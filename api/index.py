@@ -1,16 +1,12 @@
 import sys
 import os
 
-# Add root directory to sys.path
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BACKEND_DIR = os.path.join(ROOT_DIR, "backend")
+# Ensure current directory is in sys.path so all local modules load seamlessly
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+if CURRENT_DIR not in sys.path:
+    sys.path.insert(0, CURRENT_DIR)
 
-if BACKEND_DIR not in sys.path:
-    sys.path.insert(0, BACKEND_DIR)
-if ROOT_DIR not in sys.path:
-    sys.path.insert(0, ROOT_DIR)
+from app import app
 
-from backend.app import app
-
-# Vercel Serverless WSGI entry point
-# 'app' instance is exported for Vercel Python runtime
+# Vercel Serverless WSGI callable
+# Exported as 'app'

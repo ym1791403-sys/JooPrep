@@ -15,7 +15,7 @@ import os
 from datetime import datetime
 
 # Vercel serverless environment allows writing only to /tmp
-if os.environ.get("VERCEL"):
+if os.environ.get("VERCEL") or "/var/task" in os.path.abspath(__file__):
     DB_PATH = "/tmp/jooprep.db"
 else:
     DB_PATH = os.path.join(os.path.dirname(__file__), "jooprep.db")
