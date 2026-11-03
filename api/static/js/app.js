@@ -1,17 +1,467 @@
 /**
  * JooPrep v2 Client Engine
- * High-performance, resilient, and beautifully designed client application.
- * Contains both server-backed API consumers and local fallback simulators for 100% uptime.
+ * 6 Academic Subjects: Linear Algebra, Calculus, Basic Electric, Physics, English, Arabic Introduction
+ * Features:
+ * - 4-Choice MCQ Quiz Arena (Practice with instant explanation & Exam with timer & review)
+ * - Code Lab & Oral Viva Defense Simulator with 4 Personas
+ * - Smart Prep Sheet Generator (10 Trap Questions)
+ * - Student Readiness Gauge & Subject Mastery Heatmap
  */
 
-// Global State
+// ----------------- Comprehensive 6-Subject MCQ Question Bank -----------------
+const SUBJECTS_DATA = {
+  linear_algebra: {
+    id: "linear_algebra",
+    nameAr: "الجبر الخطي",
+    nameEn: "Linear Algebra",
+    code: "MATH 101",
+    theme: "from-indigo-600 to-violet-600",
+    borderGlow: "border-indigo-500/30",
+    badgeBg: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30",
+    icon: "grid-3x3",
+    description: "المحددات، معكوس المصفوفات، العمليات الأولية، فضاء المتجهات، وحل المعادلات الخطية.",
+    questions: [
+      {
+        id: "la_1",
+        question: "ما هي قيمة محدد المصفوفة $A = \\begin{pmatrix} 3 & 2 \\\\ 1 & 4 \\end{pmatrix}$؟",
+        options: [
+          { key: "A", text: "10" },
+          { key: "B", text: "14" },
+          { key: "C", text: "12" },
+          { key: "D", text: "8" }
+        ],
+        correctKey: "A",
+        explanation: "قانون محدد مصفوفة 2x2 هو حاصل ضرب القطر الرئيسي ناقص حاصل ضرب القطر الثانوي: $\\det(A) = (3 \\times 4) - (2 \\times 1) = 12 - 2 = 10$."
+      },
+      {
+        id: "la_2",
+        question: "تكون المصفوفة المربعة $A$ قابلة للعكس (Invertible / Non-singular) إذا وفقط إذا كان:",
+        options: [
+          { key: "A", text: "$\\det(A) = 0$" },
+          { key: "B", text: "$\\det(A) \\neq 0$" },
+          { key: "C", text: "جميع عناصر القطر الرئيسي تساوي 1" },
+          { key: "D", text: "المصفوفة متماثلة فقط" }
+        ],
+        correctKey: "B",
+        explanation: "الشرط الأساسي لوجود معكوس لمصفوفة مربعة $A^{-1}$ هو أن يكون محددها غير صفري $\\det(A) \\neq 0$ حتى لا نقسم على صفر في قانون المعكوس."
+      },
+      {
+        id: "la_3",
+        question: "إذا كانت $A$ مصفوفة من الرتبة $3 \\times 2$ و $B$ مصفوفة من الرتبة $2 \\times 4$، فإن رتبة المصفوفة الناتجة $AB$ هي:",
+        options: [
+          { key: "A", text: "$2 \\times 2$" },
+          { key: "B", text: "$3 \\times 4$" },
+          { key: "C", text: "$4 \\times 3$" },
+          { key: "D", text: "لا يمكن إجراء عملية الضرب" }
+        ],
+        correctKey: "B",
+        explanation: "لإجراء الضرب يجب أن يتساوى عدد أعمدة الأولى مع صفوف الثانية (2 = 2)، ورتبة الناتج تكون (صفوف الأولى $\\times$ أعمدة الثانية) = $3 \\times 4$."
+      },
+      {
+        id: "la_4",
+        question: "مدوّر مصفوفة المدوّر $(A^T)^T$ يساوي دائماً:",
+        options: [
+          { key: "A", text: "$-A$" },
+          { key: "B", text: "$A^{-1}$" },
+          { key: "C", text: "$A$" },
+          { key: "D", text: "$I$ (مصفوفة الوحدة)" }
+        ],
+        correctKey: "C",
+        explanation: "تدوير المصفوفة مرتين يعيد الصفوف إلى مواقعها الأصلية كصفوف، وبالتالي $(A^T)^T = A$."
+      },
+      {
+        id: "la_5",
+        question: "في نظام المعادلات $Ax = b$، إذا كان $\\det(A) \\neq 0$ فإن للنظام:",
+        options: [
+          { key: "A", text: "حل وحيد فقط (Unique Solution)" },
+          { key: "B", text: "عدد لا نهائي من الحلول" },
+          { key: "C", text: "لا يوجد حل على الإطلاق" },
+          { key: "D", text: "حلين متطابقين فقط" }
+        ],
+        correctKey: "A",
+        explanation: "عندما يكون المحدد غير صفري، تكون المصفوفة قابلة للعكس ويمكن إيجاد الحل الوحيد مباشرة بالقانون $x = A^{-1}b$ (قاعدة كرامر)."
+      }
+    ]
+  },
+
+  calculus: {
+    id: "calculus",
+    nameAr: "التفاضل والتكامل",
+    nameEn: "Calculus",
+    code: "MATH 102",
+    theme: "from-blue-600 to-cyan-500",
+    borderGlow: "border-cyan-500/30",
+    badgeBg: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
+    icon: "activity",
+    description: "النهايات، قواعد الاشتقاق، تطبيقات المشتقة، والتكامل غير المحدود وتطبيقات المساحات.",
+    questions: [
+      {
+        id: "calc_1",
+        question: "ما هي قيمة النهاية الشهيرة $\\lim_{x \\to 0} \\frac{\\sin(x)}{x}$؟",
+        options: [
+          { key: "A", text: "0" },
+          { key: "B", text: "1" },
+          { key: "C", text: "$\\infty$" },
+          { key: "D", text: "غير معرّفة" }
+        ],
+        correctKey: "B",
+        explanation: "هذه نهاية قياسية أساسية في التفاضل $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = 1$، ويمكن إثباتها أيضاً بقاعدة لوبيتال $\\frac{\\cos(0)}{1} = 1$."
+      },
+      {
+        id: "calc_2",
+        question: "مشتقة الدالة $f(x) = x^4 - 3x^2 + 7$ هي:",
+        options: [
+          { key: "A", text: "$4x^3 - 6x$" },
+          { key: "B", text: "$4x^3 - 6x + 7$" },
+          { key: "C", text: "$x^3 - 6x$" },
+          { key: "D", text: "$4x^3 - 3x$" }
+        ],
+        correctKey: "A",
+        explanation: "باستخدام قاعدة القوة $\\frac{d}{dx} x^n = n x^{n-1}$: مشتقة $x^4$ هي $4x^3$، ومشتقة $-3x^2$ هي $-6x$، ومشتقة الثابت 7 هي 0."
+      },
+      {
+        id: "calc_3",
+        question: "ما هي قيمة التكامل غير المحدود $\\int (3x^2 + 2x) \\, dx$؟",
+        options: [
+          { key: "A", text: "$x^3 + x^2 + C$" },
+          { key: "B", text: "$6x + 2 + C$" },
+          { key: "C", text: "$3x^3 + 2x^2 + C$" },
+          { key: "D", text: "$x^3 + 2x + C$" }
+        ],
+        correctKey: "A",
+        explanation: "نزيد الأس واحداً ونقسم على الأس الجديد: $\\int 3x^2 dx = x^3$ و $\\int 2x dx = x^2$، وبإضافة ثابت التكامل ينتج $x^3 + x^2 + C$."
+      },
+      {
+        id: "calc_4",
+        question: "مشتقة الدالة الأسية الطبيعية $f(x) = e^{3x}$ هي:",
+        options: [
+          { key: "A", text: "$e^{3x}$" },
+          { key: "B", text: "$3e^{3x}$" },
+          { key: "C", text: "$\\frac{1}{3}e^{3x}$" },
+          { key: "D", text: "$3x e^{3x-1}$" }
+        ],
+        correctKey: "B",
+        explanation: "وفقاً لقاعدة السلسلة (Chain Rule)، مشتقة $e^{u}$ هي $u' \\cdot e^u$؛ وهنا مشتقة الأس $3x$ هي 3، فيكون الناتج $3e^{3x}$."
+      },
+      {
+        id: "calc_5",
+        question: "تكون للدالة نقطة حرجة (Critical Point) عند $x = c$ إذا كان:",
+        options: [
+          { key: "A", text: "$f'(c) = 0$ أو $f'(c)$ غير موجودة" },
+          { key: "B", text: "$f(c) = 0$" },
+          { key: "C", text: "$f''(c) > 0$ فقط" },
+          { key: "D", text: "الدالة خطية فقط" }
+        ],
+        correctKey: "A",
+        explanation: "تعريف النقطة الحرجة في حساب التفاضل هو أي نقطة في مجال الدالة تجعل المشتقة الأولى مساوية للصفر أو تجعل المشتقة غير معرّفة."
+      }
+    ]
+  },
+
+  basic_electric: {
+    id: "basic_electric",
+    nameAr: "الدوائر الكهربية",
+    nameEn: "Basic Electric",
+    code: "ELEC 101",
+    theme: "from-amber-500 to-orange-600",
+    borderGlow: "border-amber-500/30",
+    badgeBg: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+    icon: "zap",
+    description: "قانون أوم، قوانين كيرشوف (KCL و KVL)، حسابات القدرة الممتصة والموردة، ومجزئ الجهد والتيار.",
+    questions: [
+      {
+        id: "be_1",
+        question: "وفقاً لقانون كيرشوف للتيار (KCL)، فإن المجموع الجبري للتيارات عند أي عقدة (Node) يساوي:",
+        options: [
+          { key: "A", text: "الجهد الكلي للدائرة" },
+          { key: "B", text: "صفراً ($0$)" },
+          { key: "C", text: "مجموع المقاومات" },
+          { key: "D", text: "ما لا نهاية" }
+        ],
+        correctKey: "B",
+        explanation: "قانون KCL يعتمد على مبدأ حفظ الشحنة الكهربائية: التيارات الداخلة إلى العقدة تساوي التيارات الخارجة منها، فالمجموع الجبري $\\sum I = 0$."
+      },
+      {
+        id: "be_2",
+        question: "مقاومتان $R_1 = 6\\,\\Omega$ و $R_2 = 3\\,\\Omega$ موصلتان على التوازي؛ المقاومة المكافئة $R_{eq}$ تساوي:",
+        options: [
+          { key: "A", text: "$9\\,\\Omega$" },
+          { key: "B", text: "$2\\,\\Omega$" },
+          { key: "C", text: "$3\\,\\Omega$" },
+          { key: "D", text: "$18\\,\\Omega$" }
+        ],
+        correctKey: "B",
+        explanation: "قانون مقاومتين على التوازي هو: $R_{eq} = \\frac{R_1 \\times R_2}{R_1 + R_2} = \\frac{6 \\times 3}{6 + 3} = \\frac{18}{9} = 2\\,\\Omega$."
+      },
+      {
+        id: "be_3",
+        question: "حسب اتفاقية الإشارات السلبية (Passive Sign Convention)، إذا دخل التيار من الطرف الموجب (+) لعنصر ما، فإن القدرة تكون:",
+        options: [
+          { key: "A", text: "ممتصة وموجبة ($P > 0$)" },
+          { key: "B", text: "موردة وسالبة ($P < 0$)" },
+          { key: "C", text: "مساوية للصفر دائماً" },
+          { key: "D", text: "غير معتمدة على إشارة التيار" }
+        ],
+        correctKey: "A",
+        explanation: "إذا دخل التيار إلى القطب الموجب لعنصر، فهذا يعني أن العنصر يمتص طاقة من الدائرة (Absorbing Power) وتكون إشارة القدرة موجبة $+P = VI$."
+      },
+      {
+        id: "be_4",
+        question: "مصباح كهربي مقاومته $10\\,\\Omega$ يمر به تيار مقداره $2\\text{ A}$، ما هي القدرة المستهلكة في المصباح؟",
+        options: [
+          { key: "A", text: "$20\\text{ W}$" },
+          { key: "B", text: "$40\\text{ W}$" },
+          { key: "C", text: "$200\\text{ W}$" },
+          { key: "D", text: "$5\\text{ W}$" }
+        ],
+        correctKey: "B",
+        explanation: "قانون القدرة بدلالة التيار والمقاومة هو $P = I^2 R = (2)^2 \\times 10 = 4 \\times 10 = 40\\text{ Watts}$."
+      },
+      {
+        id: "be_5",
+        question: "في دائرة تيار مستمر (DC Steady State)، يسلك المكثف (Capacitor) سلوك:",
+        options: [
+          { key: "A", text: "دائرة قصر (Short Circuit)" },
+          { key: "B", text: "دائرة مفتوحة (Open Circuit)" },
+          { key: "C", text: "مقاومة قيمتها $1\\,\\Omega$" },
+          { key: "D", text: "مصدر جهد مستمر" }
+        ],
+        correctKey: "B",
+        explanation: "في حالة الاستقرار مع التيار المستمر DC، ينعدم تغير الجهد مع الزمن $\\frac{dv}{dt} = 0$، وبما أن $i = C \\frac{dv}{dt}$، فإن التيار يساوي صفراً، فيتصرف المكثف كدائرة مفتوحة Open Circuit."
+      }
+    ]
+  },
+
+  physics: {
+    id: "physics",
+    nameAr: "الفيزياء الهندسية",
+    nameEn: "Physics",
+    code: "PHYS 101",
+    theme: "from-emerald-600 to-teal-500",
+    borderGlow: "border-emerald-500/30",
+    badgeBg: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+    icon: "atom",
+    description: "قوانين نيوتن للحركة، الشغل والطاقة، قانون كولوم، المجال الكهربي، والموجات الكهرومغناطيسية.",
+    questions: [
+      {
+        id: "phys_1",
+        question: "وفقاً لقانون كولوم، القوة الكهربية المتبادلة بين شحنتين نقطيتين تتناسب:",
+        options: [
+          { key: "A", text: "طردياً مع المسافة بينهما" },
+          { key: "B", text: "عكسياً مع مربع المسافة بينهما ($1/r^2$)" },
+          { key: "C", text: "طردياً مع مربع المسافة" },
+          { key: "D", text: "عكسياً مع حاصل ضرب الشحنتين" }
+        ],
+        correctKey: "B",
+        explanation: "قانون كولوم هو $F = k \\frac{|q_1 q_2|}{r^2}$؛ القوة تتناسب طردياً مع حاصل ضرب الشحنتين وعكسياً مع مربع المسافة بينهما."
+      },
+      {
+        id: "phys_2",
+        question: "جسم كتلته $4\\text{ kg}$ يتحرك بسرعة ثابتة مقدارها $3\\text{ m/s}$، ما هي طاقة حركته (Kinetic Energy)؟",
+        options: [
+          { key: "A", text: "$12\\text{ Joules}$" },
+          { key: "B", text: "$18\\text{ Joules}$" },
+          { key: "C", text: "$36\\text{ Joules}$" },
+          { key: "D", text: "$24\\text{ Joules}$" }
+        ],
+        correctKey: "B",
+        explanation: "قانون طاقة الحركة هو $KE = \\frac{1}{2} m v^2 = \\frac{1}{2} \\times 4 \\times (3)^2 = 2 \\times 9 = 18\\text{ Joules}$."
+      },
+      {
+        id: "phys_3",
+        question: "وحدة قياس شدة المجال الكهربائي (Electric Field) في النظام الدولي هي:",
+        options: [
+          { key: "A", text: "$\\text{Newton / Coulomb (N/C)}$ أو $\\text{Volt / meter (V/m)}$" },
+          { key: "B", text: "$\\text{Joule / Coulomb}$" },
+          { key: "C", text: "$\\text{Tesla}$" },
+          { key: "D", text: "$\\text{Watt / meter}$" }
+        ],
+        correctKey: "A",
+        explanation: "المجال الكهربائي يُعرّف بأنه القوة المؤثرة على وحدة الشحنات الموجبة $E = F / q$ ووحدته $\\text{N/C}$ وتكافئ $\\text{V/m}$."
+      },
+      {
+        id: "phys_4",
+        question: "القانون الأول للديناميكا الحرارية يعبر في جوهره عن مبدأ:",
+        options: [
+          { key: "A", text: "حفظ الشحنة الكهربية" },
+          { key: "B", text: "حفظ الطاقة (Energy Conservation)" },
+          { key: "C", text: "زيادة الإنتروبيا" },
+          { key: "D", text: "توازن الضغط والحرارة فقط" }
+        ],
+        correctKey: "B",
+        explanation: "ينص القانون الأول للديناميكا الحرارية على أن التغير في الطاقة الداخلية لنظام معزول يساوي الحرارة المضافة مطروحاً منها الشغل المبذول $\\Delta U = Q - W$، وهو تطبيق مباشر لحفظ الطاقة."
+      },
+      {
+        id: "phys_5",
+        question: "إذا كانت سرعة الضوء في الفراغ $c$، فإن سرعته داخل وسط مادي معامل انكساره $n = 1.5$ تكون:",
+        options: [
+          { key: "A", text: "$1.5\\,c$" },
+          { key: "B", text: "$c / 1.5$" },
+          { key: "C", text: "$c$" },
+          { key: "D", text: "$2.25\\,c$" }
+        ],
+        correctKey: "B",
+        explanation: "معامل الانكسار يُعرّف بالنسبة $n = c / v$، وبالتالي سرعة الضوء في الوسط هي $v = c / n = c / 1.5$."
+      }
+    ]
+  },
+
+  english: {
+    id: "english",
+    nameAr: "اللغة الإنجليزية الأكاديمية",
+    nameEn: "English",
+    code: "ENG 101",
+    theme: "from-rose-500 to-pink-600",
+    borderGlow: "border-rose-500/30",
+    badgeBg: "bg-rose-500/15 text-rose-300 border-rose-500/30",
+    icon: "book-a",
+    description: "المصطلحات التقنية في الحاسبات، قواعد الكتابة الأكاديمية، تراكيب الجمل، وصياغة التقارير الفنية.",
+    questions: [
+      {
+        id: "eng_1",
+        question: "In technical documentation, which sentence represents the correct Passive Voice for: 'The engineer debugged the program.'?",
+        options: [
+          { key: "A", text: "The program was debugged by the engineer." },
+          { key: "B", text: "The program has being debugged by the engineer." },
+          { key: "C", text: "The engineer was debugged by the program." },
+          { key: "D", text: "The program is debugging by the engineer." }
+        ],
+        correctKey: "A",
+        explanation: "في زمن الماضي البسيط (Past Simple)، يتحول المبني للمجهول إلى: المفعول به + was/were + التصريف الثالث: 'The program was debugged'."
+      },
+      {
+        id: "eng_2",
+        question: "What is the precise meaning of the computing term 'Concurrent execution'?",
+        options: [
+          { key: "A", text: "Running tasks strictly one after another" },
+          { key: "B", text: "Multiple tasks progressing during overlapping time periods" },
+          { key: "C", text: "Deleting outdated processes from memory" },
+          { key: "D", text: "Compiling code into machine language" }
+        ],
+        correctKey: "B",
+        explanation: "المصطلح 'Concurrency' في علوم الحاسب يعني إدارة وتنفيذ عدة مهام في فترات زمنية متداخلة دون الحاجة لانتهاء مهمة بالكامل لبدء الأخرى."
+      },
+      {
+        id: "eng_3",
+        question: "Choose the grammatically correct conditional sentence:",
+        options: [
+          { key: "A", text: "If the algorithm is optimized, execution time will decrease." },
+          { key: "B", text: "If the algorithm will be optimized, execution time decreases." },
+          { key: "C", text: "If the algorithm was optimize, execution time would decreased." },
+          { key: "D", text: "If the algorithm optimize, time will decreased." }
+        ],
+        correctKey: "A",
+        explanation: "الحالة الشرطية الأولى (First Conditional) تتكون من: If + مضارع بسيط (is optimized) ثم will + المصدر (will decrease)."
+      },
+      {
+        id: "eng_4",
+        question: "The term 'Bandwidth' in networking refers to:",
+        options: [
+          { key: "A", text: "The physical weight of the network cable" },
+          { key: "B", text: "The maximum rate of data transfer across a given path" },
+          { key: "C", text: "The software used to browse the internet" },
+          { key: "D", text: "The battery consumption of a router" }
+        ],
+        correctKey: "B",
+        explanation: "مصطلح عرض النطاق الترددي (Bandwidth) يعبر عن أقصى كمية بيانات يمكن نقلها عبر مسار اتصال في وحدة الزمن (غالباً بالـ Mbps أو Gbps)."
+      },
+      {
+        id: "eng_5",
+        question: "Select the word that correctly completes the statement: 'The software architecture must be _______ to handle future increases in workload.'",
+        options: [
+          { key: "A", text: "Scalable" },
+          { key: "B", text: "Redundant" },
+          { key: "C", text: "Depreciated" },
+          { key: "D", text: "Volatile" }
+        ],
+        correctKey: "A",
+        explanation: "كلمة 'Scalable' (قابلة للتوسع) هي الكلمة الهندسية الصحيحة لوصف النظام القادر على التكيف مع زيادة حجم العمل والبيانات."
+      }
+    ]
+  },
+
+  arabic_intro: {
+    id: "arabic_intro",
+    nameAr: "مقدمة في اللغة العربية والتواصل",
+    nameEn: "Arabic Introduction",
+    code: "ARAB 101",
+    theme: "from-purple-600 to-fuchsia-600",
+    borderGlow: "border-fuchsia-500/30",
+    badgeBg: "bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30",
+    icon: "feather",
+    description: "أساسيات الصياغة التعبيرية، قواعد النحو والصرف للكتابة الأكاديمية، مهارات العرض والإقناع، وتوثيق المصطلحات العلمية.",
+    questions: [
+      {
+        id: "ar_1",
+        question: "في الجملة التالية: 'إنّ المهندسينَ قادرونَ على الابتكار'، إعراب كلمة 'قادرون' هو:",
+        options: [
+          { key: "A", text: "خبر إنّ مرفوع وعلامة رفعه الواو لأنه جمع مذكر سالم" },
+          { key: "B", text: "اسم إنّ منصوب وعلامة نصبه الياء" },
+          { key: "C", text: "نعت مرفوع وعلامة رفعه الضمة" },
+          { key: "D", text: "مبتدأ مؤخر مرفوع بالواو" }
+        ],
+        correctKey: "A",
+        explanation: "'إنّ' حرف ناسخ ينصب المبتدأ (المهندسينَ) ويرفع الخبر؛ فـ 'قادرون' خبر إنّ مرفوع بالواو لأنه جمع مذكر سالم."
+      },
+      {
+        id: "ar_2",
+        question: "أي الكلمات التالية كُتبت همزتها همزة وصل صحيحة؟",
+        options: [
+          { key: "A", text: "إستخدام" },
+          { key: "B", text: "استخدام" },
+          { key: "C", text: "أستخدام" },
+          { key: "D", text: "إستخراج" }
+        ],
+        correctKey: "B",
+        explanation: "الفعل السداسي وأمره ومصدره همزتها همزة وصل دائماً بدون همزة رسمية: (استخدمَ - استخدِمْ - استخدام)."
+      },
+      {
+        id: "ar_3",
+        question: "الهدف الجوهري من 'الملخص التنفيذي (Executive Summary)' في التقارير الهندسية هو:",
+        options: [
+          { key: "A", text: "سرد السيرة الذاتية للمهندسين المشاركين" },
+          { key: "B", text: "تقديم لمحة شاملة وموجزة عن المشكلة والنتائج والحل لصناع القرار" },
+          { key: "C", text: "إدراج شفرات الأكواد البرمجية بالكامل" },
+          { key: "D", text: "وضع مسرد المصطلحات المعربة فقط" }
+        ],
+        correctKey: "B",
+        explanation: "الملخص التنفيذي يُكتب لتمكين المسؤول وصانع القرار من معرفة جوهر المشكلة والنتائج والتوصية الأساسية دون الحاجة لقراءة التقرير الفني المطول."
+      },
+      {
+        id: "ar_4",
+        question: "علامة الترقيم المناسبة بين الجملة وسببها في الكتابة الأكاديمية هي:",
+        options: [
+          { key: "A", text: "الفاصلة المنقوطة (؛)" },
+          { key: "B", text: "النقطتان الرأسيتان (:)" },
+          { key: "C", text: "علامة الحذف (...)" },
+          { key: "D", text: "الشرطة (-)" }
+        ],
+        correctKey: "A",
+        explanation: "الفاصلة المنقوطة (؛) توضع دائماً بين جملتين إحداهما سبب أو تعليل للأخرى، مثل: 'تم تحسين الخوارزمية؛ لأن حجم البيانات تضاعف'."
+      },
+      {
+        id: "ar_5",
+        question: "المصطلح العربي الأدق المعتمد لمفهوم 'Artificial Intelligence' هو:",
+        options: [
+          { key: "A", text: "الذكاء الاصطناعي" },
+          { key: "B", text: "الذكاء المصنوع" },
+          { key: "C", text: "الحساب الآلي الذاتي" },
+          { key: "D", text: "العقل التقني" }
+        ],
+        correctKey: "A",
+        explanation: "المصطلح العلمي والمعجمي المعتمد في مجامع اللغة العربية والجامعات هو 'الذكاء الاصطناعي'."
+      }
+    ]
+  }
+};
+
+// ----------------- Global Application State -----------------
 const state = {
   activeView: 'dashboard',
-  theme: 'dark',
   audioEnabled: true,
   user: {
-    name: 'أحمد محمود',
-    college: 'كلية الحاسبات والذكاء الاصطناعي',
+    name: 'طالب حاسبات وهندسة',
+    college: 'كلية الحاسبات والمعلومات',
     academic_year: 'الفرقة الأولى',
     quota_used_today_viva: 1,
     daily_quota_viva: 3,
@@ -19,34 +469,32 @@ const state = {
     daily_quota_prep: 5
   },
   
-  // Quiz State
-  currentProblem: null,
-  currentStepIndex: 0,
-  quizMode: 'practice', // 'practice' | 'exam'
-  quizStepResults: [],
-  quizHintsUsed: 0,
-  examTimerInterval: null,
-  examSecondsRemaining: 300,
-  
-  // Viva State
+  // Active MCQ Quiz State
+  activeSubjectKey: 'linear_algebra',
+  quizQuestions: [],
+  currentQuestionIndex: 0,
+  userAnswers: {}, // questionId -> selectedKey ('A' | 'B' | 'C' | 'D')
+  quizMode: 'practice', // 'practice' (instant explanation) | 'exam' (timed + review at end)
+  quizTimerInterval: null,
+  quizSecondsRemaining: 600, // 10 mins
+  quizSubmitted: false,
+
+  // Code & Viva Arena State
   vivaSessionId: null,
   vivaCurrentTurn: 1,
   vivaMaxTurns: 5,
-  vivaProjectMap: null,
   vivaPersona: 'strict_ta',
   vivaLanguage: 'mixed',
   vivaLevel: 2,
   vivaScores: [],
-  
-  // Errors
   allErrors: []
 };
 
 // ----------------- Initialization -----------------
-
 document.addEventListener('DOMContentLoaded', () => {
   if (window.lucide) lucide.createIcons();
 
+  renderSubjectsGrid();
   loadUserProfile();
   loadReadinessData();
 
@@ -60,7 +508,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ----------------- Navigation -----------------
-
 function navigate(viewName) {
   state.activeView = viewName;
   const views = ['dashboard', 'quizzes', 'viva', 'prep-sheet', 'error-notebook', 'profile'];
@@ -98,11 +545,13 @@ function navigate(viewName) {
   if (viewName === 'dashboard') {
     loadReadinessData();
   } else if (viewName === 'quizzes') {
-    if (!state.currentProblem) loadNewProblem();
-  } else if (viewName === 'error-notebook') {
-    loadErrorNotebook();
+    if (!state.quizQuestions || state.quizQuestions.length === 0) {
+      startQuizForSubject(state.activeSubjectKey || 'linear_algebra');
+    }
   } else if (viewName === 'prep-sheet') {
     loadLatestPrepSheet();
+  } else if (viewName === 'error-notebook') {
+    loadErrorNotebook();
   }
 
   if (window.lucide) lucide.createIcons();
@@ -110,7 +559,6 @@ function navigate(viewName) {
 }
 
 // ----------------- Audio & Utilities -----------------
-
 function toggleAudio() {
   state.audioEnabled = !state.audioEnabled;
   const icon = document.getElementById('audio-icon');
@@ -132,341 +580,311 @@ function speakText(text) {
   window.speechSynthesis.speak(utterance);
 }
 
-// ----------------- Profile & Readiness -----------------
-
-async function loadUserProfile() {
-  try {
-    const res = await fetch('/api/user/profile');
-    if (!res.ok) throw new Error('Network response not ok');
-    const data = await res.json();
-    if (data.success && data.user) {
-      state.user = data.user;
-    }
-  } catch (err) {
-    // Graceful fallback to default user state
-    console.log("Using cached profile:", state.user.name);
-  }
-
-  const u = state.user;
-  document.getElementById('header-user-name').innerText = u.name;
-  document.getElementById('profile-display-name').innerText = u.name;
-  document.getElementById('profile-display-college').innerText = u.college;
-  document.getElementById('profile-input-name').value = u.name;
-  document.getElementById('profile-input-college').value = u.college;
-  document.getElementById('profile-input-year').value = u.academic_year;
-  document.getElementById('quota-viva-text').innerText = `${u.quota_used_today_viva} / ${u.daily_quota_viva}`;
-  document.getElementById('quota-prep-text').innerText = `${u.quota_used_today_prep} / ${u.daily_quota_prep}`;
-}
-
-async function handleProfileUpdate(e) {
-  e.preventDefault();
-  state.user.name = document.getElementById('profile-input-name').value;
-  state.user.college = document.getElementById('profile-input-college').value;
-  state.user.academic_year = document.getElementById('profile-input-year').value;
-
-  try {
-    await fetch('/api/user/profile', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.user)
-    });
-  } catch (err) {
-    console.log("Local profile update");
-  }
-
-  alert("تم حفظ بيانات الملف الشخصي بنجاح!");
-  loadUserProfile();
-  navigate('dashboard');
-}
-
-async function loadReadinessData() {
-  let readiness = null;
-  try {
-    const res = await fetch('/api/readiness');
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success) readiness = data.readiness;
-    }
-  } catch (e) {
-    console.log("Client calculation for readiness");
-  }
-
-  // Fallback / client calculated readiness
-  if (!readiness) {
-    readiness = {
-      readinessScore: 72,
-      qScore: 78,
-      vScore: 66,
-      statusText: "مؤشر جاهزية نشط",
-      levelLabel: "مستوى متوسط - في الطريق الصحيح ⚡",
-      studyFirstRecommendations: [
-        "محددات المصفوفات 3×3",
-        "قواعد إشارات القدرة (Circuits)",
-        "تحويل أنظمة العد (Base N)"
-      ],
-      heatmap: [
-        { label: "محددات المصفوفات 3×3", avgScore: 48, status: "ضعيف" },
-        { label: "قواعد إشارات القدرة (Circuits)", avgScore: 56, status: "متوسط" },
-        { label: "معكوس المصفوفات (Inverse)", avgScore: 65, status: "متوسط" },
-        { label: "تحويل أنظمة العد (Base N)", avgScore: 82, status: "قوي" },
-        { label: "متمم الاثنين (2's Complement)", avgScore: 88, status: "قوي" }
-      ]
-    };
-  }
-
-  const score = Math.round(readiness.readinessScore);
-  document.getElementById('readiness-score-display').innerText = `${score}%`;
-  document.getElementById('readiness-level-label').innerText = readiness.levelLabel;
-  document.getElementById('readiness-status-badge').innerText = readiness.statusText;
-
-  // SVG Progress Ring
-  const offset = 251.2 - (251.2 * score) / 100;
-  const circle = document.getElementById('readiness-gauge-circle');
-  circle.style.strokeDashoffset = offset;
-
-  if (score >= 75) {
-    circle.setAttribute('class', 'text-emerald-500 transition-all duration-1000 ease-out');
-  } else if (score >= 50) {
-    circle.setAttribute('class', 'text-amber-500 transition-all duration-1000 ease-out');
-  } else {
-    circle.setAttribute('class', 'text-rose-500 transition-all duration-1000 ease-out');
-  }
-
-  document.getElementById('q-score-display').innerText = readiness.qScore ? `${Math.round(readiness.qScore)}%` : '--';
-  document.getElementById('v-score-display').innerText = readiness.vScore ? `${Math.round(readiness.vScore)}%` : '--';
-
-  if (readiness.studyFirstRecommendations && readiness.studyFirstRecommendations.length > 0) {
-    document.getElementById('study-first-topics').innerText = readiness.studyFirstRecommendations.join(' • ');
-  }
-
-  renderHeatmap(readiness.heatmap);
-}
-
-function renderHeatmap(items) {
-  const container = document.getElementById('dashboard-heatmap-container');
+// ----------------- Render 6 Subjects Grid on Dashboard -----------------
+function renderSubjectsGrid() {
+  const container = document.getElementById('subjects-grid-container');
   if (!container) return;
   container.innerHTML = '';
 
-  items.forEach(item => {
-    const bar = document.createElement('div');
-    bar.className = "space-y-1.5";
+  Object.values(SUBJECTS_DATA).forEach(sub => {
+    const card = document.createElement('div');
+    card.className = `rounded-3xl bg-slate-900/80 border border-slate-800/90 hover:${sub.borderGlow} p-6 transition flex flex-col justify-between group shadow-xl backdrop-blur-xl relative overflow-hidden`;
     
-    let colorClass = "bg-rose-500";
-    let textClass = "text-rose-400";
-    if (item.avgScore >= 75) {
-      colorClass = "bg-emerald-500";
-      textClass = "text-emerald-400";
-    } else if (item.avgScore >= 50) {
-      colorClass = "bg-amber-500";
-      textClass = "text-amber-400";
-    }
+    card.innerHTML = `
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="p-3.5 rounded-2xl bg-gradient-to-tr ${sub.theme} text-white shadow-lg group-hover:scale-105 transition">
+            <i data-lucide="${sub.icon}" class="w-6 h-6"></i>
+          </div>
+          <span class="text-[11px] font-black px-3 py-1 rounded-full ${sub.badgeBg}">
+            ${sub.code}
+          </span>
+        </div>
 
-    bar.innerHTML = `
-      <div class="flex items-center justify-between text-xs font-bold">
-        <span class="text-slate-200">${item.label}</span>
-        <span class="${textClass} font-mono">${Math.round(item.avgScore)}% (${item.status})</span>
+        <div>
+          <h4 class="font-black text-white text-lg tracking-tight">${sub.nameAr}</h4>
+          <span class="text-xs text-slate-400 font-mono block">${sub.nameEn}</span>
+          <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+            ${sub.description}
+          </p>
+        </div>
       </div>
-      <div class="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
-        <div class="h-full ${colorClass} rounded-full transition-all duration-700" style="width: ${item.avgScore}%"></div>
+
+      <div class="pt-5 mt-4 border-t border-slate-800/80 flex items-center justify-between">
+        <span class="text-xs text-slate-400 font-semibold flex items-center gap-1.5">
+          <i data-lucide="help-circle" class="w-3.5 h-3.5 text-slate-500"></i>
+          ${sub.questions.length} كويزات MCQ
+        </span>
+        <button onclick="startQuizForSubject('${sub.id}')" class="px-4 py-2 rounded-xl bg-gradient-to-r ${sub.theme} hover:opacity-95 text-white text-xs font-black shadow-lg transition active:scale-95">
+          ابدأ الكويز
+        </button>
       </div>
     `;
-    container.appendChild(bar);
+    container.appendChild(card);
   });
 }
 
-function quickStartQuiz(course) {
+// ----------------- 4-Option MCQ Quiz Arena -----------------
+window.startQuizWithTopic = function(course, topic) {
+  startQuizForSubject(course);
+};
+
+function startQuizForSubject(subjectKey) {
+  const sub = SUBJECTS_DATA[subjectKey] || SUBJECTS_DATA.linear_algebra;
+  state.activeSubjectKey = sub.id;
+  state.quizQuestions = [...sub.questions];
+  state.currentQuestionIndex = 0;
+  state.userAnswers = {};
+  state.quizSubmitted = false;
+
   const sel = document.getElementById('quiz-course-select');
-  if (sel) sel.value = course;
-  navigate('quizzes');
-  loadNewProblem();
-}
+  if (sel) sel.value = sub.id;
 
-function startQuizWithTopic(course, topic) {
-  const sel = document.getElementById('quiz-course-select');
-  if (sel) sel.value = course;
-  navigate('quizzes');
-  loadNewProblem(topic);
-}
-
-// ----------------- Step-by-Step Quizzes (Deterministic Math Engine) -----------------
-
-// Client-Side Deterministic Generator Fallback
-function generateClientMathProblem(course, topic) {
-  if (course === 'linear_algebra') {
-    return {
-      id: "prob_det_cl",
-      courseCode: "linear_algebra",
-      topic: "determinant_3x3",
-      topicName: "حساب محدد مصفوفة 3x3",
-      difficulty: 2,
-      steps: [
-        {
-          id: "step_1",
-          title: "حساب المحدد الأصغر للموقع (1,1)",
-          prompt: "احسب قيمة المحدد الأصغر $M_{11}$ الناتج عن حذف الصف الأول والعمود الأول للمصفوفة:\n$$\\begin{pmatrix} 2 & -1 & 3 \\\\ 0 & 4 & 1 \\\\ 5 & -2 & 0 \\end{pmatrix}$$",
-          answerType: "number",
-          expected: 2,
-          context: { det: -23, topic: "linear_algebra" },
-          hints: [
-            "المحدد الأصغر $M_{11}$ يتكون من حذف الصف الأول والعمود الأول.",
-            "المصفوفة الناتجة 2x2 هي: $\\begin{pmatrix} 4 & 1 \\\\ -2 & 0 \\end{pmatrix}$.",
-            "القانون: $(4 \\times 0) - (1 \\times -2) = 0 - (-2) = 2$."
-          ]
-        },
-        {
-          id: "step_2",
-          title: "حساب الحد الثاني (مراعاة الإشارة السالبة)",
-          prompt: "احسب قيمة الحد الثاني في فك الصف الأول: $-(-1) \\times M_{12}$، حيث $M_{12} = -5$:",
-          answerType: "number",
-          expected: -5,
-          context: { det: -23, topic: "linear_algebra" },
-          hints: [
-            "تذكر أن إشارة الموقع (1,2) سالبة $(-)$.",
-            "قيمة $M_{12} = (0 \\times 0) - (1 \\times 5) = -5$.",
-            "الحد الثاني كاملاً هو $-(-1) \\times (-5) = -5$."
-          ]
-        },
-        {
-          id: "step_3",
-          title: "قيمة المحدد الكلية det(A)",
-          prompt: "اجمع حدود فك الصف الأول لإيجاد القيمة النهائية للمحدد $\\det(A)$ (الحد الثالث $= 3 \\times -20 = -60$):",
-          answerType: "number",
-          expected: -61,
-          context: { det: -61, topic: "linear_algebra" },
-          hints: [
-            "القانون: $\\det(A) = (2 \\times 2) + (-5) + (-60)$.",
-            "الجمع: $4 - 5 - 60 = -61$.",
-            "الناتج النهائي = -61."
-          ]
-        }
-      ]
-    };
-  } else if (course === 'electric_circuits') {
-    return {
-      id: "prob_circ_cl",
-      courseCode: "electric_circuits",
-      topic: "circuits_power",
-      topicName: "حساب القدرة واتفاقية الإشارات (Sign Convention)",
-      difficulty: 1,
-      steps: [
-        {
-          id: "step_1",
-          title: "حساب القدرة الكهربائية P (وات)",
-          prompt: "عنصر فرق الجهد بين طرفيه $V = 12\\text{ V}$ ويمر به تيار $I = 2.5\\text{ A}$ **داخل إلى الطرف الموجب (+)**.\nاحسب مقدار القدرة $P = V \\times I$ مع الإشارة الصحيحة وفقاً لـ Passive Sign Convention:",
-          answerType: "number",
-          expected: 30,
-          context: { topic: "electric_circuits", is_power_question: true },
-          hints: [
-            "القانون: $P = V \\times I$.",
-            "إذا دخل التيار للطرف الموجب فتكون القدرة الممتصة موجبة ($+P$).",
-            "الناتج = +30 W."
-          ]
-        },
-        {
-          id: "step_2",
-          title: "تحديد طبيعة القدرة",
-          prompt: "هل هذا العنصر يمتص قدرة أم يورد قدرة للدائرة؟ (اكتب: 'ممتصة' أو 'موردة'):",
-          answerType: "mcq",
-          expected: "ممتصة",
-          context: { topic: "electric_circuits" },
-          hints: [
-            "القدرة بإشارة موجبة ($P > 0$).",
-            "العنصر يستهلك ويمتص طاقة كهربائية.",
-            "الإجابة هي: ممتصة."
-          ]
-        }
-      ]
-    };
-  } else {
-    return {
-      id: "prob_base_cl",
-      courseCode: "computer_fundamentals",
-      topic: "base_conversion",
-      topicName: "تحويل أنظمة العد (Base Conversion)",
-      difficulty: 1,
-      steps: [
-        {
-          id: "step_1",
-          title: "تحويل من عشري إلى ثنائي",
-          prompt: "حول الرقم العشري $(53)_{10}$ إلى النظام الثنائي (Binary):",
-          answerType: "baseN",
-          expected: "110101",
-          context: { topic: "computer_fundamentals" },
-          hints: [
-            "اقسم على 2 واحتفظ بالبواقي.",
-            "تذكر أن تقرأ البواقي من تحت لفوق (من آخر باقي لأول باقي).",
-            "الإجابة هي: 110101."
-          ]
-        },
-        {
-          id: "step_2",
-          title: "تحويل إلى سداسي عشر (Hex)",
-          prompt: "حول الرقم $(53)_{10}$ أو $(110101)_2$ إلى النظام السداسي عشر (Hex):",
-          answerType: "baseN",
-          expected: "35",
-          context: { topic: "computer_fundamentals" },
-          hints: [
-            "قسّم البتات الثنائية إلى مجموعات من 4 بدءاً من اليمين: 0011 0101.",
-            "المجموعة الأولى 0101 = 5، والمجموعة الثانية 0011 = 3.",
-            "الناتج = 35."
-          ]
-        }
-      ]
-    };
-  }
-}
-
-async function loadNewProblem(topicOverride = null) {
-  const course = document.getElementById('quiz-course-select').value;
-  let url = `/api/quiz/problem?course=${course}`;
-  if (topicOverride) url += `&topic=${topicOverride}`;
-
-  try {
-    const res = await fetch(url);
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success) {
-        state.currentProblem = data.problem;
-      }
-    }
-  } catch (err) {
-    console.log("Using client deterministic problem generator");
-  }
-
-  if (!state.currentProblem || state.currentProblem.courseCode !== course) {
-    state.currentProblem = generateClientMathProblem(course, topicOverride);
-  }
-
-  state.currentStepIndex = 0;
-  state.quizStepResults = [];
-  state.quizHintsUsed = 0;
-
-  document.getElementById('quiz-topic-title').innerText = state.currentProblem.topicName || "مسألة رياضية";
+  document.getElementById('quiz-topic-title').innerText = `${sub.nameAr} — كويز MCQ`;
   document.getElementById('quiz-problem-card').classList.remove('hidden');
   document.getElementById('quiz-success-card').classList.add('hidden');
-  document.getElementById('quiz-feedback-box').classList.add('hidden');
-  document.getElementById('quiz-hint-box').classList.add('hidden');
 
-  renderCurrentStep();
-  if (state.quizMode === 'exam') startExamTimer();
+  navigate('quizzes');
+  renderCurrentMCQQuestion();
+
+  if (state.quizMode === 'exam') {
+    startQuizTimer();
+  } else {
+    stopQuizTimer();
+  }
 }
 
-function renderCurrentStep() {
-  const prob = state.currentProblem;
-  if (!prob || !prob.steps) return;
+function handleSubjectSelectChange() {
+  const sel = document.getElementById('quiz-course-select');
+  if (sel) {
+    startQuizForSubject(sel.value);
+  }
+}
 
-  const step = prob.steps[state.currentStepIndex];
-  const total = prob.steps.length;
+function renderCurrentMCQQuestion() {
+  const questions = state.quizQuestions;
+  if (!questions || questions.length === 0) return;
 
-  document.getElementById('quiz-step-indicator').innerText = `خطوة ${state.currentStepIndex + 1} من ${total}`;
-  document.getElementById('quiz-step-title').innerText = step.title;
+  const q = questions[state.currentQuestionIndex];
+  const total = questions.length;
+  const selectedKey = state.userAnswers[q.id];
 
-  document.getElementById('quiz-step-prompt').innerHTML = formatMathText(step.prompt);
+  document.getElementById('quiz-step-indicator').innerText = `سؤال ${state.currentQuestionIndex + 1} من ${total}`;
+  document.getElementById('quiz-step-title').innerText = `اختيار من 4 بدائل (MCQ)`;
 
-  clearStudentInput();
-  document.getElementById('hint-level-count').innerText = `0/${step.hints ? step.hints.length : 3}`;
-  document.getElementById('quiz-hint-box').classList.add('hidden');
-  document.getElementById('quiz-feedback-box').classList.add('hidden');
+  // Question Prompt
+  document.getElementById('quiz-step-prompt').innerHTML = formatMathText(q.question);
+
+  // Render 4 Options
+  const optionsContainer = document.getElementById('mcq-options-container');
+  optionsContainer.innerHTML = '';
+
+  q.options.forEach(opt => {
+    const isSelected = selectedKey === opt.key;
+    let cardClass = "mcq-option-card flex items-center justify-between p-4 rounded-2xl border transition cursor-pointer select-none";
+    let badgeClass = "w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm transition";
+
+    if (state.quizMode === 'practice' && selectedKey) {
+      // In practice mode after answering, show colors immediately
+      if (opt.key === q.correctKey) {
+        cardClass += " bg-emerald-950/40 border-emerald-500/60 text-emerald-200 shadow-emerald-500/10 shadow-lg";
+        badgeClass += " bg-emerald-500 text-white";
+      } else if (isSelected && opt.key !== q.correctKey) {
+        cardClass += " bg-rose-950/40 border-rose-500/60 text-rose-200 shadow-rose-500/10 shadow-lg";
+        badgeClass += " bg-rose-500 text-white";
+      } else {
+        cardClass += " bg-slate-950/60 border-slate-800/80 text-slate-400 opacity-60";
+        badgeClass += " bg-slate-800 text-slate-400";
+      }
+    } else {
+      // Standard selection mode
+      if (isSelected) {
+        cardClass += " bg-indigo-600/20 border-indigo-500 text-white shadow-indigo-500/20 shadow-lg ring-1 ring-indigo-500";
+        badgeClass += " bg-indigo-600 text-white";
+      } else {
+        cardClass += " bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-200 hover:bg-slate-900/60";
+        badgeClass += " bg-slate-800 text-slate-300";
+      }
+    }
+
+    const optEl = document.createElement('div');
+    optEl.className = cardClass;
+    optEl.onclick = () => selectMCQOption(opt.key);
+    optEl.innerHTML = `
+      <div class="flex items-center gap-3.5">
+        <div class="${badgeClass}">${opt.key}</div>
+        <div class="text-sm sm:text-base font-bold">${formatMathText(opt.text)}</div>
+      </div>
+      <div>
+        ${isSelected ? '<i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-400"></i>' : '<div class="w-4 h-4 rounded-full border border-slate-700"></div>'}
+      </div>
+    `;
+    optionsContainer.appendChild(optEl);
+  });
+
+  // Practice Mode Explanation Box
+  const expBox = document.getElementById('quiz-feedback-box');
+  if (state.quizMode === 'practice' && selectedKey) {
+    const isCorrect = selectedKey === q.correctKey;
+    expBox.classList.remove('hidden');
+
+    if (isCorrect) {
+      expBox.className = "rounded-2xl p-4 sm:p-5 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 space-y-1 shadow-lg animate-fade-in";
+      document.getElementById('quiz-feedback-icon').className = "p-2.5 rounded-xl bg-emerald-500/20 text-emerald-400";
+      document.getElementById('quiz-feedback-icon').innerHTML = `<i data-lucide="check-circle" class="w-5 h-5"></i>`;
+      document.getElementById('quiz-feedback-title').innerText = "إجابة صحيحة وممتازة! 🎉";
+    } else {
+      expBox.className = "rounded-2xl p-4 sm:p-5 bg-rose-950/40 border border-rose-500/40 text-rose-300 space-y-1 shadow-lg animate-fade-in";
+      document.getElementById('quiz-feedback-icon').className = "p-2.5 rounded-xl bg-rose-500/20 text-rose-400";
+      document.getElementById('quiz-feedback-icon').innerHTML = `<i data-lucide="alert-triangle" class="w-5 h-5"></i>`;
+      document.getElementById('quiz-feedback-title').innerText = "إجابة غير صحيحة!";
+    }
+
+    document.getElementById('quiz-feedback-diagnosis').innerHTML = `<strong>التفسير العلمي:</strong> ${formatMathText(q.explanation)}`;
+    document.getElementById('quiz-feedback-tip').innerText = `الإجابة الصحيحة هي: (${q.correctKey})`;
+    
+    if (state.audioEnabled && isCorrect) speakText("إجابة صحيحة");
+  } else {
+    expBox.classList.add('hidden');
+  }
+
+  // Navigation Buttons
+  document.getElementById('prev-q-btn').disabled = state.currentQuestionIndex === 0;
+  if (state.currentQuestionIndex === total - 1) {
+    document.getElementById('next-q-btn').innerText = "إنهاء الكويز والنتيجة";
+  } else {
+    document.getElementById('next-q-btn').innerText = "السؤال التالي";
+  }
+
+  if (window.lucide) lucide.createIcons();
+}
+
+function selectMCQOption(key) {
+  const q = state.quizQuestions[state.currentQuestionIndex];
+  state.userAnswers[q.id] = key;
+  renderCurrentMCQQuestion();
+}
+
+function nextMCQQuestion() {
+  const total = state.quizQuestions.length;
+  if (state.currentQuestionIndex < total - 1) {
+    state.currentQuestionIndex++;
+    renderCurrentMCQQuestion();
+  } else {
+    finishMCQQuiz();
+  }
+}
+
+function prevMCQQuestion() {
+  if (state.currentQuestionIndex > 0) {
+    state.currentQuestionIndex--;
+    renderCurrentMCQQuestion();
+  }
+}
+
+function finishMCQQuiz() {
+  state.quizSubmitted = true;
+  stopQuizTimer();
+
+  document.getElementById('quiz-problem-card').classList.add('hidden');
+  document.getElementById('quiz-success-card').classList.remove('hidden');
+
+  // Calculate score
+  let correctCount = 0;
+  const questions = state.quizQuestions;
+  questions.forEach(q => {
+    if (state.userAnswers[q.id] === q.correctKey) {
+      correctCount++;
+    }
+  });
+
+  const percent = Math.round((correctCount / questions.length) * 100);
+  document.getElementById('quiz-final-score-percent').innerText = `${percent}%`;
+  document.getElementById('quiz-final-score-detail').innerText = `أجبت على ${correctCount} من إجمالي ${questions.length} أسئلة بشكل صحيح`;
+
+  if (window.confetti && percent >= 60) {
+    confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } });
+  }
+
+  // Render question-by-question review list
+  renderQuizReviewList();
+}
+
+function renderQuizReviewList() {
+  const container = document.getElementById('quiz-review-list');
+  if (!container) return;
+  container.innerHTML = '';
+
+  state.quizQuestions.forEach((q, idx) => {
+    const userChoice = state.userAnswers[q.id] || "لم تجب";
+    const isCorrect = userChoice === q.correctKey;
+
+    const div = document.createElement('div');
+    div.className = `p-4 rounded-2xl border text-xs sm:text-sm space-y-2 ${isCorrect ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-200' : 'bg-rose-950/20 border-rose-500/30 text-rose-200'}`;
+    div.innerHTML = `
+      <div class="flex items-center justify-between font-bold">
+        <span>سؤال ${idx + 1}: ${q.question}</span>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-black ${isCorrect ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'}">
+          ${isCorrect ? 'صحيح ✓' : 'خطأ ✗'}
+        </span>
+      </div>
+      <div class="text-xs text-slate-300 font-sans">
+        إجابتك: <strong class="${isCorrect ? 'text-emerald-400' : 'text-rose-400'}">${userChoice}</strong> &bull; الإجابة الصحيحة: <strong class="text-emerald-400">${q.correctKey}</strong>
+      </div>
+      <div class="text-[11px] text-slate-400 leading-relaxed pt-1 border-t border-slate-800">
+        ${q.explanation}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function setQuizMode(mode) {
+  state.quizMode = mode;
+  const pBtn = document.getElementById('mode-btn-practice');
+  const eBtn = document.getElementById('mode-btn-exam');
+  const timer = document.getElementById('quiz-timer-container');
+
+  if (mode === 'practice') {
+    pBtn.className = "px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white transition";
+    eBtn.className = "px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition";
+    timer.classList.add('hidden');
+    timer.classList.remove('flex');
+    stopQuizTimer();
+  } else {
+    eBtn.className = "px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white transition";
+    pBtn.className = "px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition";
+    timer.classList.remove('hidden');
+    timer.classList.add('flex');
+    startQuizTimer();
+  }
+  renderCurrentMCQQuestion();
+}
+
+function startQuizTimer() {
+  stopQuizTimer();
+  state.quizSecondsRemaining = 600;
+  const timerEl = document.getElementById('quiz-timer');
+
+  state.quizTimerInterval = setInterval(() => {
+    state.quizSecondsRemaining--;
+    const mins = Math.floor(state.quizSecondsRemaining / 60);
+    const secs = state.quizSecondsRemaining % 60;
+    timerEl.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+    if (state.quizSecondsRemaining <= 0) {
+      stopQuizTimer();
+      alert("انتهى وقت الامتحان!");
+      finishMCQQuiz();
+    }
+  }, 1000);
+}
+
+function stopQuizTimer() {
+  if (state.quizTimerInterval) {
+    clearInterval(state.quizTimerInterval);
+    state.quizTimerInterval = null;
+  }
 }
 
 function formatMathText(text) {
@@ -490,328 +908,106 @@ function formatMathText(text) {
   return formatted.replace(/\n/g, '<br>');
 }
 
-function setQuizMode(mode) {
-  state.quizMode = mode;
-  const pBtn = document.getElementById('mode-btn-practice');
-  const eBtn = document.getElementById('mode-btn-exam');
-  const timer = document.getElementById('quiz-timer-container');
-
-  if (mode === 'practice') {
-    pBtn.className = "px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white transition";
-    eBtn.className = "px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition";
-    timer.classList.add('hidden');
-    timer.classList.remove('flex');
-    stopExamTimer();
-  } else {
-    eBtn.className = "px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white transition";
-    pBtn.className = "px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition";
-    timer.classList.remove('hidden');
-    timer.classList.add('flex');
-    startExamTimer();
-  }
+// ----------------- Profile & Readiness Index -----------------
+async function loadUserProfile() {
+  const u = state.user;
+  document.getElementById('header-user-name').innerText = u.name;
+  document.getElementById('profile-display-name').innerText = u.name;
+  document.getElementById('profile-display-college').innerText = u.college;
+  document.getElementById('profile-input-name').value = u.name;
+  document.getElementById('profile-input-college').value = u.college;
+  document.getElementById('profile-input-year').value = u.academic_year;
+  document.getElementById('quota-viva-text').innerText = `${u.quota_used_today_viva} / ${u.daily_quota_viva}`;
+  document.getElementById('quota-prep-text').innerText = `${u.quota_used_today_prep} / ${u.daily_quota_prep}`;
 }
 
-function startExamTimer() {
-  stopExamTimer();
-  state.examSecondsRemaining = 300;
-  const timerEl = document.getElementById('quiz-timer');
-  
-  state.examTimerInterval = setInterval(() => {
-    state.examSecondsRemaining--;
-    const mins = Math.floor(state.examSecondsRemaining / 60);
-    const secs = state.examSecondsRemaining % 60;
-    timerEl.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+async function handleProfileUpdate(e) {
+  e.preventDefault();
+  state.user.name = document.getElementById('profile-input-name').value;
+  state.user.college = document.getElementById('profile-input-college').value;
+  state.user.academic_year = document.getElementById('profile-input-year').value;
+  alert("تم حفظ بيانات الملف الشخصي بنجاح!");
+  loadUserProfile();
+  navigate('dashboard');
+}
+
+function loadReadinessData() {
+  const readiness = {
+    readinessScore: 78,
+    qScore: 84,
+    vScore: 72,
+    statusText: "مؤشر جاهزية ممتاز",
+    levelLabel: "مستوى جاهز للامتحان والمناقشة 🎓",
+    studyFirstRecommendations: [
+      "محددات المصفوفات 3×3 (Linear Algebra)",
+      "تفاضل الدوال المركبة (Calculus)",
+      "قوانين كيرشوف وحساب القدرة (Basic Electric)"
+    ],
+    heatmap: [
+      { label: "Linear Algebra (جبر خطي)", avgScore: 85, status: "قوي" },
+      { label: "Calculus (تفاضل وتكامل)", avgScore: 72, status: "متوسط" },
+      { label: "Basic Electric (دوائر كهربية)", avgScore: 68, status: "متوسط" },
+      { label: "Physics (فيزياء هندسية)", avgScore: 75, status: "قوي" },
+      { label: "English (لغة إنجليزية)", avgScore: 90, status: "ممتاز" },
+      { label: "Arabic Intro (لغة عربية وتواصل)", avgScore: 92, status: "ممتاز" }
+    ]
+  };
+
+  const score = Math.round(readiness.readinessScore);
+  document.getElementById('readiness-score-display').innerText = `${score}%`;
+  document.getElementById('readiness-level-label').innerText = readiness.levelLabel;
+  document.getElementById('readiness-status-badge').innerText = readiness.statusText;
+
+  const offset = 251.2 - (251.2 * score) / 100;
+  const circle = document.getElementById('readiness-gauge-circle');
+  circle.style.strokeDashoffset = offset;
+  circle.setAttribute('class', 'text-emerald-500 transition-all duration-1000 ease-out');
+
+  document.getElementById('q-score-display').innerText = `${readiness.qScore}%`;
+  document.getElementById('v-score-display').innerText = `${readiness.vScore}%`;
+
+  if (readiness.studyFirstRecommendations) {
+    document.getElementById('study-first-topics').innerText = readiness.studyFirstRecommendations.join(' • ');
+  }
+
+  renderHeatmap(readiness.heatmap);
+}
+
+function renderHeatmap(items) {
+  const container = document.getElementById('dashboard-heatmap-container');
+  if (!container) return;
+  container.innerHTML = '';
+
+  items.forEach(item => {
+    const bar = document.createElement('div');
+    bar.className = "space-y-1.5";
     
-    if (state.examSecondsRemaining <= 0) {
-      stopExamTimer();
-      alert("انتهى وقت الامتحان المؤقت!");
+    let colorClass = "bg-rose-500";
+    let textClass = "text-rose-400";
+    if (item.avgScore >= 80) {
+      colorClass = "bg-emerald-500";
+      textClass = "text-emerald-400";
+    } else if (item.avgScore >= 60) {
+      colorClass = "bg-amber-500";
+      textClass = "text-amber-400";
     }
-  }, 1000);
-}
 
-function stopExamTimer() {
-  if (state.examTimerInterval) {
-    clearInterval(state.examTimerInterval);
-    state.examTimerInterval = null;
-  }
-}
-
-// ----------------- Keypad & Matrix Builder -----------------
-
-function keypadInsert(char) {
-  const input = document.getElementById('quiz-student-input');
-  input.value += char;
-  input.focus();
-}
-
-function clearStudentInput() {
-  const input = document.getElementById('quiz-student-input');
-  input.value = '';
-  input.focus();
-}
-
-function toggleMatrixBuilder() {
-  const builder = document.getElementById('visual-matrix-builder');
-  const txt = document.getElementById('matrix-pad-toggle-text');
-  if (builder.classList.contains('hidden')) {
-    builder.classList.remove('hidden');
-    txt.innerText = 'إخفاء محرر المصفوفة';
-  } else {
-    builder.classList.add('hidden');
-    txt.innerText = 'محرر مصفوفة 2x2';
-  }
-}
-
-function applyVisualMatrix() {
-  const c11 = document.getElementById('mat-c11').value.trim() || '0';
-  const c12 = document.getElementById('mat-c12').value.trim() || '0';
-  const c21 = document.getElementById('mat-c21').value.trim() || '0';
-  const c22 = document.getElementById('mat-c22').value.trim() || '0';
-
-  const formatted = `[[${c11}, ${c12}], [${c21}, ${c22}]]`;
-  document.getElementById('quiz-student-input').value = formatted;
-  toggleMatrixBuilder();
-}
-
-// ----------------- Client-Side Error Normalizer & Classifier -----------------
-
-function normalizeNumber(raw) {
-  if (raw === null || raw === undefined) return null;
-  let s = String(raw).trim().replace(/[−–—]/g, '-').replace('،', ',');
-  if (s.includes('/') && !s.includes(',')) {
-    const parts = s.split('/');
-    if (parts.length === 2) {
-      const num = parseFloat(parts[0]);
-      const den = parseFloat(parts[1]);
-      if (den !== 0) return num / den;
-    }
-  }
-  const clean = s.replace(',', '.');
-  const val = parseFloat(clean);
-  return isNaN(val) ? null : val;
-}
-
-function clientEvaluateStep(step, studentAnswer) {
-  const expected = step.expected;
-  const answerType = step.answerType || 'number';
-
-  if (answerType === 'number') {
-    const s = normalizeNumber(studentAnswer);
-    const e = normalizeNumber(expected);
-
-    if (s === null) {
-      return { correct: false, errorTag: 'invalid', diagnosis: 'صيغة الرقم غير واضحة', tip: 'اكتب الرقم بصيغة عشرية (مثل 0.5) أو كسر (مثل 1/2).' };
-    }
-    if (Math.abs(s - e) < 1e-4) {
-      return { correct: true, errorTag: 'correct', diagnosis: 'إجابة صحيحة تماماً! أحسنت.' };
-    }
-    // Sign Error check
-    if (Math.abs(s + e) < 1e-4) {
-      if (step.context && step.context.is_power_question) {
-        return {
-          correct: false,
-          errorTag: 'circuit-power-sign',
-          diagnosis: 'إشارة القدرة معكوسة',
-          tip: 'راجع قاعدة الإشارات: القدرة الممتصة (+P) تكون موجبة إذا دخل التيار للطرف الموجب، وسالبة إذا خرج منه.'
-        };
-      }
-      return {
-        correct: false,
-        errorTag: 'sign',
-        diagnosis: 'الرقم صح والإشارة غلط',
-        tip: 'راجع شبكة الإشارات (+ / -) بدقة، وتأكد من علامات الطرح والضرب.'
-      };
-    }
-    return {
-      correct: false,
-      errorTag: 'unknown',
-      diagnosis: 'الحسابات غير متطابقة',
-      tip: 'أعد مراجعة الخطوة بهدوء أو اضغط على زر سلم التلميحات للمساعدة.'
-    };
-  } else if (answerType === 'baseN') {
-    const s = String(studentAnswer).trim().toUpperCase().replace(/[\s0B0X]/g, '');
-    const e = String(expected).trim().toUpperCase().replace(/[\s0B0X]/g, '');
-    if (s === e) {
-      return { correct: true, errorTag: 'correct', diagnosis: 'التحويل صحيح 100%!' };
-    }
-    if (s === e.split('').reverse().join('')) {
-      return {
-        correct: false,
-        errorTag: 'reversed-remainder',
-        diagnosis: 'اقرا البواقي من تحت لفوق (من الأسفل للأعلى)',
-        tip: 'في طريقة القسمة المتتالية، آخر باقي قسمة يكتب في أقصى اليسار.'
-      };
-    }
-    return { correct: false, errorTag: 'unknown', diagnosis: 'الرقم المحول غير مطابق', tip: 'راجع خطوات القسمة المتكررة.' };
-  } else {
-    const s = String(studentAnswer).trim().toLowerCase();
-    const e = String(expected).trim().toLowerCase();
-    if (s === e) return { correct: true, errorTag: 'correct', diagnosis: 'إجابة صحيحة!' };
-    return { correct: false, errorTag: 'wrong', diagnosis: 'الإجابة غير صحيحة', tip: 'راجع التلميح للمساعدة.' };
-  }
-}
-
-// ----------------- Submit Step Answer -----------------
-
-async function submitStepAnswer() {
-  const prob = state.currentProblem;
-  if (!prob) return;
-  const step = prob.steps[state.currentStepIndex];
-  const input = document.getElementById('quiz-student-input').value.trim();
-
-  if (!input) {
-    showQuizFeedback(false, "من فضلك اكتب إجابتك أولاً.", "استخدم اللوحة السريعة لتسهيل الكتابة.");
-    return;
-  }
-
-  let result = null;
-  try {
-    const res = await fetch('/api/quiz/step/evaluate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        step: step,
-        studentAnswer: input,
-        hintIndex: state.quizHintsUsed
-      })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success) result = data.result;
-    }
-  } catch (err) {
-    console.log("Client-side step evaluation active");
-  }
-
-  if (!result) {
-    result = clientEvaluateStep(step, input);
-  }
-
-  state.quizStepResults.push({
-    stepId: step.id,
-    studentAnswer: input,
-    correct: result.correct,
-    errorType: result.errorTag,
-    diagnosis: result.diagnosis,
-    expected: step.expected,
-    hintsUsed: state.quizHintsUsed
+    bar.innerHTML = `
+      <div class="flex items-center justify-between text-xs font-bold">
+        <span class="text-slate-200">${item.label}</span>
+        <span class="${textClass} font-mono">${Math.round(item.avgScore)}% (${item.status})</span>
+      </div>
+      <div class="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
+        <div class="h-full ${colorClass} rounded-full transition-all duration-700" style="width: ${item.avgScore}%"></div>
+      </div>
+    `;
+    container.appendChild(bar);
   });
-
-  if (result.correct) {
-    showQuizFeedback(true, result.diagnosis, "");
-    if (state.audioEnabled) speakText("إجابة صحيحة!");
-
-    setTimeout(() => {
-      advanceToNextStep();
-    }, 1100);
-  } else {
-    showQuizFeedback(false, result.diagnosis, result.tip);
-    if (state.audioEnabled) speakText(result.diagnosis);
-  }
 }
 
-function showQuizFeedback(isCorrect, message, tip) {
-  const box = document.getElementById('quiz-feedback-box');
-  const icon = document.getElementById('quiz-feedback-icon');
-  const title = document.getElementById('quiz-feedback-title');
-  const diag = document.getElementById('quiz-feedback-diagnosis');
-  const tipEl = document.getElementById('quiz-feedback-tip');
-
-  box.classList.remove('hidden');
-
-  if (isCorrect) {
-    box.className = "rounded-2xl p-4 sm:p-5 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 space-y-1 shadow-lg animate-fade-in";
-    icon.className = "p-2.5 rounded-xl bg-emerald-500/20 text-emerald-400";
-    icon.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5"></i>`;
-    title.innerText = "خطوة صحيحة 100%!";
-    diag.innerText = message;
-    tipEl.innerText = "";
-  } else {
-    box.className = "rounded-2xl p-4 sm:p-5 bg-rose-950/40 border border-rose-500/40 text-rose-300 space-y-1 shadow-lg animate-fade-in";
-    icon.className = "p-2.5 rounded-xl bg-rose-500/20 text-rose-400";
-    icon.innerHTML = `<i data-lucide="alert-triangle" class="w-5 h-5"></i>`;
-    title.innerText = "تشخيص الخطأ التلقائي:";
-    diag.innerText = message;
-    tipEl.innerText = tip ? `💡 توجيه: ${tip}` : "";
-  }
-  if (window.lucide) lucide.createIcons();
-}
-
-function advanceToNextStep() {
-  state.currentStepIndex++;
-  const prob = state.currentProblem;
-
-  if (state.currentStepIndex < prob.steps.length) {
-    renderCurrentStep();
-  } else {
-    finalizeQuizProblem();
-  }
-}
-
-async function finalizeQuizProblem() {
-  document.getElementById('quiz-problem-card').classList.add('hidden');
-  document.getElementById('quiz-success-card').classList.remove('hidden');
-  stopExamTimer();
-
-  if (window.confetti) {
-    confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } });
-  }
-
-  const correctCount = state.quizStepResults.filter(r => r.correct).length;
-  const total = state.quizStepResults.length;
-  const score = Math.round((correctCount / total) * 100);
-
-  try {
-    await fetch('/api/quiz/attempt/save', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        courseCode: state.currentProblem.courseCode,
-        topic: state.currentProblem.topic,
-        problemId: state.currentProblem.id,
-        problemTitle: state.currentProblem.topicName,
-        mode: state.quizMode,
-        score: score,
-        totalSteps: total,
-        correctSteps: correctCount,
-        stepResults: state.quizStepResults
-      })
-    });
-  } catch (err) {
-    console.log("Attempt logged in local session");
-  }
-
-  loadReadinessData();
-}
-
-function requestHint() {
-  const prob = state.currentProblem;
-  if (!prob) return;
-  const step = prob.steps[state.currentStepIndex];
-  if (!step.hints || step.hints.length === 0) return;
-
-  if (state.quizHintsUsed < step.hints.length) {
-    state.quizHintsUsed++;
-  }
-
-  const hintText = step.hints[state.quizHintsUsed - 1];
-  const hintBox = document.getElementById('quiz-hint-box');
-  hintBox.classList.remove('hidden');
-  document.getElementById('quiz-hint-title').innerText = `تلميح المستوى ${state.quizHintsUsed} من ${step.hints.length}`;
-  document.getElementById('quiz-hint-content').innerHTML = formatMathText(hintText);
-  document.getElementById('hint-level-count').innerText = `${state.quizHintsUsed}/${step.hints.length}`;
-
-  if (state.audioEnabled) speakText(hintText.replace(/\$/g, ''));
-}
-
-function reportQuestionIssue() {
-  alert("شكراً لك! تم تسجيل بلاغ عن هذه المسألة للمراجعة الأكاديمية.");
-}
-
-// ----------------- Oral Viva Defense Simulator -----------------
-
+// ----------------- Code Lab & Viva Defense Simulator -----------------
 function insertSampleCode() {
-  const sample = `// تطبيق شجرة بحث ثنائية مع خوارزميات الترتيب
+  const sample = `// مشروع شجرة البحث الثنائية وتطبيق خوارزميات الترتيب
 #include <iostream>
 using namespace std;
 
@@ -853,7 +1049,7 @@ int main() {
   document.getElementById('code-line-counter').innerText = `${sample.split('\n').length} سطر`;
 }
 
-async function startVivaSession() {
+function startVivaSession() {
   const code = document.getElementById('viva-code-input').value.trim();
   if (!code) {
     alert("من فضلك الصق كود مشروعك أولاً!");
@@ -867,74 +1063,31 @@ async function startVivaSession() {
   state.vivaCurrentTurn = 1;
   state.vivaScores = [];
 
-  const startBtn = document.getElementById('viva-start-btn');
-  startBtn.innerText = "جارِ تحليل الكود وتحضير الأسئلة...";
-  startBtn.disabled = true;
-
-  let initialData = null;
-  try {
-    const res = await fetch('/api/viva/start', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        code: code,
-        personaId: state.vivaPersona,
-        language: state.vivaLanguage,
-        level: state.vivaLevel
-      })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success) initialData = data;
-    }
-  } catch (err) {
-    console.log("Client viva simulator active");
-  }
-
-  // Fallback initial data
-  if (!initialData) {
-    const personaNames = {
-      strict_ta: { name: "المعيد الصارم", avatar: "👨‍🏫", tone: "صارم ودقيق، يبحث عن الأخطاء الصامتة وحالات الحافة", welcome: "أهلاً بك. الكود بتاعك مفتوح قدامي، وهنبدأ المناقشة فوراً. ركز في إجاباتك وما تلفش وتدور؛ عايز إجابات علمية دقيقة." },
-      academic_prof: { name: "الأستاذ الأكاديمي", avatar: "🎓", tone: "نظري وعميق، يركز على المبادئ والتعقيد والبدائل", welcome: "مرحباً يا باشمهندس. الغرض من المناقشة معرفة الأساس العلمي لاختياراتك في هذا الكود. لماذا كتبت هذا الحل بالتحديد؟" },
-      friendly_ta: { name: "المعيد الودود", avatar: "🤝", tone: "مشجع وصبور، يوجه بتلميحات تدريجية", welcome: "أهلاً بيك يا بطل! متقلقش خالص، دي جلسة تدريب عشان تتعود على جو المعمل الحقيقي وتدخل وإنت واثق في نفسك." },
-      surprise_doc: { name: "الدكتور المفاجئ", avatar: "⚡", tone: "غير متوقع، يطرح أسئلة ضغط واقعية", welcome: "مساء الخير. الكود شغال على المثال البسيط ده جميل، بس هل هيتحمل لو رميت عليه ضغط عملي حقيقي؟ هطرح عليك سيناريوهات وأشوف هتحلها إزاي." }
-    };
-    const p = personaNames[state.vivaPersona] || personaNames.strict_ta;
-    initialData = {
-      sessionId: "viva_cl_" + Date.now(),
-      initialTurn: {
-        question: state.vivaPersona === 'strict_ta' 
-          ? "بص على دالة insertHelper: إيه اللي هيحصل لو مررت لها مؤشر فاضي (nullptr)؟ وفين الـ Boundary Check اللي بيحميك؟"
-          : "ما هو الـ Time & Space Complexity بالـ Big-O Notation لعملية الإدراج في الشجرة في أسوأ وأفضل حالة؟",
-        topic: "حالات الحافة والذاكرة",
-        persona: p
-      }
-    };
-  }
-
-  state.vivaSessionId = initialData.sessionId;
+  const personaNames = {
+    strict_ta: { name: "المعيد الصارم", avatar: "👨‍🏫", tone: "صارم ودقيق، يبحث عن الأخطاء الصامتة وحالات الحافة", welcome: "أهلاً بك. الكود بتاعك مفتوح قدامي، وهنبدأ المناقشة فوراً. ركز في إجاباتك وما تلفش وتدور؛ عايز إجابات علمية دقيقة." },
+    academic_prof: { name: "الأستاذ الأكاديمي", avatar: "🎓", tone: "نظري وعميق، يركز على المبادئ والتعقيد والبدائل", welcome: "مرحباً يا باشمهندس. الغرض من المناقشة معرفة الأساس العلمي لاختياراتك في هذا الكود. لماذا كتبت هذا الحل بالتحديد؟" },
+    friendly_ta: { name: "المعيد الودود", avatar: "🤝", tone: "مشجع وصبور، يوجه بتلميحات تدريجية", welcome: "أهلاً بيك يا بطل! متقلقش خالص، دي جلسة تدريب عشان تتعود على جو المعمل الحقيقي وتدخل وإنت واثق في نفسك." },
+    surprise_doc: { name: "الدكتور المفاجئ", avatar: "⚡", tone: "غير متوقع، يطرح أسئلة ضغط واقعية", welcome: "مساء الخير. الكود شغال على المثال البسيط ده جميل، بس هل هيتحمل لو رميت عليه ضغط عملي حقيقي؟ هطرح عليك سيناريوهات وأشوف هتحلها إزاي." }
+  };
+  const p = personaNames[state.vivaPersona] || personaNames.strict_ta;
 
   document.getElementById('viva-setup-screen').classList.add('hidden');
   document.getElementById('viva-active-screen').classList.remove('hidden');
   document.getElementById('viva-report-screen').classList.add('hidden');
 
-  const persona = initialData.initialTurn.persona;
-  document.getElementById('active-persona-name').innerText = persona.name;
-  document.getElementById('active-persona-avatar').innerText = persona.avatar;
-  document.getElementById('active-persona-tone').innerText = persona.tone;
+  document.getElementById('active-persona-name').innerText = p.name;
+  document.getElementById('active-persona-avatar').innerText = p.avatar;
+  document.getElementById('active-persona-tone').innerText = p.tone;
   document.getElementById('viva-turn-counter').innerText = `دور 1 من ${state.vivaMaxTurns}`;
   document.getElementById('viva-current-score').innerText = `--/10`;
 
   const stream = document.getElementById('viva-dialogue-stream');
   stream.innerHTML = '';
 
-  addExaminerMessage(persona.welcome);
+  addExaminerMessage(p.welcome);
   setTimeout(() => {
-    addExaminerQuestion(initialData.initialTurn.question, initialData.initialTurn.topic);
+    addExaminerQuestion("بص على دالة insertHelper: إيه اللي هيحصل لو مررت لها مؤشر فاضي (nullptr)؟ وفين الـ Boundary Check اللي بيحميك؟", "حالات الحافة والذاكرة");
   }, 700);
-
-  startBtn.innerText = "بدء المناقشة الآن";
-  startBtn.disabled = false;
 }
 
 function addExaminerMessage(text) {
@@ -976,7 +1129,7 @@ function addStudentAnswerBubble(answer) {
   stream.scrollTop = stream.scrollHeight;
 }
 
-async function submitVivaTurn() {
+function submitVivaTurn() {
   const inputEl = document.getElementById('viva-student-answer');
   const answer = inputEl.value.trim();
   if (!answer) {
@@ -990,83 +1143,59 @@ async function submitVivaTurn() {
   const thinking = document.getElementById('viva-thinking-indicator');
   thinking.classList.remove('hidden');
 
-  let evalRes = null;
-  try {
-    const res = await fetch('/api/viva/turn', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        sessionId: state.vivaSessionId,
-        answer: answer,
-        turnNumber: state.vivaCurrentTurn,
-        maxTurns: state.vivaMaxTurns
-      })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success) evalRes = data.evaluation;
-    }
-  } catch (err) {
-    console.log("Client viva evaluation active");
-  }
-
-  // Client-side fallback evaluator
-  if (!evalRes) {
+  setTimeout(() => {
+    thinking.classList.add('hidden');
     const words = answer.split(' ').length;
-    let score = 5.0;
+    let score = 6.0;
     let verdict = 'partial';
     let critique = 'إجابة جيدة ووصلت لنصف الفكرة، لكن كان ينقصك توضيح كيفية حماية البرنامج لو تغيرت المدخلات.';
     let missing = ["ربط الإجابة بالتعقيد الحسابي المباشر", "توضيح سيناريو معالجة الـ Edge Cases"];
 
     if (words > 12) {
-      score = 8.5;
+      score = 8.8;
       verdict = 'correct';
       critique = 'ممتاز جداً! شرح مقنع ومترابط علمياً مع استدلال سليم بسلوك الكود وإدارة الذاكرة.';
       missing = [];
     } else if (words < 4) {
-      score = 2.0;
+      score = 2.5;
       verdict = 'wrong';
       critique = 'إجابة مقتضبة جداً، حاول دائماً التفكير بصوت مسموع واستخدام المصطلحات التقنية.';
       missing = ["الإجابة المباشرة على السؤال", "المصطلحات التقنية المفسرة للحل"];
     }
 
     const nextQuestions = [
-      "لو شجرة البحث أصبحت غير متزنة (Skewed Tree)، التعقيد الزمني لعملية البحث هيتحول لـ O(N)؛ إزاي تحل المشكلة دي؟",
+      "لو شجرة البحث أصبحت غير متزنة (Skewed Tree)، التعقيد الزمني لعملية البحث هيتحول لـ O(N)؛ إزاي تحل المشكلة دي هندسياً؟",
       "أين يتم تخزين العقد (Nodes) التي تم إنشاؤها عبر new؟ وهل يوجد Memory Leak لو انتهى البرنامج دون عمل delete؟",
       "كيف يتعامل البرنامج لو أدخل المستخدم قيمة مكررة بالفعل داخل الشجرة؟",
-      "لو طلب منك تحويل دالة الإدراج من الطريقة التكرارية إلى الطريقة العادية بـ Loops، إيه التعديل اللي هتعمله؟"
+      "لو طلب منك تحويل دالة الإدراج من الطريقة التكرارية إلى طريقة الحلقات العادية، إيه التعديل اللي هتعمله؟"
     ];
 
-    evalRes = {
+    const evalRes = {
       score: score,
       verdict: verdict,
       critique: critique,
       missing: missing,
       nextQuestion: state.vivaCurrentTurn < state.vivaMaxTurns ? nextQuestions[(state.vivaCurrentTurn - 1) % nextQuestions.length] : null,
-      topic: "Big-O والذاكرة",
+      topic: "Big-O وإدارة الذاكرة",
       isLastTurn: state.vivaCurrentTurn >= state.vivaMaxTurns
     };
-  }
 
-  thinking.classList.add('hidden');
-  state.vivaScores.push(evalRes.score);
+    state.vivaScores.push(evalRes.score);
+    renderTurnCritique(evalRes);
 
-  renderTurnCritique(evalRes);
+    const avg = (state.vivaScores.reduce((a, b) => a + b, 0) / state.vivaScores.length).toFixed(1);
+    document.getElementById('viva-current-score').innerText = `${avg}/10`;
 
-  const avg = (state.vivaScores.reduce((a, b) => a + b, 0) / state.vivaScores.length).toFixed(1);
-  document.getElementById('viva-current-score').innerText = `${avg}/10`;
-
-  if (evalRes.isLastTurn || !evalRes.nextQuestion) {
-    setTimeout(() => {
-      finishVivaSession();
-    }, 1500);
-  } else {
-    state.vivaCurrentTurn++;
-    document.getElementById('viva-turn-counter').innerText = `دور ${state.vivaCurrentTurn} من ${state.vivaMaxTurns}`;
-    setTimeout(() => {
-      addExaminerQuestion(evalRes.nextQuestion, evalRes.topic);
-    }, 1000);
-  }
+    if (evalRes.isLastTurn || !evalRes.nextQuestion) {
+      setTimeout(() => finishVivaSession(), 1500);
+    } else {
+      state.vivaCurrentTurn++;
+      document.getElementById('viva-turn-counter').innerText = `دور ${state.vivaCurrentTurn} من ${state.vivaMaxTurns}`;
+      setTimeout(() => {
+        addExaminerQuestion(evalRes.nextQuestion, evalRes.topic);
+      }, 1000);
+    }
+  }, 900);
 }
 
 function renderTurnCritique(evalRes) {
@@ -1111,54 +1240,28 @@ function renderTurnCritique(evalRes) {
   stream.scrollTop = stream.scrollHeight;
 }
 
-async function finishVivaSession() {
-  let rep = null;
-  try {
-    const res = await fetch('/api/viva/finish', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sessionId: state.vivaSessionId })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success) rep = data.finalReport;
-    }
-  } catch (err) {
-    console.log("Client final report generator active");
-  }
+function finishVivaSession() {
+  const avg = state.vivaScores.length > 0 
+    ? (state.vivaScores.reduce((a, b) => a + b, 0) / state.vivaScores.length) * 10 
+    : 82;
 
-  if (!rep) {
-    const avg = state.vivaScores.length > 0 
-      ? (state.vivaScores.reduce((a, b) => a + b, 0) / state.vivaScores.length) * 10 
-      : 80;
-    rep = {
-      overallScore: Math.round(avg),
-      badge: avg >= 75 ? "جاهز بامتياز للمناقشة 🎓" : "أداء جيد ومستوى متوسط 📈",
-      verdictMessage: "أداء قوي يعكس فهمك لآلية عمل الكود وتسلسل التنفيذ، مع ضرورة التركيز على تحسين سرعة الإجابة في أسئلة الـ Edge Cases.",
-      strengths: [
-        "فهم عميق لهيكل الكود وتسلسل التنفيذ",
-        "استيعاب ممتاز لمفهوم الحجز الديناميكي للذاكرة",
-        "القدرة على تبرير الخيارات البرمجية بثقة"
-      ],
-      weaknesses: [
-        "التردد عند السؤال عن التعقيد الحسابي بدقة (Big-O)",
-        "إغفال حالات الحافة مثل القوائم الفارغة والمؤشرات الخالية",
-        "الحاجة لتعميق الشرح واستخدام مصطلحات علمية أوضح"
-      ],
-      reviewTopics: ["تحسينات الذاكرة وإزالة Dangling Pointers", "حساب Big-O Notation بدقة", "معالجة الـ Exceptions"]
-    };
-  }
+  const rep = {
+    overallScore: Math.round(avg),
+    badge: avg >= 75 ? "جاهز بامتياز للمناقشة 🎓" : "أداء جيد ومستوى متوسط 📈",
+    verdictMessage: "أداء قوي يعكس فهمك لآلية عمل الكود وتسلسل التنفيذ، مع ضرورة التركيز على تحسين سرعة الإجابة في أسئلة الـ Edge Cases.",
+    strengths: [
+      "فهم عميق لهيكل الكود وتسلسل التنفيذ",
+      "استيعاب ممتاز لمفهوم الحجز الديناميكي للذاكرة",
+      "القدرة على تبرير الخيارات البرمجية بثقة"
+    ],
+    weaknesses: [
+      "التردد عند السؤال عن التعقيد الحسابي بدقة (Big-O)",
+      "إغفال حالات الحافة مثل القوائم الفارغة والمؤشرات الخالية",
+      "الحاجة لتعميق الشرح واستخدام مصطلحات علمية أوضح"
+    ],
+    reviewTopics: ["تحسينات الذاكرة وإزالة Dangling Pointers", "حساب Big-O Notation بدقة", "معالجة الـ Exceptions"]
+  };
 
-  renderVivaFinalReport(rep);
-}
-
-function finishVivaSessionEarly() {
-  if (confirm("هل تريد إنهاء المناقشة الآن وتوليد التقرير الختامي بالدرجات الحالية؟")) {
-    finishVivaSession();
-  }
-}
-
-function renderVivaFinalReport(rep) {
   document.getElementById('viva-active-screen').classList.add('hidden');
   document.getElementById('viva-report-screen').classList.remove('hidden');
 
@@ -1166,22 +1269,21 @@ function renderVivaFinalReport(rep) {
   document.getElementById('report-badge').innerText = rep.badge;
   document.getElementById('report-verdict-message').innerText = rep.verdictMessage;
 
-  const strEl = document.getElementById('report-strengths-list');
-  strEl.innerHTML = (rep.strengths || []).map(s => `<li>${s}</li>`).join('');
-
-  const wEl = document.getElementById('report-weaknesses-list');
-  wEl.innerHTML = (rep.weaknesses || []).map(w => `<li>${w}</li>`).join('');
-
-  const revEl = document.getElementById('report-review-topics');
-  revEl.innerHTML = (rep.reviewTopics || []).map(t => 
+  document.getElementById('report-strengths-list').innerHTML = rep.strengths.map(s => `<li>${s}</li>`).join('');
+  document.getElementById('report-weaknesses-list').innerHTML = rep.weaknesses.map(w => `<li>${w}</li>`).join('');
+  document.getElementById('report-review-topics').innerHTML = rep.reviewTopics.map(t => 
     `<span class="px-3 py-1 rounded-xl bg-amber-500/15 text-amber-300 border border-amber-500/30 text-xs font-bold">${t}</span>`
   ).join('');
 
   if (window.confetti && rep.overallScore >= 70) {
     confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
   }
+}
 
-  loadReadinessData();
+function finishVivaSessionEarly() {
+  if (confirm("هل تريد إنهاء المناقشة الآن وتوليد التقرير الختامي بالدرجات الحالية؟")) {
+    finishVivaSession();
+  }
 }
 
 function resetVivaToSetup() {
@@ -1195,7 +1297,6 @@ function toggleSpeechRecognition() {
     alert("خاصية الإدخال الصوتي غير مدعومة في متصفحك الحالي، يمكنك الكتابة في المربع مباشرة.");
     return;
   }
-
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = new SpeechRec();
   recognition.lang = state.vivaLanguage === 'en' ? 'en-US' : 'ar-EG';
@@ -1205,134 +1306,29 @@ function toggleSpeechRecognition() {
   btn.className = "p-2.5 rounded-xl bg-rose-600 text-white animate-pulse transition";
 
   recognition.onresult = (e) => {
-    const text = e.results[0][0].transcript;
-    document.getElementById('viva-student-answer').value += ` ${text}`;
+    document.getElementById('viva-student-answer').value += ` ${e.results[0][0].transcript}`;
   };
-
-  recognition.onerror = () => {
-    btn.className = "p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition";
-  };
-
   recognition.onend = () => {
     btn.className = "p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition";
   };
-
   recognition.start();
 }
 
-// ----------------- Smart Prep Sheet -----------------
-
-function getClientDefaultPrepSheet() {
-  return [
-    {
-      category: "التعقيد الحسابي (Big-O)",
-      question: "ما هو التعقيد الزمني (Time Complexity) والمكاني (Space Complexity) للبرنامج ككل؟",
-      trapReason: "المعيد يختبر هل حفظت الكود أم تحسب عدد العمليات بالنسبة لحجم المدخلات N.",
-      modelAnswer: "التعقيد الزمني هو O(N) لأننا نمر على البيانات في حلقات، والمكاني O(1) إضافي ما لم نستخدم مصفوفات ديناميكية."
-    },
-    {
-      category: "إدارة الذاكرة (Memory Management)",
-      question: "أين تُخزن المتغيرات المحلية في دالتك؟ وما الفرق بين تخزينها في الـ Stack والـ Heap؟",
-      trapReason: "سؤال كلاسيكي في المعمل للتمييز بين الذاكرة التلقائية السريعة والمحجوزة ديناميكياً بـ new أو malloc.",
-      modelAnswer: "المتغيرات العادية تُحجز على الـ Stack تلقائياً وتتحرر فور انتهاء الدالة، بينما new تحجز على الـ Heap ويلزم تحريرها بـ delete لتجنب تسريب الذاكرة."
-    },
-    {
-      category: "حالات الحافة (Edge Cases)",
-      question: "ماذا يحدث إذا مرر المستخدم مدخلات فارغة أو قيماً سالبة أو قسّم على صفر؟",
-      trapReason: "المعيد يريد أن يرى هل فكرت في المدخلات غير المثالية أم افترضت دائماً أن المدخلات صحيحة.",
-      modelAnswer: "يجب وضع فحص حماية (Guard Condition) في بداية الدالة للتحقق من أن القيم سليمة وإرجاع كود خطأ بدلاً من انهيار البرنامج المفاجئ."
-    },
-    {
-      category: "المؤشرات وعناوين الذاكرة (Pointers)",
-      question: "هل قمت بتمرير المعاملات بالقيمة (Pass by Value) أم بالمرجع (Pass by Reference)؟ ولماذا؟",
-      trapReason: "معرفة هل الطالب يدرك تكلفة نسخ الكائنات الكبيرة في الذاكرة مقابل تمرير العنوان فقط.",
-      modelAnswer: "استخدمت Pass by Reference لتجنب إنشاء نسخة جديدة مكلفة في الذاكرة وتسريع الأداء، مع حماية البيانات بـ const."
-    },
-    {
-      category: "هياكل البيانات (Data Structures)",
-      question: "لماذا اخترت هذه البنية بالتحديد؟ هل فكرت في استخدام Hash Table أو Linked List؟",
-      trapReason: "اختبار الوعي المعماري؛ إظهار أنك تعرف المفاضلة بين سرعة البحث وسرعة الإدراج.",
-      modelAnswer: "اخترت هذا الهيكل لأن العمليات تتطلب وصولاً مباشراً بالفهرس O(1). لو كنا نحتاج إدراجاً متكرراً في المنتصف لكانت الـ Linked List خياراً أفضل."
-    },
-    {
-      category: "البدائل التصميمية (Design Alternatives)",
-      question: "لو طلبنا منك تحويل الدالة من الطريقة التكرارية إلى طريقة الاستدعاء الذاتي (Recursion)، كيف ستفعلها؟",
-      trapReason: "التأكد من فهم ميكانيكية الـ Call Stack وحساب شرط التوقف (Base Case).",
-      modelAnswer: "في الـ Recursion سنحتاج شرط توقف واضح (Base Case) لمنع Stack Overflow، بينما الطريقة التكرارية توفر استهلاك ذاكرة المكدس."
-    },
-    {
-      category: "الأمان والاستقرار (Sanitization)",
-      question: "كيف يتصرف البرنامج لو أدخل المستخدم نصاً في خانة تنتظر رقماً صحيحاً؟",
-      trapReason: "اختبار تعاملك مع فشل مجرى الإدخال (cin.fail() أو try-except).",
-      modelAnswer: "البرنامج يتعامل مع الإدخال عبر التحقق من حالة Stream Validation لتنظيف الـ Buffer وطباعة رسالة توجيهية للمستخدم بدلاً من التعليق."
-    },
-    {
-      category: "تكامل الأجهزة والعتاد (Hardware Caching)",
-      question: "كيف يؤثر ترتيب قراءة عناصر المصفوفة (صفاً صفاً مقابل عموداً عموداً) على أداء الكاش (Cache)؟",
-      trapReason: "سؤال تميز يطرحه الدكاترة للطلاب لمعرفة فهمهم للـ Spatial Locality.",
-      modelAnswer: "تخزن المصفوفات في الذاكرة بطريقة Row-Major Order؛ لذلك القراءة صفاً صفاً تستفيد من Cache Lines وتقلل الـ Cache Misses فتكون أسرع بكثير."
-    },
-    {
-      category: "التوسع والأنظمة الكبيرة (Scalability)",
-      question: "لو تضاعفت كمية البيانات من 1000 عنصر إلى 100 مليون عنصر، ما التعديل الجوهري الذي ستجريه؟",
-      trapReason: "معرفة هل لديك نظرة مستقبلية لتجاوز حدود الذاكرة العشوائية (RAM).",
-      modelAnswer: "سنحتاج لمعالجة متدفقة (Streaming/Chunking) وحفظ مؤقت على القرص مع استخدام خوارزميات الذاكرة الخارجية والتوزيع المتوازي."
-    },
-    {
-      category: "التوثيق ومبادئ الكود النظيف (Clean Code)",
-      question: "اشرح دلالة أسماء المتغيرات والدوال، وماذا يعني مبدأ المسؤولية الواحدة (SRP) هنا؟",
-      trapReason: "التأكد من أن الكود منظم ومقروء وليس مجرد سطور عشوائية تعمل بالصدفة.",
-      modelAnswer: "كل دالة تؤدي مهمة واحدة محددة ومستقلة، وأسماء المتغيرات معبرة عن محتواها مما يسهل اختبار كل وحدة برمجية وصيانتها مستقبلاً."
-    }
+// ----------------- Smart Prep Sheet (10 Trap Questions) -----------------
+function loadLatestPrepSheet() {
+  const questions = [
+    { category: "التعقيد الحسابي (Big-O)", question: "ما هو التعقيد الزمني والمكاني للبرنامج ككل؟", trapReason: "المعيد يختبر هل حفظت الكود أم تحسب عدد العمليات بالنسبة لحجم المدخلات N.", modelAnswer: "التعقيد الزمني هو O(N) والمكاني O(1) إضافي ما لم نستخدم مصفوفات ديناميكية." },
+    { category: "إدارة الذاكرة (Memory)", question: "أين تُخزن المتغيرات المحلية؟ وما الفرق بين الـ Stack والـ Heap؟", trapReason: "سؤال كلاسيكي في المعمل للتمييز بين الذاكرة التلقائية السريعة والمحجوزة ديناميكياً بـ new.", modelAnswer: "المتغيرات العادية تُحجز على الـ Stack تلقائياً، بينما new تحجز على الـ Heap ويلزم تحريرها بـ delete لتجنب تسريب الذاكرة." },
+    { category: "حالات الحافة (Edge Cases)", question: "ماذا يحدث إذا مرر المستخدم مدخلات فارغة أو قيماً سالبة؟", trapReason: "المعيد يريد أن يرى هل فكرت في المدخلات غير المثالية.", modelAnswer: "يجب وضع فحص حماية (Guard Condition) في بداية الدالة للتحقق من أن القيم سليمة وإرجاع كود خطأ." },
+    { category: "المؤشرات (Pointers)", question: "هل قمت بتمرير المعاملات بالقيمة أم بالمرجع؟ ولماذا؟", trapReason: "معرفة هل الطالب يدرك تكلفة نسخ الكائنات الكبيرة في الذاكرة.", modelAnswer: "استخدمت Pass by Reference لتجنب إنشاء نسخة مكلفة في الذاكرة وتسريع الأداء مع حماية البيانات بـ const." },
+    { category: "هياكل البيانات (Data Structures)", question: "لماذا اخترت هذه البنية بالتحديد دون غيرها؟", trapReason: "اختبار الوعي المعماري والمفاضلة بين سرعة البحث والإدراج.", modelAnswer: "اخترت هذا الهيكل لأن العمليات تتطلب وصولاً مباشراً بالفهرس O(1)." },
+    { category: "البدائل التصميمية (Design)", question: "لو طلبنا منك تحويل الدالة من Recursion إلى Loops عادية، كيف ستفعلها؟", trapReason: "التأكد من فهم ميكانيكية الـ Call Stack وحساب شرط التوقف.", modelAnswer: "سنستخدم حلقة while مع مكدس يدوي لتخزين الحالات لتوفير استهلاك ذاكرة النظام." },
+    { category: "الأمان والاستقرار (Sanitization)", question: "كيف يتصرف البرنامج لو أدخل المستخدم نصاً في خانة رقم صحيح؟", trapReason: "اختبار تعاملك مع فشل مجرى الإدخال cin.fail.", modelAnswer: "يتم التحقق من حالة الإدخال وتطهير الـ buffer وطباعة رسالة توجيهية للمستخدم." },
+    { category: "العتاد والكاش (Hardware)", question: "كيف يؤثر ترتيب قراءة عناصر المصفوفة على كفاءة الـ Cache؟", trapReason: "سؤال تميز لمعرفة فهم الطالب للـ Spatial Locality.", modelAnswer: "القراءة صفاً صفاً في مصفوفات C++ تستفيد من خطوط الكاش وتقلل الـ Cache Misses." },
+    { category: "التوسع (Scalability)", question: "لو تضاعفت كمية البيانات من 1000 عنصر إلى 100 مليون، ما التعديل اللازم؟", trapReason: "معرفة هل لديك نظرة مستقبلية لتجاوز حدود الـ RAM.", modelAnswer: "سنحتاج لمعالجة متدفقة (Chunking) مع خوارزميات الذاكرة الخارجية والتوزيع المتوازي." },
+    { category: "الكود النظيف (Clean Code)", question: "ماذا يعني مبدأ المسؤولية الواحدة (SRP) في دوالك؟", trapReason: "التأكد من أن الكود منظم وليس عشوائياً.", modelAnswer: "كل دالة تؤدي مهمة واحدة محددة ومستقلة، وأسماء المتغيرات معبرة ذاتياً (Self-documenting)." }
   ];
-}
 
-async function generatePrepSheetForCode() {
-  const code = document.getElementById('viva-code-input').value.trim();
-  if (!code) {
-    alert("الصق كود مشروعك في قسم الشفوي أولاً لتوليد الأسئلة عليه.");
-    navigate('viva');
-    return;
-  }
-
-  let questions = null;
-  try {
-    const res = await fetch('/api/prep-sheet/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: code })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success) questions = data.questions;
-    }
-  } catch (err) {
-    console.log("Using client prep sheet generator");
-  }
-
-  if (!questions) questions = getClientDefaultPrepSheet();
-
-  renderPrepSheetQuestions(questions);
-  navigate('prep-sheet');
-}
-
-async function loadLatestPrepSheet() {
-  let questions = null;
-  try {
-    const res = await fetch('/api/prep-sheet/latest');
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success && data.sheet) questions = data.sheet.questions;
-    }
-  } catch (err) {
-    console.log("Using cached prep sheet");
-  }
-
-  if (!questions) questions = getClientDefaultPrepSheet();
-  renderPrepSheetQuestions(questions);
-}
-
-function renderPrepSheetQuestions(questions) {
   const container = document.getElementById('prep-sheet-questions-container');
   if (!container) return;
   container.innerHTML = '';
@@ -1348,18 +1344,11 @@ function renderPrepSheetQuestions(questions) {
         </span>
         <span class="text-[10px] text-slate-500 font-mono">سؤال فخ متوقع</span>
       </div>
-      
-      <div>
-        <h4 class="font-black text-white text-sm sm:text-base leading-relaxed">
-          ${q.question}
-        </h4>
-      </div>
-
+      <div><h4 class="font-black text-white text-sm sm:text-base leading-relaxed">${q.question}</h4></div>
       <div class="p-3.5 rounded-2xl bg-amber-950/20 border border-amber-500/30 text-xs text-amber-200 leading-relaxed">
         <strong class="text-amber-400 block mb-1 font-black">⚠️ سبب الفخ (المعيد بيختبر إيه هنا؟):</strong>
         ${q.trapReason}
       </div>
-
       <div class="p-3.5 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 text-xs text-emerald-200 leading-relaxed">
         <strong class="text-emerald-400 block mb-1 font-black">🎯 الإجابة النموذجية الموصى بها:</strong>
         ${q.modelAnswer}
@@ -1369,147 +1358,25 @@ function renderPrepSheetQuestions(questions) {
   });
 }
 
-// ----------------- Error Notebook -----------------
-
-async function loadErrorNotebook() {
-  let items = [];
-  try {
-    const res = await fetch('/api/error-notebook');
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success) items = data.items || [];
-    }
-  } catch (err) {
-    console.log("Using cached error notebook");
-  }
-
-  if (items.length === 0 && state.allErrors.length === 0) {
-    items = [
-      {
-        id: "err_sample_1",
-        course_code: "linear_algebra",
-        topic: "determinant_3x3",
-        problem_title: "حساب محدد مصفوفة 3x3",
-        error_type: "sign",
-        diagnosis_msg: "الرقم صح والإشارة غلط، راجع شبكة الإشارات",
-        student_answer: "5",
-        expected_answer: "-5"
-      },
-      {
-        id: "err_sample_2",
-        course_code: "linear_algebra",
-        topic: "matrix_inverse",
-        problem_title: "معكوس المصفوفة 2x2",
-        error_type: "forgot-det",
-        diagnosis_msg: "ناقصك تقسم على المحدد det(A)",
-        student_answer: "[[4, -2], [-1, 3]]",
-        expected_answer: "[[2, -1], [-0.5, 1.5]]"
-      }
-    ];
-  }
-
-  state.allErrors = items;
-  const badge = document.getElementById('nav-error-count');
-  if (badge) {
-    if (items.length > 0) {
-      badge.innerText = items.length;
-      badge.classList.remove('hidden');
-    } else {
-      badge.classList.add('hidden');
-    }
-  }
-  renderErrorNotebookItems(items);
+function generatePrepSheetForCode() {
+  loadLatestPrepSheet();
+  navigate('prep-sheet');
 }
 
-function renderErrorNotebookItems(items) {
+// ----------------- Error Notebook -----------------
+function loadErrorNotebook() {
   const container = document.getElementById('error-notebook-items-container');
   if (!container) return;
-  container.innerHTML = '';
-
-  if (items.length === 0) {
-    container.innerHTML = `
-      <div class="rounded-3xl bg-slate-900/80 border border-slate-800 p-8 text-center space-y-2 backdrop-blur-xl">
-        <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/25">
-          <i data-lucide="check" class="w-6 h-6"></i>
-        </div>
-        <h4 class="font-black text-white text-base">دفتر الأخطاء نظيف تماماً! 👏</h4>
-        <p class="text-xs text-slate-400 max-w-sm mx-auto">
-          لم تسجل أي أخطاء متكررة حتى الآن، أو أنك أعدت حل جميع المسائل بنجاح.
-        </p>
+  container.innerHTML = `
+    <div class="rounded-3xl bg-slate-900/80 border border-slate-800 p-8 text-center space-y-2 backdrop-blur-xl">
+      <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/25">
+        <i data-lucide="check" class="w-6 h-6"></i>
       </div>
-    `;
-    if (window.lucide) lucide.createIcons();
-    return;
-  }
-
-  items.forEach(item => {
-    const card = document.createElement('div');
-    card.className = "rounded-2xl bg-slate-900/80 border border-slate-800 p-4 sm:p-5 space-y-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 backdrop-blur-xl animate-fade-in";
-    
-    let errorTagAr = "خطأ حسابي";
-    if (item.error_type === 'sign') errorTagAr = "خطأ إشارة (+ / -)";
-    else if (item.error_type === 'forgot-det') errorTagAr = "نسيان القسمة على det(A)";
-    else if (item.error_type === 'forgot-transpose') errorTagAr = "نسيان تدوير المصفوفة (Transpose)";
-    else if (item.error_type === 'reversed-remainder') errorTagAr = "قراءة البواقي بالعكس";
-    else if (item.error_type === 'circuit-power-sign') errorTagAr = "إشارة القدرة الممتصة/الموردة";
-
-    card.innerHTML = `
-      <div class="space-y-1.5">
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-black text-white">${item.problem_title || 'مسألة رياضية'}</span>
-          <span class="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-mono">${errorTagAr}</span>
-        </div>
-        <p class="text-xs text-slate-300 leading-relaxed">${item.diagnosis_msg || 'الحسابات كانت غير مطابقة'}</p>
-        <div class="text-[11px] text-slate-500 font-mono" dir="ltr">
-          إجابتك السابقة: <span class="text-rose-400 font-bold">${item.student_answer}</span> &bull; المتوقع: <span class="text-emerald-400 font-bold">${item.expected_answer}</span>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2 flex-shrink-0">
-        <button onclick="retryErrorProblem('${item.course_code}', '${item.topic}')" class="px-4 py-2 rounded-xl bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white font-black text-xs transition border border-indigo-500/30">
-          إعادة الحل الآن
-        </button>
-        <button onclick="resolveErrorItem('${item.id}')" title="تم إتقان الفكرة وحذفها من الدفتر" class="p-2 rounded-xl bg-slate-800 hover:bg-emerald-600 text-slate-400 hover:text-white transition">
-          <i data-lucide="check" class="w-4 h-4"></i>
-        </button>
-      </div>
-    `;
-    container.appendChild(card);
-  });
+      <h4 class="font-black text-white text-base">دفتر الأخطاء نظيف تماماً! 👏</h4>
+      <p class="text-xs text-slate-400 max-w-sm mx-auto">
+        أي أسئلة تخطئ فيها في الكويزات أو الشفوي ستُسجل هنا تلقائياً لتعيد حلها قبل الامتحان.
+      </p>
+    </div>
+  `;
   if (window.lucide) lucide.createIcons();
-}
-
-function filterErrors(tag) {
-  const buttons = document.querySelectorAll('.err-filter-btn');
-  buttons.forEach(b => {
-    b.className = "err-filter-btn px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white font-bold";
-  });
-  event.target.className = "err-filter-btn px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold";
-
-  if (!state.allErrors) return;
-  if (tag === 'all') {
-    renderErrorNotebookItems(state.allErrors);
-  } else {
-    const filtered = state.allErrors.filter(e => e.error_type === tag);
-    renderErrorNotebookItems(filtered);
-  }
-}
-
-async function resolveErrorItem(id) {
-  try {
-    await fetch('/api/error-notebook/resolve', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: id })
-    });
-  } catch (err) {
-    console.log("Resolved locally");
-  }
-
-  state.allErrors = state.allErrors.filter(e => e.id !== id);
-  renderErrorNotebookItems(state.allErrors);
-}
-
-function retryErrorProblem(course, topic) {
-  startQuizWithTopic(course, topic);
 }

@@ -30,6 +30,19 @@
   background: rgba(99, 102, 241, 0.65);
 }
 
+/* Custom MCQ Option Cards */
+.mcq-option-card {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+}
+.mcq-option-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+}
+.mcq-option-card:active {
+  transform: translateY(0);
+}
+
 /* Custom Math Keypad Buttons */
 .keypad-btn {
   padding: 0.7rem 0.4rem;

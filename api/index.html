@@ -93,12 +93,12 @@
           الرئيسية
         </button>
         <button onclick="navigate('quizzes')" id="nav-btn-quizzes" class="nav-link px-4 py-2 rounded-xl transition flex items-center gap-2 text-slate-400 hover:text-slate-200">
-          <i data-lucide="calculator" class="w-4 h-4"></i>
-          كويزات الخطوات
+          <i data-lucide="check-square" class="w-4 h-4"></i>
+          كويزات المواد الـ 6
         </button>
         <button onclick="navigate('viva')" id="nav-btn-viva" class="nav-link px-4 py-2 rounded-xl transition flex items-center gap-2 text-slate-400 hover:text-slate-200">
-          <i data-lucide="mic" class="w-4 h-4"></i>
-          المناقشة الشفوية
+          <i data-lucide="code-2" class="w-4 h-4"></i>
+          مختبر الكود والشفوي
         </button>
         <button onclick="navigate('prep-sheet')" id="nav-btn-prep-sheet" class="nav-link px-4 py-2 rounded-xl transition flex items-center gap-2 text-slate-400 hover:text-slate-200">
           <i data-lucide="file-check-2" class="w-4 h-4"></i>
@@ -264,283 +264,165 @@
 
       </div>
 
-      <!-- Course Tracks Section -->
+      <!-- Course Tracks Section (6 Academic Subjects) -->
       <div class="space-y-4">
         <div class="flex items-center justify-between">
-          <h3 class="text-lg font-black text-white flex items-center gap-2">
-            <i data-lucide="sparkles" class="w-5 h-5 text-indigo-400"></i>
-            المسارات الأكاديمية والعملية
-          </h3>
-          <span class="text-xs text-slate-400">جميع المسارات مجانية ومتاحة بدون قيود</span>
+          <div>
+            <h3 class="text-xl font-black text-white flex items-center gap-2.5">
+              <i data-lucide="sparkles" class="w-5 h-5 text-indigo-400"></i>
+              المواد الأكاديمية الـ 6 المعتمدة
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">منهج متكامل مؤهل للامتحانات التحريرية ومناقشات المعمل الشفوية</p>
+          </div>
+          <span class="text-xs text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-3.5 py-1 rounded-full font-bold flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+            6 مواد تخصصية
+          </span>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-          
-          <!-- Track 1: Linear Algebra -->
-          <div class="rounded-3xl bg-slate-900/80 border border-slate-800/90 hover:border-indigo-500/50 p-6 transition flex flex-col justify-between group shadow-lg backdrop-blur-xl">
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="p-3 rounded-2xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/20 group-hover:scale-110 transition">
-                  <i data-lucide="grid-3x3" class="w-6 h-6"></i>
-                </span>
-                <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">جبر خطي</span>
-              </div>
-              <h4 class="font-black text-white text-base">Linear Algebra</h4>
-              <p class="text-xs text-slate-300 leading-relaxed">
-                محددات 3x3، معكوس المصفوفات (Inverse)، مصفوفة المرافقات (Cofactors)، والتدوير (Transpose).
-              </p>
-            </div>
-            <div class="pt-5 mt-4 border-t border-slate-800/80 flex items-center justify-between">
-              <span class="text-xs text-slate-500 font-mono">حساب حتمي دقيق</span>
-              <button onclick="startQuizWithTopic('linear_algebra', 'determinant_3x3')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition shadow-md shadow-indigo-600/20">
-                تدريب الآن
-              </button>
-            </div>
-          </div>
-
-          <!-- Track 2: Computer Fundamentals -->
-          <div class="rounded-3xl bg-slate-900/80 border border-slate-800/90 hover:border-emerald-500/50 p-6 transition flex flex-col justify-between group shadow-lg backdrop-blur-xl">
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="p-3 rounded-2xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 group-hover:scale-110 transition">
-                  <i data-lucide="binary" class="w-6 h-6"></i>
-                </span>
-                <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">أساسيات حاسب</span>
-              </div>
-              <h4 class="font-black text-white text-base">Computer Fundamentals</h4>
-              <p class="text-xs text-slate-300 leading-relaxed">
-                تحويل أنظمة العد (Binary / Hex / Octal)، متمم الاثنين (Two's Complement)، وفخ قراءة البواقي بالعكس.
-              </p>
-            </div>
-            <div class="pt-5 mt-4 border-t border-slate-800/80 flex items-center justify-between">
-              <span class="text-xs text-slate-500 font-mono">كشف فخ البواقي</span>
-              <button onclick="startQuizWithTopic('computer_fundamentals', 'base_conversion')" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow-md shadow-emerald-600/20">
-                تدريب الآن
-              </button>
-            </div>
-          </div>
-
-          <!-- Track 3: Electric Circuits -->
-          <div class="rounded-3xl bg-slate-900/80 border border-slate-800/90 hover:border-amber-500/50 p-6 transition flex flex-col justify-between group shadow-lg backdrop-blur-xl">
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="p-3 rounded-2xl bg-amber-500/15 text-amber-400 border border-amber-500/20 group-hover:scale-110 transition">
-                  <i data-lucide="zap" class="w-6 h-6"></i>
-                </span>
-                <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">دوائر كهربية</span>
-              </div>
-              <h4 class="font-black text-white text-base">Electric Circuits</h4>
-              <p class="text-xs text-slate-300 leading-relaxed">
-                حساب القدرة المستهلكة والموردة (Passive Sign Convention)، وقواعد إشارات التيار والجهد.
-              </p>
-            </div>
-            <div class="pt-5 mt-4 border-t border-slate-800/80 flex items-center justify-between">
-              <span class="text-xs text-slate-500 font-mono">قواعد الإشارات</span>
-              <button onclick="startQuizWithTopic('electric_circuits', 'circuits_power')" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition shadow-md shadow-amber-600/20">
-                تدريب الآن
-              </button>
-            </div>
-          </div>
-
+        <!-- 6 Subjects Grid populated automatically via app.js -->
+        <div id="subjects-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Rendered dynamically -->
         </div>
       </div>
 
     </div>
 
 
-    <!-- ================= VIEW 2: STEP-BY-STEP QUIZZES (كويزات الرياضيات) ================= -->
+    <!-- ================= VIEW 2: 4-CHOICE MCQ QUIZZES (كويزات المواد الست) ================= -->
     <div id="view-quizzes" class="hidden space-y-6">
       
       <!-- Quiz Header & Controller Bar -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 p-4 rounded-3xl backdrop-blur-xl">
-        <div class="flex items-center gap-3">
-          <div class="p-3 rounded-2xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/20">
-            <i data-lucide="calculator" class="w-6 h-6"></i>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 p-4 rounded-3xl backdrop-blur-xl shadow-xl">
+        <div class="flex items-center gap-3.5">
+          <div class="p-3.5 rounded-2xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/20">
+            <i data-lucide="check-square" class="w-6 h-6"></i>
           </div>
           <div>
-            <h2 id="quiz-topic-title" class="font-black text-white text-lg">كويز خطوة بخطوة</h2>
-            <p id="quiz-mode-description" class="text-xs text-slate-400">محرك حسابي حتمي يحلل خطواتك الوسيطة فورياً</p>
+            <h2 id="quiz-topic-title" class="font-black text-white text-lg">بنك كويزات الـ 6 مواد (MCQ)</h2>
+            <p id="quiz-mode-description" class="text-xs text-slate-400">سؤال مع 4 اختيارات واضحة مع إيضاح وتفسير فوري للحل</p>
           </div>
         </div>
 
-        <!-- Mode & Topic Pickers -->
-        <div class="flex flex-wrap items-center gap-2">
-          <!-- Course Filter -->
-          <select id="quiz-course-select" onchange="loadNewProblem()" class="bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded-xl px-3 py-2 font-semibold focus:border-indigo-500 outline-none">
-            <option value="linear_algebra">جبر خطي (Linear Algebra)</option>
-            <option value="computer_fundamentals">أنظمة العد (Computer Fund.)</option>
-            <option value="electric_circuits">دوائر كهربية (Circuits)</option>
+        <!-- Mode & Subject Pickers -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <!-- Course Filter for all 6 subjects -->
+          <select id="quiz-course-select" onchange="handleSubjectSelectChange()" class="bg-slate-950 border border-slate-700/80 hover:border-slate-600 text-slate-200 text-xs rounded-xl px-3.5 py-2.5 font-bold focus:border-indigo-500 outline-none transition cursor-pointer">
+            <option value="linear_algebra">الجبر الخطي (Linear Algebra)</option>
+            <option value="calculus">التفاضل والتكامل (Calculus)</option>
+            <option value="basic_electric">الدوائر الكهربية (Basic Electric)</option>
+            <option value="physics">الفيزياء الهندسية (Physics)</option>
+            <option value="english">اللغة الإنجليزية (English)</option>
+            <option value="arabic_intro">مقدمة اللغة العربية (Arabic Intro)</option>
           </select>
 
           <!-- Mode Toggle: Practice vs Exam -->
           <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-bold">
-            <button id="mode-btn-practice" onclick="setQuizMode('practice')" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white transition">
-              تدريب (تلميحات)
+            <button id="mode-btn-practice" onclick="setQuizMode('practice')" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white transition shadow-sm">
+              تدريب (تصحيح فوري)
             </button>
             <button id="mode-btn-exam" onclick="setQuizMode('exam')" class="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition">
-              امتحان (مؤقت)
+              امتحان (مؤقت ومراجعة)
             </button>
           </div>
-
-          <!-- New Problem Generator Button -->
-          <button onclick="loadNewProblem()" title="توليد مسألة جديدة بأرقام عشوائية" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
-            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-          </button>
         </div>
       </div>
 
-      <!-- Active Problem Card -->
+      <!-- Active MCQ Problem Card -->
       <div id="quiz-problem-card" class="rounded-3xl bg-slate-900/80 border border-slate-800 p-6 sm:p-8 shadow-2xl backdrop-blur-xl space-y-6">
         
-        <!-- Step Progress Tracker & Timer -->
+        <!-- Question Progress Tracker & Timer -->
         <div class="flex items-center justify-between pb-4 border-b border-slate-800">
           <div class="flex items-center gap-2.5">
             <span id="quiz-step-indicator" class="text-xs font-black px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-              خطوة 1 من 3
+              سؤال 1 من 5
             </span>
             <span id="quiz-step-title" class="text-sm font-bold text-slate-200">
-              حساب المحدد الأصغر
+              اختر الإجابة الصحيحة من بين البدائل الأربعة:
             </span>
           </div>
 
           <div id="quiz-timer-container" class="hidden items-center gap-1.5 text-xs font-mono text-amber-400 bg-amber-500/10 px-3.5 py-1 rounded-full border border-amber-500/20">
             <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-            <span id="quiz-timer">05:00</span>
+            <span id="quiz-timer">10:00</span>
           </div>
         </div>
 
-        <!-- Problem Prompt with LaTeX Math Rendering -->
-        <div class="bg-slate-950/80 border border-slate-800/90 rounded-2xl p-5 sm:p-6 space-y-3 shadow-inner">
+        <!-- Question Prompt with LaTeX KaTeX Rendering -->
+        <div class="bg-slate-950/80 border border-slate-800/90 rounded-2xl p-6 space-y-2 shadow-inner">
           <div class="text-xs font-bold text-slate-400 flex items-center gap-2">
             <i data-lucide="help-circle" class="w-4 h-4 text-indigo-400"></i>
-            المطلوب في هذه الخطوة:
+            نص السؤال:
           </div>
-          <div id="quiz-step-prompt" class="text-sm sm:text-base text-slate-100 leading-relaxed font-sans" dir="rtl">
-            <!-- Dynamically populated math prompt -->
-          </div>
-        </div>
-
-        <!-- Student Input Section & Custom Keypad -->
-        <div class="space-y-4">
-          
-          <div class="space-y-2">
-            <label class="block text-xs font-bold text-slate-300">
-              أدخل إجابتك للخطوة الحالية (يقبل كسور مثل 1/2 أو أرقام سالبة أو مصفوفات):
-            </label>
-            <div class="relative">
-              <input type="text" id="quiz-student-input" dir="ltr" placeholder="مثال: 0.5 أو 1/2 أو 1 2; 3 4" 
-                class="w-full bg-slate-950 border border-slate-700/80 focus:border-indigo-500 text-slate-100 font-mono text-base rounded-2xl px-4 py-3.5 outline-none transition shadow-inner">
-              <button onclick="clearStudentInput()" class="absolute right-3.5 top-3.5 text-slate-500 hover:text-slate-300">
-                <i data-lucide="delete" class="w-5 h-5"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Mobile-Friendly Custom Number / Matrix Pad (Section 10 & 15) -->
-          <div class="rounded-2xl bg-slate-950/90 border border-slate-800 p-3.5 space-y-2.5">
-            <div class="flex items-center justify-between text-[11px] text-slate-400 font-bold px-1">
-              <span>لوحة إدخال الرياضيات السريعة:</span>
-              <button onclick="toggleMatrixBuilder()" class="text-indigo-400 hover:underline flex items-center gap-1 font-bold">
-                <i data-lucide="grid" class="w-3.5 h-3.5"></i>
-                <span id="matrix-pad-toggle-text">محرر مصفوفة 2x2</span>
-              </button>
-            </div>
-
-            <!-- Custom Quick Buttons -->
-            <div class="grid grid-cols-6 sm:grid-cols-12 gap-1.5 font-mono text-sm" dir="ltr">
-              <button onclick="keypadInsert('1')" class="keypad-btn">1</button>
-              <button onclick="keypadInsert('2')" class="keypad-btn">2</button>
-              <button onclick="keypadInsert('3')" class="keypad-btn">3</button>
-              <button onclick="keypadInsert('4')" class="keypad-btn">4</button>
-              <button onclick="keypadInsert('5')" class="keypad-btn">5</button>
-              <button onclick="keypadInsert('6')" class="keypad-btn">6</button>
-              <button onclick="keypadInsert('7')" class="keypad-btn">7</button>
-              <button onclick="keypadInsert('8')" class="keypad-btn">8</button>
-              <button onclick="keypadInsert('9')" class="keypad-btn">9</button>
-              <button onclick="keypadInsert('0')" class="keypad-btn">0</button>
-              <button onclick="keypadInsert('-')" class="keypad-btn text-amber-400 font-bold">-</button>
-              <button onclick="keypadInsert('/')" class="keypad-btn text-indigo-400 font-bold">/</button>
-            </div>
-
-            <!-- Visual Matrix 2x2 Grid -->
-            <div id="visual-matrix-builder" class="hidden pt-3 border-t border-slate-800/80 space-y-3">
-              <div class="text-xs text-slate-400 text-center">أدخل أرقام المصفوفة وسيتم تجهيزها فورياً:</div>
-              <div class="grid grid-cols-2 gap-2.5 max-w-xs mx-auto" dir="ltr">
-                <input type="text" id="mat-c11" placeholder="a11" class="matrix-cell">
-                <input type="text" id="mat-c12" placeholder="a12" class="matrix-cell">
-                <input type="text" id="mat-c21" placeholder="a21" class="matrix-cell">
-                <input type="text" id="mat-c22" placeholder="a22" class="matrix-cell">
-              </div>
-              <div class="text-center">
-                <button onclick="applyVisualMatrix()" class="text-xs font-bold px-4 py-2 rounded-xl bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-600 hover:text-white transition">
-                  تطبيق المصفوفة على خانة الإجابة
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
-            <div class="flex items-center gap-2.5">
-              <button onclick="submitStepAnswer()" id="submit-step-btn" class="px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-sm shadow-xl shadow-indigo-600/30 flex items-center gap-2 transition active:scale-95">
-                <i data-lucide="check" class="w-4 h-4"></i>
-                تحقق من الخطوة
-              </button>
-
-              <button onclick="requestHint()" id="hint-btn" class="px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 font-bold text-xs flex items-center gap-1.5 transition">
-                <i data-lucide="lightbulb" class="w-4 h-4"></i>
-                سلم التلميحات (<span id="hint-level-count">0/3</span>)
-              </button>
-            </div>
-
-            <button onclick="reportQuestionIssue()" class="text-slate-400 hover:text-rose-400 text-xs flex items-center gap-1 font-semibold">
-              <i data-lucide="flag" class="w-3.5 h-3.5"></i>
-              <span>بلّغ عن سؤال خطأ</span>
-            </button>
+          <div id="quiz-step-prompt" class="text-base sm:text-lg text-slate-100 font-bold leading-relaxed font-sans" dir="rtl">
+            <!-- Dynamically populated question text -->
           </div>
         </div>
 
-        <!-- Real-Time Error Diagnosis Box (Section 5.2 Error Classifier) -->
-        <div id="quiz-feedback-box" class="hidden rounded-2xl p-4 sm:p-5 transition-all duration-300 shadow-lg">
+        <!-- 4 MCQ Options Container (A, B, C, D) -->
+        <div id="mcq-options-container" class="space-y-3">
+          <!-- Dynamically populated 4 options -->
+        </div>
+
+        <!-- Feedback & Explanation Box (Practice Mode) -->
+        <div id="quiz-feedback-box" class="hidden rounded-2xl p-5 transition-all duration-300 shadow-lg space-y-2">
           <div class="flex items-start gap-3.5">
             <div id="quiz-feedback-icon" class="p-2.5 rounded-xl flex-shrink-0 mt-0.5"></div>
-            <div class="space-y-1">
+            <div class="space-y-1.5">
               <h5 id="quiz-feedback-title" class="font-black text-sm"></h5>
-              <p id="quiz-feedback-diagnosis" class="text-xs text-slate-200 leading-relaxed"></p>
-              <p id="quiz-feedback-tip" class="text-xs text-indigo-300 font-bold"></p>
+              <div id="quiz-feedback-diagnosis" class="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans"></div>
+              <div id="quiz-feedback-tip" class="text-xs text-indigo-300 font-bold"></div>
             </div>
           </div>
         </div>
 
-        <!-- Hint Ladder Display Box -->
-        <div id="quiz-hint-box" class="hidden rounded-2xl bg-amber-950/25 border border-amber-500/30 p-4 sm:p-5 space-y-2 shadow-lg">
-          <div class="flex items-center gap-2 text-amber-400 font-black text-xs">
-            <i data-lucide="lightbulb" class="w-4 h-4"></i>
-            <span id="quiz-hint-title">تلميح المستوى 1</span>
-          </div>
-          <div id="quiz-hint-content" class="text-xs text-slate-200 leading-relaxed font-sans" dir="rtl"></div>
+        <!-- Navigation & Action Buttons -->
+        <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+          <button id="prev-q-btn" onclick="prevMCQQuestion()" disabled class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-300 font-bold text-xs flex items-center gap-2 transition">
+            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            السابق
+          </button>
+
+          <button id="next-q-btn" onclick="nextMCQQuestion()" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-indigo-600/30 flex items-center gap-2 transition active:scale-95">
+            السؤال التالي
+            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+          </button>
         </div>
 
       </div>
 
-      <!-- Problem Solved Celebration -->
-      <div id="quiz-success-card" class="hidden rounded-3xl bg-gradient-to-tr from-emerald-950 via-slate-900 to-slate-900 border border-emerald-500/40 p-6 sm:p-9 text-center space-y-4 shadow-2xl">
-        <div class="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/30 shadow-xl shadow-emerald-500/25">
-          <i data-lucide="award" class="w-8 h-8"></i>
+      <!-- Problem Solved / Quiz Results Celebration -->
+      <div id="quiz-success-card" class="hidden rounded-3xl bg-gradient-to-tr from-indigo-950/80 via-slate-900 to-slate-900 border border-indigo-500/40 p-6 sm:p-9 text-center space-y-6 shadow-2xl backdrop-blur-xl">
+        <div class="w-20 h-20 rounded-3xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto border border-indigo-500/30 shadow-2xl shadow-indigo-500/30">
+          <i data-lucide="award" class="w-10 h-10"></i>
         </div>
-        <div class="space-y-1">
-          <h3 class="text-2xl font-black text-white">عاش يا بطل! حليت المسألة بالكامل 🎉</h3>
-          <p class="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
-            كل الخطوات الوسيطة اتحسبت بنجاح، ومؤشر الجاهزية بتاعك اتحرك للأمام!
+        
+        <div class="space-y-2">
+          <div class="text-4xl sm:text-5xl font-black text-white font-sans" id="quiz-final-score-percent">100%</div>
+          <h3 class="text-2xl font-black text-white">اكتمل الكويز بنجاح! 🎉</h3>
+          <p id="quiz-final-score-detail" class="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
+            أجبت على 5 من إجمالي 5 أسئلة بشكل صحيح
           </p>
         </div>
 
-        <div class="flex justify-center gap-3 pt-2">
-          <button onclick="loadNewProblem()" class="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-lg transition">
-            مسألة جديدة بأرقام أخرى
+        <!-- Detailed Review List for all questions -->
+        <div class="max-w-2xl mx-auto text-right space-y-3" dir="rtl">
+          <h4 class="text-xs font-extrabold text-slate-300 flex items-center gap-2">
+            <i data-lucide="list-checks" class="w-4 h-4 text-indigo-400"></i>
+            مراجعة تفصيلية لجميع الإجابات والتفسيرات:
+          </h4>
+          <div id="quiz-review-list" class="space-y-2.5">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-3 pt-3">
+          <button onclick="handleSubjectSelectChange()" class="px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-indigo-600/30 transition">
+            إعادة اختبار المادة
           </button>
-          <button onclick="navigate('viva')" class="px-6 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-extrabold text-xs border border-slate-700 transition">
-            تدرب على الشفوي الآن
+          <button onclick="navigate('viva')" class="px-6 py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs shadow-lg shadow-purple-600/30 transition flex items-center gap-2">
+            <i data-lucide="code-2" class="w-4 h-4"></i>
+            انتقل لمختبر الكود ومناقشة المعمل
           </button>
         </div>
       </div>
@@ -976,12 +858,12 @@
       الرئيسية
     </button>
     <button onclick="navigate('quizzes')" id="mob-nav-quizzes" class="flex flex-col items-center gap-1 hover:text-slate-200">
-      <i data-lucide="calculator" class="w-5 h-5"></i>
-      كويزات
+      <i data-lucide="check-square" class="w-5 h-5"></i>
+      كويزات MCQ
     </button>
     <button onclick="navigate('viva')" id="mob-nav-viva" class="flex flex-col items-center gap-1 hover:text-slate-200">
-      <i data-lucide="mic" class="w-5 h-5"></i>
-      الشفوي
+      <i data-lucide="code-2" class="w-5 h-5"></i>
+      كود وشفوي
     </button>
     <button onclick="navigate('prep-sheet')" id="mob-nav-prep-sheet" class="flex flex-col items-center gap-1 hover:text-slate-200">
       <i data-lucide="file-check-2" class="w-5 h-5"></i>
