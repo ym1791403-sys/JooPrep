@@ -15,9 +15,9 @@ const SUBJECTS_DATA = {
     nameAr: "الجبر الخطي",
     nameEn: "Linear Algebra",
     code: "MATH 101",
-    theme: "from-indigo-600 to-violet-600",
-    borderGlow: "border-indigo-500/30",
-    badgeBg: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30",
+    theme: "from-[#45404F] to-[#292531]",
+    borderGlow: "border-[#AAA2B3]/50 shadow-[0_0_25px_rgba(170,162,179,0.15)]",
+    badgeBg: "bg-[#45404F]/60 text-[#E2DDE7] border border-[#AAA2B3]/30",
     icon: "grid-3x3",
     description: "المحددات، معكوس المصفوفات، العمليات الأولية، فضاء المتجهات، وحل المعادلات الخطية.",
     questions: [
@@ -89,9 +89,9 @@ const SUBJECTS_DATA = {
     nameAr: "التفاضل والتكامل",
     nameEn: "Calculus",
     code: "MATH 102",
-    theme: "from-blue-600 to-cyan-500",
-    borderGlow: "border-cyan-500/30",
-    badgeBg: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
+    theme: "from-[#716879] to-[#45404F]",
+    borderGlow: "border-[#E2DDE7]/50 shadow-[0_0_25px_rgba(226,221,231,0.15)]",
+    badgeBg: "bg-[#716879]/50 text-[#E2DDE7] border border-[#AAA2B3]/30",
     icon: "activity",
     description: "النهايات، قواعد الاشتقاق، تطبيقات المشتقة، والتكامل غير المحدود وتطبيقات المساحات.",
     questions: [
@@ -163,9 +163,9 @@ const SUBJECTS_DATA = {
     nameAr: "الدوائر الكهربية",
     nameEn: "Basic Electric",
     code: "ELEC 101",
-    theme: "from-amber-500 to-orange-600",
-    borderGlow: "border-amber-500/30",
-    badgeBg: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+    theme: "from-[#594F63] to-[#292531]",
+    borderGlow: "border-[#AAA2B3]/50 shadow-[0_0_25px_rgba(170,162,179,0.15)]",
+    badgeBg: "bg-[#594F63]/50 text-[#E2DDE7] border border-[#AAA2B3]/30",
     icon: "zap",
     description: "قانون أوم، قوانين كيرشوف (KCL و KVL)، حسابات القدرة الممتصة والموردة، ومجزئ الجهد والتيار.",
     questions: [
@@ -237,9 +237,9 @@ const SUBJECTS_DATA = {
     nameAr: "الفيزياء الهندسية",
     nameEn: "Physics",
     code: "PHYS 101",
-    theme: "from-emerald-600 to-teal-500",
-    borderGlow: "border-emerald-500/30",
-    badgeBg: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+    theme: "from-[#665B72] to-[#36303D]",
+    borderGlow: "border-[#AAA2B3]/50 shadow-[0_0_25px_rgba(170,162,179,0.15)]",
+    badgeBg: "bg-[#665B72]/50 text-[#E2DDE7] border border-[#AAA2B3]/30",
     icon: "atom",
     description: "قوانين نيوتن للحركة، الشغل والطاقة، قانون كولوم، المجال الكهربي، والموجات الكهرومغناطيسية.",
     questions: [
@@ -311,9 +311,9 @@ const SUBJECTS_DATA = {
     nameAr: "اللغة الإنجليزية الأكاديمية",
     nameEn: "English",
     code: "ENG 101",
-    theme: "from-rose-500 to-pink-600",
-    borderGlow: "border-rose-500/30",
-    badgeBg: "bg-rose-500/15 text-rose-300 border-rose-500/30",
+    theme: "from-[#7D728A] to-[#45404F]",
+    borderGlow: "border-[#AAA2B3]/50 shadow-[0_0_25px_rgba(170,162,179,0.15)]",
+    badgeBg: "bg-[#7D728A]/50 text-[#E2DDE7] border border-[#AAA2B3]/30",
     icon: "book-a",
     description: "المصطلحات التقنية في الحاسبات، قواعد الكتابة الأكاديمية، تراكيب الجمل، وصياغة التقارير الفنية.",
     questions: [
@@ -385,9 +385,9 @@ const SUBJECTS_DATA = {
     nameAr: "مقدمة في اللغة العربية والتواصل",
     nameEn: "Arabic Introduction",
     code: "ARAB 101",
-    theme: "from-purple-600 to-fuchsia-600",
-    borderGlow: "border-fuchsia-500/30",
-    badgeBg: "bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30",
+    theme: "from-[#8C8099] to-[#544B5E]",
+    borderGlow: "border-[#AAA2B3]/50 shadow-[0_0_25px_rgba(170,162,179,0.15)]",
+    badgeBg: "bg-[#8C8099]/50 text-[#E2DDE7] border border-[#AAA2B3]/30",
     icon: "feather",
     description: "أساسيات الصياغة التعبيرية، قواعد النحو والصرف للكتابة الأكاديمية، مهارات العرض والإقناع، وتوثيق المصطلحات العلمية.",
     questions: [
@@ -527,17 +527,17 @@ function navigate(viewName) {
 
     if (navBtn) {
       if (v === viewName) {
-        navBtn.className = "nav-link px-4 py-2 rounded-xl transition flex items-center gap-2 text-indigo-400 bg-indigo-600/15 border border-indigo-500/20";
+        navBtn.className = "nav-link px-4 py-2 rounded-xl transition flex items-center gap-2 text-[#E2DDE7] bg-[#716879]/30 border border-[#AAA2B3]/35 shadow-sm";
       } else {
-        navBtn.className = "nav-link px-4 py-2 rounded-xl transition flex items-center gap-2 text-slate-400 hover:text-slate-200";
+        navBtn.className = "nav-link px-4 py-2 rounded-xl transition flex items-center gap-2 text-[#AAA2B3] hover:text-[#E2DDE7] hover:bg-[#45404F]/30";
       }
     }
 
     if (mobBtn) {
       if (v === viewName) {
-        mobBtn.className = "flex flex-col items-center gap-1 text-indigo-400 font-bold";
+        mobBtn.className = "flex flex-col items-center gap-1 text-[#E2DDE7] font-black";
       } else {
-        mobBtn.className = "flex flex-col items-center gap-1 hover:text-slate-200";
+        mobBtn.className = "flex flex-col items-center gap-1 text-[#AAA2B3]/70 hover:text-[#E2DDE7]";
       }
     }
   });
@@ -588,12 +588,12 @@ function renderSubjectsGrid() {
 
   Object.values(SUBJECTS_DATA).forEach(sub => {
     const card = document.createElement('div');
-    card.className = `rounded-3xl bg-slate-900/80 border border-slate-800/90 hover:${sub.borderGlow} p-6 transition flex flex-col justify-between group shadow-xl backdrop-blur-xl relative overflow-hidden`;
+    card.className = `glass-card p-6 transition flex flex-col justify-between group relative overflow-hidden`;
     
     card.innerHTML = `
       <div class="space-y-4">
         <div class="flex items-center justify-between">
-          <div class="p-3.5 rounded-2xl bg-gradient-to-tr ${sub.theme} text-white shadow-lg group-hover:scale-105 transition">
+          <div class="p-3.5 rounded-2xl bg-gradient-to-tr ${sub.theme} text-[#E2DDE7] shadow-lg group-hover:scale-105 border border-[#E2DDE7]/20 transition">
             <i data-lucide="${sub.icon}" class="w-6 h-6"></i>
           </div>
           <span class="text-[11px] font-black px-3 py-1 rounded-full ${sub.badgeBg}">
@@ -602,26 +602,27 @@ function renderSubjectsGrid() {
         </div>
 
         <div>
-          <h4 class="font-black text-white text-lg tracking-tight">${sub.nameAr}</h4>
-          <span class="text-xs text-slate-400 font-mono block">${sub.nameEn}</span>
-          <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+          <h4 class="font-black text-[#E2DDE7] text-lg tracking-tight">${sub.nameAr}</h4>
+          <span class="text-xs text-[#AAA2B3] font-mono block">${sub.nameEn}</span>
+          <p class="text-xs text-[#AAA2B3]/90 mt-2 leading-relaxed">
             ${sub.description}
           </p>
         </div>
       </div>
 
-      <div class="pt-5 mt-4 border-t border-slate-800/80 flex items-center justify-between">
-        <span class="text-xs text-slate-400 font-semibold flex items-center gap-1.5">
-          <i data-lucide="help-circle" class="w-3.5 h-3.5 text-slate-500"></i>
+      <div class="pt-5 mt-4 border-t border-[#45404F]/60 flex items-center justify-between">
+        <span class="text-xs text-[#AAA2B3] font-semibold flex items-center gap-1.5">
+          <i data-lucide="help-circle" class="w-3.5 h-3.5 text-[#716879]"></i>
           ${sub.questions.length} كويزات MCQ
         </span>
-        <button onclick="startQuizForSubject('${sub.id}')" class="px-4 py-2 rounded-xl bg-gradient-to-r ${sub.theme} hover:opacity-95 text-white text-xs font-black shadow-lg transition active:scale-95">
+        <button onclick="startQuizForSubject('${sub.id}')" class="btn-glass-primary px-4 py-2 rounded-xl text-xs font-black shadow-lg transition active:scale-95">
           ابدأ الكويز
         </button>
       </div>
     `;
     container.appendChild(card);
   });
+  if (window.lucide) lucide.createIcons();
 }
 
 // ----------------- 4-Option MCQ Quiz Arena -----------------
@@ -697,13 +698,13 @@ function renderCurrentMCQQuestion() {
         badgeClass += " bg-slate-800 text-slate-400";
       }
     } else {
-      // Standard selection mode
+      // Standard selection mode with Glassmorphism
       if (isSelected) {
-        cardClass += " bg-indigo-600/20 border-indigo-500 text-white shadow-indigo-500/20 shadow-lg ring-1 ring-indigo-500";
-        badgeClass += " bg-indigo-600 text-white";
+        cardClass += " bg-[#716879]/35 border-[#AAA2B3] text-[#E2DDE7] shadow-[0_0_25px_rgba(170,162,179,0.3)] ring-1 ring-[#AAA2B3]/60";
+        badgeClass += " bg-gradient-to-tr from-[#716879] to-[#AAA2B3] text-[#17151C] font-black shadow-md";
       } else {
-        cardClass += " bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-200 hover:bg-slate-900/60";
-        badgeClass += " bg-slate-800 text-slate-300";
+        cardClass += " bg-[#292531]/45 border-[#45404F]/70 hover:border-[#716879] text-[#E2DDE7]/90 hover:bg-[#292531]/75";
+        badgeClass += " bg-[#45404F]/60 text-[#AAA2B3] border border-[#716879]/40";
       }
     }
 
@@ -716,7 +717,7 @@ function renderCurrentMCQQuestion() {
         <div class="text-sm sm:text-base font-bold">${formatMathText(opt.text)}</div>
       </div>
       <div>
-        ${isSelected ? '<i data-lucide="check-circle-2" class="w-5 h-5 text-indigo-400"></i>' : '<div class="w-4 h-4 rounded-full border border-slate-700"></div>'}
+        ${isSelected ? '<i data-lucide="check-circle-2" class="w-5 h-5 text-[#AAA2B3]"></i>' : '<div class="w-4 h-4 rounded-full border border-[#716879]/50"></div>'}
       </div>
     `;
     optionsContainer.appendChild(optEl);
@@ -729,12 +730,12 @@ function renderCurrentMCQQuestion() {
     expBox.classList.remove('hidden');
 
     if (isCorrect) {
-      expBox.className = "rounded-2xl p-4 sm:p-5 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 space-y-1 shadow-lg animate-fade-in";
+      expBox.className = "rounded-2xl p-5 bg-[#292531]/90 border border-emerald-500/50 text-emerald-200 space-y-1.5 shadow-2xl backdrop-blur-xl animate-fade-in";
       document.getElementById('quiz-feedback-icon').className = "p-2.5 rounded-xl bg-emerald-500/20 text-emerald-400";
       document.getElementById('quiz-feedback-icon').innerHTML = `<i data-lucide="check-circle" class="w-5 h-5"></i>`;
       document.getElementById('quiz-feedback-title').innerText = "إجابة صحيحة وممتازة! 🎉";
     } else {
-      expBox.className = "rounded-2xl p-4 sm:p-5 bg-rose-950/40 border border-rose-500/40 text-rose-300 space-y-1 shadow-lg animate-fade-in";
+      expBox.className = "rounded-2xl p-5 bg-[#292531]/90 border border-rose-500/50 text-rose-200 space-y-1.5 shadow-2xl backdrop-blur-xl animate-fade-in";
       document.getElementById('quiz-feedback-icon').className = "p-2.5 rounded-xl bg-rose-500/20 text-rose-400";
       document.getElementById('quiz-feedback-icon').innerHTML = `<i data-lucide="alert-triangle" class="w-5 h-5"></i>`;
       document.getElementById('quiz-feedback-title').innerText = "إجابة غير صحيحة!";
@@ -846,14 +847,14 @@ function setQuizMode(mode) {
   const timer = document.getElementById('quiz-timer-container');
 
   if (mode === 'practice') {
-    pBtn.className = "px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white transition";
-    eBtn.className = "px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition";
+    pBtn.className = "px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-[#716879] to-[#45404F] text-[#E2DDE7] font-bold border border-[#AAA2B3]/30 shadow-md transition";
+    eBtn.className = "px-3.5 py-1.5 rounded-lg text-[#AAA2B3] hover:text-[#E2DDE7] transition font-bold";
     timer.classList.add('hidden');
     timer.classList.remove('flex');
     stopQuizTimer();
   } else {
-    eBtn.className = "px-3.5 py-1.5 rounded-lg bg-indigo-600 text-white transition";
-    pBtn.className = "px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition";
+    eBtn.className = "px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-[#716879] to-[#45404F] text-[#E2DDE7] font-bold border border-[#AAA2B3]/30 shadow-md transition";
+    pBtn.className = "px-3.5 py-1.5 rounded-lg text-[#AAA2B3] hover:text-[#E2DDE7] transition font-bold";
     timer.classList.remove('hidden');
     timer.classList.add('flex');
     startQuizTimer();

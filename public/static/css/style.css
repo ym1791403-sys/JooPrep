@@ -1,10 +1,73 @@
-/* JooPrep Modern Design System Stylesheet */
+/* ==========================================================================
+   JooPrep — Ultra Glassmorphism Design System
+   Exact User Color Palette:
+     - #17151C (Deep Canvas / Base Night)
+     - #292531 (Glass Card Surface / Secondary Dark)
+     - #45404F (Elevated Borders / Inputs / Structural Dividers)
+     - #716879 (Muted Mauve / Secondary Accents & Subtext)
+     - #AAA2B3 (Soft Lilac / Interactive Glow & Active Highlights)
+     - #E2DDE7 (Frost Lavender White / Primary Typography & Bright CTA)
+   ========================================================================== */
+
+:root {
+  --palette-deep: #17151C;
+  --palette-surface: #292531;
+  --palette-slate: #45404F;
+  --palette-mauve: #716879;
+  --palette-lilac: #AAA2B3;
+  --palette-frost: #E2DDE7;
+
+  /* Glassmorphism Variables */
+  --glass-card-bg: rgba(41, 37, 49, 0.65);
+  --glass-inner-bg: rgba(23, 21, 28, 0.72);
+  --glass-border: rgba(69, 64, 79, 0.6);
+  --glass-border-light: rgba(170, 162, 179, 0.22);
+  --glass-border-bright: rgba(226, 221, 231, 0.35);
+  --glass-shadow: 0 12px 40px 0 rgba(10, 8, 14, 0.55);
+  --glass-inset-glow: inset 0 1px 0 0 rgba(226, 221, 231, 0.16);
+  --glass-blur: blur(20px) saturate(180%);
+}
+
+/* Base Body Styling with Ambient Canvas */
+body {
+  background-color: var(--palette-deep) !important;
+  color: var(--palette-frost) !important;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(113, 104, 121, 0.18) 0%, transparent 60%),
+    radial-gradient(circle at 100% 40%, rgba(170, 162, 179, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 0% 80%, rgba(41, 37, 49, 0.4) 0%, transparent 55%);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: rgba(170, 162, 179, 0.35) !important;
+  color: #FFFFFF !important;
+}
+
+/* Custom Refined Scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: var(--palette-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(113, 104, 121, 0.45);
+  border-radius: 9999px;
+  border: 1px solid rgba(69, 64, 79, 0.6);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(170, 162, 179, 0.75);
+}
 
 /* KaTeX Formula LTR and Clean Math Presentation */
 .katex, .katex-display, .katex-html {
   direction: ltr !important;
   unicode-bidi: isolate !important;
   text-align: center;
+  color: var(--palette-frost) !important;
 }
 
 .katex-display {
@@ -14,98 +77,261 @@
   overflow-y: hidden;
 }
 
-/* Custom Refined Scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: rgba(7, 10, 18, 0.8);
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.35);
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 102, 241, 0.65);
+/* ==========================================================================
+   Universal Glassmorphism Component Classes
+   ========================================================================== */
+
+/* Main Frosted Glass Card */
+.glass-card,
+.bg-slate-900\/80,
+.bg-slate-900\/70,
+.bg-slate-900\/90,
+.bg-slate-900 {
+  background: var(--glass-card-bg) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid var(--glass-border-light) !important;
+  box-shadow: var(--glass-shadow), var(--glass-inset-glow) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* Custom MCQ Option Cards */
-.mcq-option-card {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
-}
-.mcq-option-card:hover {
+.glass-card:hover {
+  border-color: var(--glass-border-bright) !important;
+  box-shadow: 0 16px 48px 0 rgba(10, 8, 14, 0.7), inset 0 1px 0 0 rgba(226, 221, 231, 0.28) !important;
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
-}
-.mcq-option-card:active {
-  transform: translateY(0);
 }
 
-/* Custom Math Keypad Buttons */
+/* Deeper Nested Frosted Glass Container */
+.glass-panel-deep,
+.bg-slate-950\/80,
+.bg-slate-950\/90,
+.bg-slate-950\/60,
+.bg-slate-950 {
+  background: var(--glass-inner-bg) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-color: rgba(69, 64, 79, 0.7) !important;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Glass Header Sticky Bar */
+header {
+  background: rgba(23, 21, 28, 0.82) !important;
+  backdrop-filter: blur(24px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
+  border-bottom: 1px solid rgba(170, 162, 179, 0.15) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Mobile Nav Glass Bar */
+nav.md\:hidden {
+  background: rgba(23, 21, 28, 0.9) !important;
+  backdrop-filter: blur(24px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
+  border-top: 1px solid rgba(170, 162, 179, 0.18) !important;
+}
+
+/* Universal Border Tone Overrides */
+.border-slate-800,
+.border-slate-800\/80,
+.border-slate-800\/90,
+.border-slate-800\/70 {
+  border-color: var(--glass-border) !important;
+}
+
+.border-slate-700,
+.border-slate-700\/80,
+.border-slate-700\/60 {
+  border-color: rgba(113, 104, 121, 0.45) !important;
+}
+
+/* Universal Input Glassmorphism */
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+  background: rgba(23, 21, 28, 0.85) !important;
+  border: 1px solid rgba(69, 64, 79, 0.8) !important;
+  color: var(--palette-frost) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--palette-lilac) !important;
+  box-shadow: 0 0 0 2px rgba(170, 162, 179, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+  outline: none !important;
+}
+
+/* ==========================================================================
+   Buttons with Palette Gradients & Frosted Glass Highlights
+   ========================================================================== */
+
+/* Primary CTA Buttons */
+.bg-indigo-600,
+.bg-indigo-500,
+.btn-glass-primary {
+  background: linear-gradient(135deg, #716879 0%, #45404F 100%) !important;
+  border: 1px solid rgba(226, 221, 231, 0.25) !important;
+  color: var(--palette-frost) !important;
+  box-shadow: 0 4px 18px rgba(10, 8, 14, 0.45), inset 0 1px 0 rgba(226, 221, 231, 0.22) !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.bg-indigo-600:hover,
+.bg-indigo-500:hover,
+.btn-glass-primary:hover {
+  background: linear-gradient(135deg, #AAA2B3 0%, #716879 100%) !important;
+  color: #17151C !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 8px 25px rgba(170, 162, 179, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+  transform: translateY(-1.5px) !important;
+}
+
+/* High Contrast Accent CTA Buttons (e.g. Hero Zap CTA) */
+.btn-glass-accent {
+  background: linear-gradient(135deg, #E2DDE7 0%, #AAA2B3 100%) !important;
+  color: #17151C !important;
+  font-weight: 800 !important;
+  border: 1px solid rgba(255, 255, 255, 0.7) !important;
+  box-shadow: 0 6px 20px rgba(170, 162, 179, 0.35) !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-glass-accent:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 8px 28px rgba(170, 162, 179, 0.55) !important;
+  transform: translateY(-2px);
+}
+
+/* Secondary Buttons */
+.bg-slate-800,
+.bg-slate-800\/90,
+.btn-glass-secondary {
+  background: rgba(41, 37, 49, 0.75) !important;
+  border: 1px solid rgba(113, 104, 121, 0.45) !important;
+  color: var(--palette-frost) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25) !important;
+  transition: all 0.2s ease !important;
+}
+
+.bg-slate-800:hover,
+.bg-slate-800\/90:hover,
+.btn-glass-secondary:hover {
+  background: rgba(69, 64, 79, 0.85) !important;
+  border-color: var(--palette-lilac) !important;
+  color: #FFFFFF !important;
+}
+
+/* ==========================================================================
+   4-Choice MCQ Option Cards (Glassmorphism Interactivity)
+   ========================================================================== */
+
+.mcq-option-card {
+  background: rgba(41, 37, 49, 0.5) !important;
+  border: 1px solid rgba(69, 64, 79, 0.65) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  box-shadow: 0 6px 16px rgba(10, 8, 14, 0.35), inset 0 1px 0 rgba(226, 221, 231, 0.08) !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer;
+}
+
+.mcq-option-card:hover {
+  background: rgba(69, 64, 79, 0.5) !important;
+  border-color: rgba(170, 162, 179, 0.55) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(10, 8, 14, 0.55), inset 0 1px 0 rgba(226, 221, 231, 0.2) !important;
+}
+
+.mcq-option-card.selected-active {
+  background: rgba(113, 104, 121, 0.32) !important;
+  border-color: var(--palette-lilac) !important;
+  box-shadow: 0 0 25px rgba(170, 162, 179, 0.35), inset 0 1px 0 rgba(226, 221, 231, 0.35) !important;
+}
+
+/* ==========================================================================
+   Viva Defense Chat Bubbles with Palette Tint
+   ========================================================================== */
+
+.viva-bubble-examiner {
+  background: linear-gradient(135deg, rgba(23, 21, 28, 0.95), rgba(41, 37, 49, 0.85)) !important;
+  border: 1px solid rgba(170, 162, 179, 0.3) !important;
+  border-radius: 1.25rem 1.25rem 0.25rem 1.25rem !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(226, 221, 231, 0.1) !important;
+}
+
+.viva-bubble-student {
+  background: linear-gradient(135deg, rgba(69, 64, 79, 0.85), rgba(113, 104, 121, 0.6)) !important;
+  border: 1px solid rgba(226, 221, 231, 0.35) !important;
+  border-radius: 1.25rem 1.25rem 1.25rem 0.25rem !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(226, 221, 231, 0.25) !important;
+}
+
+/* ==========================================================================
+   Keypad & Matrix Cells
+   ========================================================================== */
+
 .keypad-btn {
   padding: 0.7rem 0.4rem;
-  background-color: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(51, 65, 85, 0.6);
+  background-color: rgba(41, 37, 49, 0.8);
+  border: 1px solid rgba(69, 64, 79, 0.7);
   border-radius: 0.75rem;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--palette-frost);
   text-align: center;
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   user-select: none;
 }
 .keypad-btn:hover {
-  background-color: rgba(99, 102, 241, 0.2);
-  border-color: rgba(99, 102, 241, 0.5);
+  background-color: rgba(113, 104, 121, 0.4);
+  border-color: var(--palette-lilac);
   transform: translateY(-1px);
 }
 .keypad-btn:active {
   transform: scale(0.96);
 }
 
-/* Visual Matrix Input Cells */
 .matrix-cell {
-  background-color: #070c18;
-  border: 1px solid #334155;
+  background-color: rgba(23, 21, 28, 0.9);
+  border: 1px solid rgba(69, 64, 79, 0.8);
   border-radius: 0.75rem;
   padding: 0.65rem;
   text-align: center;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.875rem;
-  color: #ffffff;
+  color: var(--palette-frost);
   outline: none;
   transition: border-color 0.2s;
 }
 .matrix-cell:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+  border-color: var(--palette-lilac);
+  box-shadow: 0 0 0 2px rgba(170, 162, 179, 0.35);
 }
 
-/* Viva Defense Chat Bubbles */
-.viva-bubble-examiner {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 27, 75, 0.5));
-  border: 1px solid rgba(147, 51, 234, 0.3);
-  border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
-}
+/* ==========================================================================
+   Animations
+   ========================================================================== */
 
-.viva-bubble-student {
-  background: linear-gradient(135deg, rgba(67, 56, 202, 0.3), rgba(79, 70, 229, 0.15));
-  border: 1px solid rgba(99, 102, 241, 0.45);
-  border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
-}
-
-/* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out forwards;
 }
 
-/* Print Stylesheet for Clean PDF Export */
+/* ==========================================================================
+   Print Stylesheet
+   ========================================================================== */
 @media print {
   header, nav, #audio-toggle-btn, .btn-primary, #viva-input-card, #quiz-problem-card, button, .no-print {
     display: none !important;
