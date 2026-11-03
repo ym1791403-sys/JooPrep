@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>JooPrep — منصة التأهيل الأكاديمي والعملي</title>
+  
+  <!-- Google Fonts: Cairo for Arabic & JetBrains Mono for Code -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Cairo', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#1e1b4b',
+            },
+            surface: {
+              dark: '#0f172a',
+              card: '#1e293b',
+              border: '#334155',
+              input: '#090d16',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- KaTeX for crisp LaTeX Math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-indigo-500 selection:text-white flex flex-col transition-colors duration-300">
+
+  <!-- Top Header / Navigation Bar -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-slate-800 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="navigate('dashboard')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/25">
+          <i data-lucide="graduation-cap" class="w-6 h-6 text-white"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl font-black tracking-tight text-white">Joo<span class="text-indigo-400">Prep</span></span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">v2 المطوّرة</span>
+          </div>
+          <p class="text-[11px] text-slate-400 hidden sm:block">تدخل الامتحان والمناقشة وإنت مجربهم قبل كده</p>
+        </div>
+      </div>
+
+      <!-- Main Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-1 bg-slate-900/60 p-1 rounded-xl border border-slate-800/80 text-sm">
+        <button onclick="navigate('dashboard')" id="nav-btn-dashboard" class="nav-link px-3.5 py-1.5 rounded-lg font-medium transition flex items-center gap-2 text-indigo-400 bg-indigo-600/10">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          الرئيسية
+        </button>
+        <button onclick="navigate('quizzes')" id="nav-btn-quizzes" class="nav-link px-3.5 py-1.5 rounded-lg font-medium transition flex items-center gap-2 text-slate-400 hover:text-slate-200">
+          <i data-lucide="calculator" class="w-4 h-4"></i>
+          كويزات الخطوات
+        </button>
+        <button onclick="navigate('viva')" id="nav-btn-viva" class="nav-link px-3.5 py-1.5 rounded-lg font-medium transition flex items-center gap-2 text-slate-400 hover:text-slate-200">
+          <i data-lucide="mic" class="w-4 h-4"></i>
+          المناقشة الشفوية
+        </button>
+        <button onclick="navigate('prep-sheet')" id="nav-btn-prep-sheet" class="nav-link px-3.5 py-1.5 rounded-lg font-medium transition flex items-center gap-2 text-slate-400 hover:text-slate-200">
+          <i data-lucide="file-text" class="w-4 h-4"></i>
+          ورقة التحضير
+        </button>
+        <button onclick="navigate('error-notebook')" id="nav-btn-error-notebook" class="nav-link px-3.5 py-1.5 rounded-lg font-medium transition flex items-center gap-2 text-slate-400 hover:text-slate-200">
+          <i data-lucide="book-x" class="w-4 h-4"></i>
+          دفتر الأخطاء
+          <span id="nav-error-count" class="hidden text-[10px] bg-rose-500/20 text-rose-300 px-1.5 py-0.2 rounded-full font-bold">0</span>
+        </button>
+      </nav>
+
+      <!-- Right Action Controls -->
+      <div class="flex items-center gap-2">
+        <!-- Audio Readout Toggle -->
+        <button id="audio-toggle-btn" onclick="toggleAudio()" title="تشغيل/كتم الصوت التلقائي" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-indigo-400 transition">
+          <i data-lucide="volume-2" id="audio-icon" class="w-4 h-4 text-emerald-400"></i>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button onclick="toggleTheme()" title="تبديل الوضع الليلي / النهاري" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-amber-400 transition">
+          <i data-lucide="moon" id="theme-icon" class="w-4 h-4"></i>
+        </button>
+
+        <!-- Profile Button -->
+        <button onclick="navigate('profile')" class="flex items-center gap-2 p-1.5 sm:px-3 sm:py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:border-slate-700 transition">
+          <div class="w-7 h-7 rounded-full bg-indigo-500/20 text-indigo-400 font-bold flex items-center justify-center text-xs">
+            أ
+          </div>
+          <span class="text-xs font-semibold hidden sm:inline" id="header-user-name">أحمد محمود</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main View Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ================= VIEW 1: DASHBOARD (الرئيسية) ================= -->
+    <div id="view-dashboard" class="space-y-6">
+      
+      <!-- Welcome Banner & Quick Action (Reaching first question in < 3 clicks) -->
+      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-l from-indigo-950 via-slate-900 to-slate-900 border border-indigo-900/40 p-6 sm:p-8 shadow-xl">
+        <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              موجة الـ 48 ساعة قبل المعمل
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              جاهز تدوس وتكسر حاجز الخوف؟ 🚀
+            </h1>
+            <p class="text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed">
+              هنا مفيش حفظ بدون فهم؛ بنحسب كل خطوة رياضية بدقة ونشخص أخطاء الإشارات والمحددات، ونحاكي مناقشة المعمل الواقعية قبل ما تقف قدام المعيد.
+            </p>
+          </div>
+          
+          <!-- Rapid Launch Buttons (< 3 clicks!) -->
+          <div class="flex flex-col sm:flex-row gap-3 flex-shrink-0">
+            <button onclick="quickStartQuiz('linear_algebra')" class="btn-primary px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition transform active:scale-95">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              ابدأ تدريب فوري
+            </button>
+            <button onclick="navigate('viva')" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-sm border border-slate-700 flex items-center justify-center gap-2 transition transform active:scale-95">
+              <i data-lucide="mic" class="w-4 h-4 text-purple-400"></i>
+              محاكاة الشفوي
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Readiness Index Gauge & Key Stats Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Readiness Gauge Card (Section 7) -->
+        <div class="lg:col-span-1 rounded-2xl bg-slate-900 border border-slate-800 p-6 flex flex-col justify-between shadow-lg relative overflow-hidden">
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800/80">
+            <div class="flex items-center gap-2">
+              <div class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
+                <i data-lucide="gauge" class="w-5 h-5"></i>
+              </div>
+              <h2 class="font-bold text-white text-base">مؤشر الجاهزية (R)</h2>
+            </div>
+            <span id="readiness-status-badge" class="text-xs px-2.5 py-1 rounded-full font-bold bg-slate-800 text-slate-400">
+              جارِ الحساب...
+            </span>
+          </div>
+
+          <!-- Circular / Dial Metric -->
+          <div class="my-6 flex flex-col items-center justify-center">
+            <div class="relative w-44 h-44 flex items-center justify-center">
+              <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                <!-- Background Ring -->
+                <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="8" class="text-slate-800" fill="transparent" />
+                <!-- Dynamic Progress Ring -->
+                <circle id="readiness-gauge-circle" cx="50" cy="50" r="40" stroke="currentColor" stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset="100" stroke-linecap="round" class="text-indigo-500 transition-all duration-1000 ease-out" fill="transparent" />
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span id="readiness-score-display" class="text-4xl font-black text-white tracking-tight">0%</span>
+                <span id="readiness-level-label" class="text-xs font-semibold text-slate-400 mt-1">ابدأ التدريب</span>
+              </div>
+            </div>
+            <p class="text-xs text-slate-400 text-center mt-3 font-mono">
+              R = 0.5 &times; Q (الكويزات) + 0.5 &times; V (الشفوي)
+            </p>
+          </div>
+
+          <!-- Q and V Breakdown -->
+          <div class="grid grid-cols-2 gap-3 pt-3 border-t border-slate-800/80 text-center">
+            <div class="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/50">
+              <div class="text-[11px] text-slate-400">دقة الكويزات (Q)</div>
+              <div id="q-score-display" class="text-lg font-bold text-indigo-400 mt-0.5">--</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/50">
+              <div class="text-[11px] text-slate-400">أداء الشفوي (V)</div>
+              <div id="v-score-display" class="text-lg font-bold text-purple-400 mt-0.5">--</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Topic Heatmap & Recommendation: "ذاكر ده الأول" (Section 7) -->
+        <div class="lg:col-span-2 rounded-2xl bg-slate-900 border border-slate-800 p-6 flex flex-col justify-between shadow-lg">
+          <div>
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800/80">
+              <div class="flex items-center gap-2">
+                <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400">
+                  <i data-lucide="compass" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h2 class="font-bold text-white text-base">الخريطة الحرارية للمواضيع</h2>
+                  <p class="text-xs text-slate-400">تحدد لك نقاط القوة ومواطن الخلل تلقائياً</p>
+                </div>
+              </div>
+
+              <!-- Recommendation Pill: ذاكر ده الأول -->
+              <div class="flex items-center gap-1.5 text-xs bg-amber-500/10 text-amber-300 border border-amber-500/20 px-3 py-1 rounded-full font-bold">
+                <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
+                <span>ذاكر ده الأول!</span>
+              </div>
+            </div>
+
+            <!-- Priority Alert Callout -->
+            <div id="study-first-callout" class="my-4 p-3.5 rounded-xl bg-slate-950 border border-amber-500/30 flex items-start gap-3">
+              <i data-lucide="pin" class="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5"></i>
+              <div class="text-xs text-slate-300">
+                <span class="font-bold text-amber-400">التوصية الأكاديمية:</span>
+                <span id="study-first-topics">محتاج تركز في فك المحددات 3x3 وقواعد إشارات القدرة في الدوائر.</span>
+              </div>
+            </div>
+
+            <!-- Heatmap Bars -->
+            <div id="dashboard-heatmap-container" class="space-y-3 mt-4">
+              <!-- Dynamically populated via JS -->
+            </div>
+          </div>
+
+          <!-- Bottom Shortcut to Resume -->
+          <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+            <span>آخر تدريب: <strong class="text-slate-200" id="dashboard-last-activity">اليوم</strong></span>
+            <button onclick="navigate('quizzes')" class="text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1">
+              عرض جميع الكويزات
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course Tracks Cards -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+          <i data-lucide="book-open" class="w-5 h-5 text-indigo-400"></i>
+          مسارات التدريب المتاحة
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          
+          <!-- Track 1: Linear Algebra -->
+          <div class="rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 p-5 transition flex flex-col justify-between group shadow-sm">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 group-hover:scale-110 transition">
+                  <i data-lucide="grid-3x3" class="w-6 h-6"></i>
+                </span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">جبر خطي</span>
+              </div>
+              <h4 class="font-extrabold text-white text-base">Linear Algebra</h4>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                محددات 3x3، معكوس المصفوفات (Inverse)، مصفوفة المرافقات (Cofactors)، والتدوير (Transpose).
+              </p>
+            </div>
+            <div class="pt-5 mt-4 border-t border-slate-800 flex items-center justify-between">
+              <span class="text-xs text-slate-500">حسابات حتمية بالكود</span>
+              <button onclick="startQuizWithTopic('linear_algebra', 'determinant_3x3')" class="px-3.5 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white text-xs font-bold transition">
+                تدريب الآن
+              </button>
+            </div>
+          </div>
+
+          <!-- Track 2: Computer Fundamentals -->
+          <div class="rounded-2xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 p-5 transition flex flex-col justify-between group shadow-sm">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition">
+                  <i data-lucide="binary" class="w-6 h-6"></i>
+                </span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">أساسيات حاسب</span>
+              </div>
+              <h4 class="font-extrabold text-white text-base">Computer Fundamentals</h4>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                تحويل أنظمة العد (Binary / Hex / Octal)، ومتمم الاثنين (Two's Complement)، وفخ قراءة البواقي بالعكس.
+              </p>
+            </div>
+            <div class="pt-5 mt-4 border-t border-slate-800 flex items-center justify-between">
+              <span class="text-xs text-slate-500">كشف فخ البواقي</span>
+              <button onclick="startQuizWithTopic('computer_fundamentals', 'base_conversion')" class="px-3.5 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white text-xs font-bold transition">
+                تدريب الآن
+              </button>
+            </div>
+          </div>
+
+          <!-- Track 3: Electric Circuits -->
+          <div class="rounded-2xl bg-slate-900 border border-slate-800 hover:border-amber-500/50 p-5 transition flex flex-col justify-between group shadow-sm">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 group-hover:scale-110 transition">
+                  <i data-lucide="zap" class="w-6 h-6"></i>
+                </span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">دوائر كهربية</span>
+              </div>
+              <h4 class="font-extrabold text-white text-base">Electric Circuits</h4>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                حساب القدرة المستهلكة والموردة (Passive Sign Convention)، وقواعد إشارات التيار والجهد.
+              </p>
+            </div>
+            <div class="pt-5 mt-4 border-t border-slate-800 flex items-center justify-between">
+              <span class="text-xs text-slate-500">ضبط قواعد الإشارات</span>
+              <button onclick="startQuizWithTopic('electric_circuits', 'circuits_power')" class="px-3.5 py-1.5 rounded-lg bg-amber-600/20 hover:bg-amber-600 text-amber-300 hover:text-white text-xs font-bold transition">
+                تدريب الآن
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ================= VIEW 2: STEP-BY-STEP QUIZZES (كويزات الرياضيات) ================= -->
+    <div id="view-quizzes" class="hidden space-y-6">
+      
+      <!-- Quiz Header & Controller Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+        <div class="flex items-center gap-3">
+          <div class="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400">
+            <i data-lucide="calculator" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h2 id="quiz-topic-title" class="font-bold text-white text-lg">كويز خطوة بخطوة</h2>
+            <p id="quiz-mode-description" class="text-xs text-slate-400">محرك حسابي حتمي يحلل خطواتك الوسيطة فورياً</p>
+          </div>
+        </div>
+
+        <!-- Mode & Topic Pickers -->
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Course Filter -->
+          <select id="quiz-course-select" onchange="loadNewProblem()" class="bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded-xl px-3 py-2 font-medium focus:border-indigo-500 outline-none">
+            <option value="linear_algebra">جبر خطي (Linear Algebra)</option>
+            <option value="computer_fundamentals">أنظمة العد (Computer Fund.)</option>
+            <option value="electric_circuits">دوائر كهربية (Circuits)</option>
+          </select>
+
+          <!-- Mode Toggle: Practice vs Exam -->
+          <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+            <button id="mode-btn-practice" onclick="setQuizMode('practice')" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white transition">
+              تدريب (تلميحات فورية)
+            </button>
+            <button id="mode-btn-exam" onclick="setQuizMode('exam')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition">
+              امتحان (مؤقت وبدون غش)
+            </button>
+          </div>
+
+          <!-- New Problem Generator Button -->
+          <button onclick="loadNewProblem()" title="توليد مسألة جديدة بأرقام عشوائية" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Problem Card -->
+      <div id="quiz-problem-card" class="rounded-2xl bg-slate-900 border border-slate-800 p-6 shadow-xl space-y-6">
+        
+        <!-- Step Progress Tracker & Timer -->
+        <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+          <div class="flex items-center gap-2">
+            <span id="quiz-step-indicator" class="text-xs font-bold px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+              خطوة 1 من 3
+            </span>
+            <span id="quiz-step-title" class="text-sm font-semibold text-slate-300">
+              حساب المحدد الصغير
+            </span>
+          </div>
+
+          <div id="quiz-timer-container" class="hidden items-center gap-1.5 text-xs font-mono text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+            <span id="quiz-timer">05:00</span>
+          </div>
+        </div>
+
+        <!-- Problem Prompt with LaTeX Math Rendering -->
+        <div class="bg-slate-950/80 border border-slate-800/80 rounded-xl p-5 space-y-3">
+          <div class="text-xs font-bold text-slate-400 flex items-center gap-1.5">
+            <i data-lucide="help-circle" class="w-4 h-4 text-indigo-400"></i>
+            المطلوب في هذه الخطوة:
+          </div>
+          <div id="quiz-step-prompt" class="text-sm sm:text-base text-slate-100 leading-relaxed font-sans" dir="rtl">
+            <!-- Dynamically populated math prompt -->
+          </div>
+        </div>
+
+        <!-- Student Input Section & Custom Keypad -->
+        <div class="space-y-4">
+          
+          <!-- Input Field with LTR orientation for math -->
+          <div class="space-y-2">
+            <label class="block text-xs font-semibold text-slate-400">
+              أدخل إجابتك للخطوة الحالية (يقبل كسور اعتيادية مثل 1/2 أو أرقام سالبة أو مصفوفات):
+            </label>
+            <div class="relative">
+              <input type="text" id="quiz-student-input" dir="ltr" placeholder="مثال: 0.5 أو 1/2 أو 1 2; 3 4" 
+                class="w-full bg-slate-950 border border-slate-700 focus:border-indigo-500 text-slate-100 font-mono text-base rounded-xl px-4 py-3 outline-none transition shadow-inner">
+              <button onclick="clearStudentInput()" class="absolute right-3 top-3 text-slate-500 hover:text-slate-300 text-xs">
+                <i data-lucide="delete" class="w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Mobile-Friendly Custom Number / Matrix Pad (Section 10 & 15) -->
+          <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 space-y-2">
+            <div class="flex items-center justify-between text-[11px] text-slate-400 font-semibold px-1">
+              <span>لوحة إدخال الرياضيات السريعة (تسهيل الموبايل):</span>
+              <button onclick="toggleMatrixBuilder()" class="text-indigo-400 hover:underline flex items-center gap-1">
+                <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+                <span id="matrix-pad-toggle-text">محرر مصفوفة 2x2</span>
+              </button>
+            </div>
+
+            <!-- Custom Quick Buttons -->
+            <div class="grid grid-cols-6 sm:grid-cols-12 gap-1.5 font-mono text-sm" dir="ltr">
+              <button onclick="keypadInsert('1')" class="keypad-btn">1</button>
+              <button onclick="keypadInsert('2')" class="keypad-btn">2</button>
+              <button onclick="keypadInsert('3')" class="keypad-btn">3</button>
+              <button onclick="keypadInsert('4')" class="keypad-btn">4</button>
+              <button onclick="keypadInsert('5')" class="keypad-btn">5</button>
+              <button onclick="keypadInsert('6')" class="keypad-btn">6</button>
+              <button onclick="keypadInsert('7')" class="keypad-btn">7</button>
+              <button onclick="keypadInsert('8')" class="keypad-btn">8</button>
+              <button onclick="keypadInsert('9')" class="keypad-btn">9</button>
+              <button onclick="keypadInsert('0')" class="keypad-btn">0</button>
+              <button onclick="keypadInsert('-')" class="keypad-btn text-amber-400">-</button>
+              <button onclick="keypadInsert('/')" class="keypad-btn text-indigo-400">/</button>
+            </div>
+
+            <!-- Visual Matrix 2x2 Grid (Collapsible) -->
+            <div id="visual-matrix-builder" class="hidden pt-3 border-t border-slate-800/80 space-y-3">
+              <div class="text-xs text-slate-400">أدخل عناصر المصفوفة بالخلايا وسيتم توليد التنسيق تلقائياً:</div>
+              <div class="grid grid-cols-2 gap-2 max-w-xs mx-auto" dir="ltr">
+                <input type="text" id="mat-c11" placeholder="a11" class="matrix-cell">
+                <input type="text" id="mat-c12" placeholder="a12" class="matrix-cell">
+                <input type="text" id="mat-c21" placeholder="a21" class="matrix-cell">
+                <input type="text" id="mat-c22" placeholder="a22" class="matrix-cell">
+              </div>
+              <div class="text-center">
+                <button onclick="applyVisualMatrix()" class="text-xs font-bold px-4 py-1.5 rounded-lg bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-600 hover:text-white transition">
+                  تطبيق المصفوفة على خانة الإجابة
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Evaluation Action Buttons -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <div class="flex items-center gap-2">
+              <!-- Check Answer Button -->
+              <button onclick="submitStepAnswer()" id="submit-step-btn" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-lg shadow-indigo-600/25 flex items-center gap-2 transition">
+                <i data-lucide="check" class="w-4 h-4"></i>
+                تحقق من الخطوة
+              </button>
+
+              <!-- Hint Ladder Button (Section 5.1 & 4) -->
+              <button onclick="requestHint()" id="hint-btn" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 font-semibold text-xs flex items-center gap-1.5 transition">
+                <i data-lucide="lightbulb" class="w-4 h-4"></i>
+                سلم التلميحات (<span id="hint-level-count">0/3</span>)
+              </button>
+            </div>
+
+            <!-- Report Miscalculation Button (Section 11) -->
+            <button onclick="reportQuestionIssue()" class="text-slate-400 hover:text-rose-400 text-xs flex items-center gap-1">
+              <i data-lucide="flag" class="w-3.5 h-3.5"></i>
+              <span>بلّغ عن سؤال خطأ</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Real-Time Error Diagnosis Box (Section 5.2 Error Classifier) -->
+        <div id="quiz-feedback-box" class="hidden rounded-xl p-4 transition-all duration-300">
+          <div class="flex items-start gap-3">
+            <div id="quiz-feedback-icon" class="p-2 rounded-lg flex-shrink-0 mt-0.5"></div>
+            <div class="space-y-1">
+              <h5 id="quiz-feedback-title" class="font-bold text-sm"></h5>
+              <p id="quiz-feedback-diagnosis" class="text-xs text-slate-300 leading-relaxed"></p>
+              <p id="quiz-feedback-tip" class="text-xs text-indigo-300 font-semibold"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hint Ladder Display Box -->
+        <div id="quiz-hint-box" class="hidden rounded-xl bg-amber-950/30 border border-amber-500/30 p-4 space-y-2">
+          <div class="flex items-center gap-2 text-amber-400 font-bold text-xs">
+            <i data-lucide="help-circle" class="w-4 h-4"></i>
+            <span id="quiz-hint-title">تلميح المستوى 1</span>
+          </div>
+          <div id="quiz-hint-content" class="text-xs text-slate-200 leading-relaxed font-sans" dir="rtl"></div>
+        </div>
+
+      </div>
+
+      <!-- Problem Solved Celebration & Next Steps -->
+      <div id="quiz-success-card" class="hidden rounded-2xl bg-gradient-to-tr from-emerald-950 via-slate-900 to-slate-900 border border-emerald-500/40 p-6 sm:p-8 text-center space-y-4">
+        <div class="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/30 shadow-lg shadow-emerald-500/20">
+          <i data-lucide="award" class="w-8 h-8"></i>
+        </div>
+        <div class="space-y-1">
+          <h3 class="text-2xl font-black text-white">عاش يا بطل! حليت المسألة بالكامل 🎉</h3>
+          <p class="text-xs sm:text-sm text-slate-300 max-w-md mx-auto">
+            كل الخطوات الوسيطة اتحسبت بنجاح، ومؤشر الجاهزية بتاعك اتحرك للأمام!
+          </p>
+        </div>
+
+        <div class="flex justify-center gap-3 pt-2">
+          <button onclick="loadNewProblem()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg transition">
+            مسألة جديدة بأرقام أخرى
+          </button>
+          <button onclick="navigate('viva')" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 transition">
+            تدرب على الشفوي الآن
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ================= VIEW 3: ORAL VIVA DEFENSE (المناقشة الشفوية) ================= -->
+    <div id="view-viva" class="hidden space-y-6">
+      
+      <!-- Viva Setup Screen (Shown before session starts) -->
+      <div id="viva-setup-screen" class="space-y-6">
+        
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-2">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-semibold">
+            <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+            محاكاة مناقشة المعمل الواقعية (Defense / Viva)
+          </div>
+          <h2 class="text-2xl font-extrabold text-white">اكسر رعب المناقشة الشفوية قبل المعمل</h2>
+          <p class="text-sm text-slate-400 max-w-2xl leading-relaxed">
+            الصق كود مشروعك، واختر شخصية الممتحن واللهجة المناسبة؛ السيستم هيحلل الكود ويبدأ يطرح عليك أسئلة غير متوقعة في الـ Edge Cases والذاكرة والـ Big-O، ويقيمك بمعايير المعمل الرسمية.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Code Input Column -->
+          <div class="lg:col-span-2 rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-4 shadow-xl">
+            <div class="flex items-center justify-between">
+              <label class="text-sm font-bold text-white flex items-center gap-2">
+                <i data-lucide="code" class="w-4 h-4 text-indigo-400"></i>
+                الصق كود مشروعك هنا (C++, Python, Java... حد أقصى 300 سطر):
+              </label>
+              <button onclick="insertSampleCode()" class="text-xs text-indigo-400 hover:underline">
+                تجربة كود عينة جاهز
+              </button>
+            </div>
+
+            <textarea id="viva-code-input" dir="ltr" rows="12" placeholder="// الصق كودك هنا...&#10;#include <iostream>&#10;using namespace std;&#10;int main() { ... }"
+              class="w-full bg-slate-950 border border-slate-800 focus:border-purple-500 text-slate-200 font-mono text-xs sm:text-sm rounded-xl p-4 outline-none transition leading-relaxed"></textarea>
+
+            <div class="flex items-center justify-between text-xs text-slate-500">
+              <span>الكود يعامل كبيانات فقط (Prompt-Injection Protected)</span>
+              <span id="code-line-counter">0 سطر</span>
+            </div>
+          </div>
+
+          <!-- Persona & Settings Column -->
+          <div class="space-y-6">
+            
+            <!-- Persona Picker (Section 6.4) -->
+            <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3 shadow-xl">
+              <label class="text-sm font-bold text-white flex items-center gap-2">
+                <i data-lucide="user-check" class="w-4 h-4 text-purple-400"></i>
+                اختر شخصية الممتحن:
+              </label>
+
+              <div class="space-y-2">
+                <!-- Strict TA -->
+                <label class="persona-option-card flex items-start gap-3 p-3 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-purple-500 transition">
+                  <input type="radio" name="viva-persona" value="strict_ta" checked class="mt-1 text-purple-600 focus:ring-purple-500">
+                  <div class="text-xs space-y-0.5">
+                    <div class="font-bold text-white flex items-center gap-1.5">
+                      <span>👨‍🏫 المعيد الصارم</span>
+                      <span class="text-[10px] text-rose-400 bg-rose-500/10 px-1.5 py-0.2 rounded font-semibold">حالات حافة وذاكرة</span>
+                    </div>
+                    <p class="text-slate-400">يركز على الـ Pointers، تسريب الذاكرة، وكسر حدود المصفوفات.</p>
+                  </div>
+                </label>
+
+                <!-- Academic Prof -->
+                <label class="persona-option-card flex items-start gap-3 p-3 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-purple-500 transition">
+                  <input type="radio" name="viva-persona" value="academic_prof" class="mt-1 text-purple-600 focus:ring-purple-500">
+                  <div class="text-xs space-y-0.5">
+                    <div class="font-bold text-white flex items-center gap-1.5">
+                      <span>🎓 الأستاذ الأكاديمي</span>
+                      <span class="text-[10px] text-indigo-400 bg-indigo-500/10 px-1.5 py-0.2 rounded font-semibold">Big-O والتصميم</span>
+                    </div>
+                    <p class="text-slate-400">يركز على التعقيد الزمني والمكاني والمفاضلة بين هياكل البيانات.</p>
+                  </div>
+                </label>
+
+                <!-- Friendly TA -->
+                <label class="persona-option-card flex items-start gap-3 p-3 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-purple-500 transition">
+                  <input type="radio" name="viva-persona" value="friendly_ta" class="mt-1 text-purple-600 focus:ring-purple-500">
+                  <div class="text-xs space-y-0.5">
+                    <div class="font-bold text-white flex items-center gap-1.5">
+                      <span>🤝 المعيد الودود</span>
+                      <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded font-semibold">تدريب بتلميحات</span>
+                    </div>
+                    <p class="text-slate-400">هادئ ويشجعك، ويقدم تلميحات لو وقفت في نقطة صعبة.</p>
+                  </div>
+                </label>
+
+                <!-- Surprise Doc -->
+                <label class="persona-option-card flex items-start gap-3 p-3 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-purple-500 transition">
+                  <input type="radio" name="viva-persona" value="surprise_doc" class="mt-1 text-purple-600 focus:ring-purple-500">
+                  <div class="text-xs space-y-0.5">
+                    <div class="font-bold text-white flex items-center gap-1.5">
+                      <span>⚡ الدكتور المفاجئ</span>
+                      <span class="text-[10px] text-amber-400 bg-amber-500/10 px-1.5 py-0.2 rounded font-semibold">أسئلة 'ماذا لو؟'</span>
+                    </div>
+                    <p class="text-slate-400">يطرح سيناريوهات ضغط واقعية وتحديات غير متوقعة.</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Language & Level Settings -->
+            <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-3">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-xs font-semibold text-slate-300 block mb-1">لهجة المناقشة:</label>
+                  <select id="viva-language-select" class="w-full bg-slate-950 border border-slate-700 text-xs rounded-xl p-2 text-slate-200">
+                    <option value="mixed" selected>مصري أكاديمي مختلط (الأقرب للواقع)</option>
+                    <option value="ar">عربي فصيح</option>
+                    <option value="en">English (Official)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-xs font-semibold text-slate-300 block mb-1">مستوى التحدي:</label>
+                  <select id="viva-level-select" class="w-full bg-slate-950 border border-slate-700 text-xs rounded-xl p-2 text-slate-200">
+                    <option value="1">1 - تمهيدي هادئ</option>
+                    <option value="2" selected>2 - معمل قياسي (Standard)</option>
+                    <option value="3">3 - مناقشة قوية مع متابعة</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Start Button -->
+              <button onclick="startVivaSession()" id="viva-start-btn" class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-sm shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2 transition active:scale-95">
+                <i data-lucide="play" class="w-4 h-4"></i>
+                بدء المناقشة الآن
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Active Viva Session Screen (Turn-based Defense) -->
+      <div id="viva-active-screen" class="hidden space-y-6">
+        
+        <!-- Top Status Bar: Persona, Turn Count, Live Score -->
+        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div id="active-persona-avatar" class="text-3xl p-1 bg-slate-800 rounded-xl">👨‍🏫</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 id="active-persona-name" class="font-bold text-white text-base">المعيد الصارم</h3>
+                <span id="active-topic-badge" class="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full border border-purple-500/30 font-semibold">
+                  حالات الحافة (Edge-case)
+                </span>
+              </div>
+              <p id="active-persona-tone" class="text-xs text-slate-400">مناقشة الكود وتحليل التفاصيل</p>
+            </div>
+          </div>
+
+          <!-- Turn Progress & Score Counter -->
+          <div class="flex items-center gap-4 text-xs font-mono">
+            <div class="text-center">
+              <span class="text-slate-500 block text-[10px]">الدور الحالي</span>
+              <span id="viva-turn-counter" class="font-bold text-white text-sm">دور 1 من 5</span>
+            </div>
+            <div class="h-6 w-px bg-slate-800"></div>
+            <div class="text-center">
+              <span class="text-slate-500 block text-[10px]">الدرجة اللحظية</span>
+              <span id="viva-current-score" class="font-bold text-indigo-400 text-sm">--/10</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat / Dialogue Stream Container -->
+        <div id="viva-dialogue-stream" class="space-y-4 max-h-[550px] overflow-y-auto p-2">
+          <!-- Turns populated dynamically -->
+        </div>
+
+        <!-- Thinking Indicator (Section 10 & 15: "الممتحن بيفكر...") -->
+        <div id="viva-thinking-indicator" class="hidden rounded-xl bg-slate-900/80 border border-slate-800 p-4 flex items-center gap-3">
+          <div class="flex space-x-1 space-x-reverse">
+            <span class="w-2.5 h-2.5 bg-purple-400 rounded-full animate-bounce"></span>
+            <span class="w-2.5 h-2.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+            <span class="w-2.5 h-2.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
+          </div>
+          <span class="text-xs font-semibold text-slate-300">الممتحن بيراجع الكود وبيحلل إجابتك...</span>
+        </div>
+
+        <!-- Student Response Box -->
+        <div id="viva-input-card" class="rounded-2xl bg-slate-900 border border-slate-800 p-4 space-y-3 shadow-xl">
+          <label class="text-xs font-semibold text-slate-300 flex items-center justify-between">
+            <span>اكتب إجابتك هنا (تكلم بثقة واستخدم المصطلحات العلمية):</span>
+            <span class="text-[11px] text-slate-500">معيار التقييم: 40% صحة، 30% عمق وتبرير، 20% وضوح</span>
+          </label>
+
+          <textarea id="viva-student-answer" rows="3" placeholder="اشرح وجهة نظرك وتبريرك لسلوك الكود..."
+            class="w-full bg-slate-950 border border-slate-800 focus:border-purple-500 text-slate-100 text-sm rounded-xl p-3 outline-none transition leading-relaxed"></textarea>
+
+          <div class="flex items-center justify-between pt-1">
+            <div class="flex items-center gap-2">
+              <button onclick="submitVivaTurn()" id="viva-send-btn" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md transition flex items-center gap-2">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                إرسال الإجابة
+              </button>
+              
+              <!-- Voice Recognition Button (Optional Voice per Section 1) -->
+              <button onclick="toggleSpeechRecognition()" id="mic-record-btn" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition" title="إدخال صوتي">
+                <i data-lucide="mic" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <!-- End / Abort Session Early -->
+            <button onclick="finishVivaSessionEarly()" class="text-xs text-slate-500 hover:text-slate-300">
+              إنهاء وتوليد التقرير الختامي
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Viva Final Report Screen (Section 5, 6.1, 10) -->
+      <div id="viva-report-screen" class="hidden space-y-6">
+        
+        <div class="rounded-2xl bg-slate-900 border border-slate-800 p-6 sm:p-8 space-y-6 shadow-2xl relative">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-800 gap-4">
+            <div>
+              <span class="text-xs font-bold text-purple-400 bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20">
+                تقرير تقييم المناقشة الشفوية
+              </span>
+              <h2 class="text-2xl font-black text-white mt-2">التقرير الختامي للمناقشة الشفوية 🎓</h2>
+              <p class="text-xs text-slate-400">تقييم شامل لأدائك مع 3 نقاط قوة و 3 نقاط ضعف محددة ومواضيع المراجعة</p>
+            </div>
+
+            <div class="text-center sm:text-left">
+              <div class="text-xs text-slate-500 font-mono">الدرجة النهائية</div>
+              <div id="report-final-score" class="text-4xl font-black text-indigo-400 tracking-tight">85%</div>
+              <div id="report-badge" class="text-xs font-bold text-emerald-400 mt-0.5">جاهز بامتياز للمناقشة</div>
+            </div>
+          </div>
+
+          <!-- Verdict summary -->
+          <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 leading-relaxed" id="report-verdict-message">
+            <!-- Populated via JS -->
+          </div>
+
+          <!-- Strengths & Weaknesses Grid (Section 6.1) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            
+            <!-- 3 Strengths -->
+            <div class="p-5 rounded-xl bg-emerald-950/20 border border-emerald-500/30 space-y-3">
+              <h4 class="font-bold text-emerald-400 text-sm flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                أبرز 3 نقاط قوة أظهرتها:
+              </h4>
+              <ul id="report-strengths-list" class="space-y-2 text-xs text-slate-200 leading-relaxed list-disc list-inside">
+                <!-- Populated via JS -->
+              </ul>
+            </div>
+
+            <!-- 3 Weaknesses -->
+            <div class="p-5 rounded-xl bg-rose-950/20 border border-rose-500/30 space-y-3">
+              <h4 class="font-bold text-rose-400 text-sm flex items-center gap-2">
+                <i data-lucide="alert-octagon" class="w-4 h-4"></i>
+                3 نقاط ضعف لازم تعالجهم قبل المعمل:
+              </h4>
+              <ul id="report-weaknesses-list" class="space-y-2 text-xs text-slate-200 leading-relaxed list-disc list-inside">
+                <!-- Populated via JS -->
+              </ul>
+            </div>
+
+          </div>
+
+          <!-- Recommended Review Topics -->
+          <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+            <h5 class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+              <i data-lucide="bookmark" class="w-4 h-4"></i>
+              مواضيع مقترحة للمراجعة السريعة:
+            </h5>
+            <div id="report-review-topics" class="flex flex-wrap gap-2 pt-1">
+              <!-- Populated via JS -->
+            </div>
+          </div>
+
+          <!-- Action buttons: Print / New Viva -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-800">
+            <button onclick="window.print()" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs flex items-center gap-2 transition">
+              <i data-lucide="printer" class="w-4 h-4"></i>
+              طباعة / حفظ التقرير (PDF)
+            </button>
+            <div class="flex items-center gap-2">
+              <button onclick="generatePrepSheetForCode()" class="px-5 py-2.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600 text-indigo-200 hover:text-white border border-indigo-500/40 font-bold text-xs transition">
+                توليد ورقة التحضير الذكية للكود
+              </button>
+              <button onclick="resetVivaToSetup()" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition">
+                مناقشة كود جديد
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= VIEW 4: SMART PREP SHEET (ورقة التحضير الذكية) ================= -->
+    <div id="view-prep-sheet" class="hidden space-y-6">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold">
+            <i data-lucide="file-check" class="w-3.5 h-3.5"></i>
+            ورقة التحضير الذكية (Smart Prep Sheet)
+          </div>
+          <h2 class="text-2xl font-extrabold text-white mt-1">10 أسئلة فخ متوقعة مع إجاباتها النموذجية</h2>
+          <p class="text-xs text-slate-400 mt-1 max-w-xl">
+            مبنية خصيصاً على هيكل كودك؛ توضح لك السؤال، وسبب الفخ اللي المعيد بيختبرك فيه، والإجابة الدقيقة اللي تبهر الممتحن.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 flex items-center gap-2 transition">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            طباعة الورقة (PDF)
+          </button>
+          <button onclick="navigate('viva')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition">
+            كود جديد
+          </button>
+        </div>
+      </div>
+
+      <!-- Questions List (Section 6.6: category, question, trapReason, modelAnswer) -->
+      <div id="prep-sheet-questions-container" class="space-y-4">
+        <!-- Dynamically loaded questions -->
+      </div>
+    </div>
+
+
+    <!-- ================= VIEW 5: ERROR NOTEBOOK (دفتر الأخطاء) ================= -->
+    <div id="view-error-notebook" class="hidden space-y-6">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs font-semibold">
+            <i data-lucide="book-x" class="w-3.5 h-3.5"></i>
+            سجل أخطائك المتكررة (Error Notebook)
+          </div>
+          <h2 class="text-2xl font-extrabold text-white mt-1">راجع الأخطاء اللي وقعت فيها قبل الامتحان</h2>
+          <p class="text-xs text-slate-400 mt-1">
+            مصنفة حسب النمط (إشارات، نسيان المحدد det، تدوير المصفوفة، قراءة البواقي بالعكس). أعد حلها حتى تتقنها تماماً.
+          </p>
+        </div>
+
+        <!-- Filter options -->
+        <div class="flex items-center gap-2 text-xs">
+          <button onclick="filterErrors('all')" class="err-filter-btn px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold">الكل</button>
+          <button onclick="filterErrors('sign')" class="err-filter-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white font-semibold">أخطاء الإشارة</button>
+          <button onclick="filterErrors('forgot-det')" class="err-filter-btn px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white font-semibold">نسيان المحدد</button>
+        </div>
+      </div>
+
+      <!-- Errors List Container -->
+      <div id="error-notebook-items-container" class="space-y-3">
+        <!-- Populated dynamically via JS -->
+      </div>
+    </div>
+
+
+    <!-- ================= VIEW 6: USER PROFILE & SETTINGS (الملف الشخصي) ================= -->
+    <div id="view-profile" class="hidden space-y-6">
+      
+      <div class="max-w-2xl mx-auto rounded-2xl bg-slate-900 border border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
+        <div class="flex items-center gap-4 pb-6 border-b border-slate-800">
+          <div class="w-16 h-16 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-2xl font-black">
+            أ
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-white" id="profile-display-name">أحمد محمود</h2>
+            <p class="text-xs text-slate-400" id="profile-display-college">كلية الحاسبات والذكاء الاصطناعي</p>
+          </div>
+        </div>
+
+        <form onsubmit="handleProfileUpdate(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">اسم الطالب:</label>
+            <input type="text" id="profile-input-name" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 outline-none focus:border-indigo-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">الكلية / الجامعة (عام لكل الكليات):</label>
+            <input type="text" id="profile-input-college" placeholder="مثال: كلية الحاسبات والمعلومات جامعة القاهرة" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 outline-none focus:border-indigo-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">الفرقة الدراسية:</label>
+            <select id="profile-input-year" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-100 outline-none focus:border-indigo-500">
+              <option value="الفرقة الأولى">الفرقة الأولى (سنة أولى)</option>
+              <option value="الفرقة الثانية">الفرقة الثانية</option>
+              <option value="الفرقة الثالثة">الفرقة الثالثة</option>
+              <option value="الفرقة الرابعة">الفرقة الرابعة (تخرج)</option>
+            </select>
+          </div>
+
+          <!-- Quota Info Box (Section 9) -->
+          <div class="rounded-xl bg-slate-950 border border-slate-800 p-4 space-y-2 text-xs">
+            <div class="font-bold text-indigo-400">الحصة اليومية المتاحة (Rate Limit & Cost Protection):</div>
+            <div class="flex justify-between text-slate-300">
+              <span>جلسات الشفوي اليومية:</span>
+              <span id="quota-viva-text" class="font-bold text-white">0 / 3</span>
+            </div>
+            <div class="flex justify-between text-slate-300">
+              <span>توليد أوراق التحضير الذكية:</span>
+              <span id="quota-prep-text" class="font-bold text-white">0 / 5</span>
+            </div>
+            <div class="text-[11px] text-slate-500 pt-1">
+              * الكويزات الحتمية مفتوحة وغير محدودة مجاناً لجميع الطلاب.
+            </div>
+          </div>
+
+          <button type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-md transition">
+            حفظ التعديلات
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Mobile Bottom Navigation Bar (< 3 clicks fast access) -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-lg border-t border-slate-800 px-3 py-2 flex items-center justify-around text-[10px] font-medium text-slate-400">
+    <button onclick="navigate('dashboard')" id="mob-nav-dashboard" class="flex flex-col items-center gap-1 text-indigo-400">
+      <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+      الرئيسية
+    </button>
+    <button onclick="navigate('quizzes')" id="mob-nav-quizzes" class="flex flex-col items-center gap-1 hover:text-slate-200">
+      <i data-lucide="calculator" class="w-5 h-5"></i>
+      كويزات
+    </button>
+    <button onclick="navigate('viva')" id="mob-nav-viva" class="flex flex-col items-center gap-1 hover:text-slate-200">
+      <i data-lucide="mic" class="w-5 h-5"></i>
+      الشفوي
+    </button>
+    <button onclick="navigate('prep-sheet')" id="mob-nav-prep-sheet" class="flex flex-col items-center gap-1 hover:text-slate-200">
+      <i data-lucide="file-text" class="w-5 h-5"></i>
+      الورقة
+    </button>
+    <button onclick="navigate('error-notebook')" id="mob-nav-error-notebook" class="flex flex-col items-center gap-1 hover:text-slate-200">
+      <i data-lucide="book-x" class="w-5 h-5"></i>
+      الأخطاء
+    </button>
+  </nav>
+
+  <!-- Scripts -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
