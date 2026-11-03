@@ -1,0 +1,119 @@
+/* JooPrep Modern Design System Stylesheet */
+
+/* KaTeX Formula LTR and Clean Math Presentation */
+.katex, .katex-display, .katex-html {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  text-align: center;
+}
+
+.katex-display {
+  margin: 0.75rem 0 !important;
+  padding: 0.5rem 0 !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Custom Refined Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(7, 10, 18, 0.8);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.35);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.65);
+}
+
+/* Custom Math Keypad Buttons */
+.keypad-btn {
+  padding: 0.7rem 0.4rem;
+  background-color: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  border-radius: 0.75rem;
+  font-weight: 700;
+  color: #f8fafc;
+  text-align: center;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+}
+.keypad-btn:hover {
+  background-color: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.5);
+  transform: translateY(-1px);
+}
+.keypad-btn:active {
+  transform: scale(0.96);
+}
+
+/* Visual Matrix Input Cells */
+.matrix-cell {
+  background-color: #070c18;
+  border: 1px solid #334155;
+  border-radius: 0.75rem;
+  padding: 0.65rem;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  color: #ffffff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.matrix-cell:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+}
+
+/* Viva Defense Chat Bubbles */
+.viva-bubble-examiner {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 27, 75, 0.5));
+  border: 1px solid rgba(147, 51, 234, 0.3);
+  border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
+}
+
+.viva-bubble-student {
+  background: linear-gradient(135deg, rgba(67, 56, 202, 0.3), rgba(79, 70, 229, 0.15));
+  border: 1px solid rgba(99, 102, 241, 0.45);
+  border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Print Stylesheet for Clean PDF Export */
+@media print {
+  header, nav, #audio-toggle-btn, .btn-primary, #viva-input-card, #quiz-problem-card, button, .no-print {
+    display: none !important;
+  }
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  #view-prep-sheet, #viva-report-screen {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .bg-slate-900, .bg-slate-950, .rounded-3xl, .rounded-2xl {
+    background: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+  .text-white, .text-slate-100, .text-slate-200, .text-slate-300 {
+    color: #000000 !important;
+  }
+}

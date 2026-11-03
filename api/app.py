@@ -423,15 +423,37 @@ def resolve_error():
 
 # ----------------- Frontend & Static Serving -----------------
 
+API_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.abspath(os.path.join(API_DIR, ".."))
+
+def get_html_content():
+    for p in [
+        os.path.join(API_DIR, "index.html"),
+        os.path.join(ROOT_DIR, "index.html"),
+        os.path.join(ROOT_DIR, "frontend", "index.html")
+    ]:
+        if os.path.exists(p):
+            with open(p, "r", encoding="utf-8") as f:
+                return f.read()
+    return "<!DOCTYPE html><html><body><h1>JooPrep is running!</h1></body></html>"
+
 @app.route("/")
 def index():
-    return send_from_directory(BASE_DIR, "index.html")
+    return get_html_content(), 200, {"Content-Type": "text/html; charset=utf-8"}
+
+@app.route("/static/<path:filename>")
+def serve_static(filename):
+    for s_dir in [os.path.join(API_DIR, "static"), os.path.join(ROOT_DIR, "static")]:
+        if os.path.exists(os.path.join(s_dir, filename)):
+            return send_from_directory(s_dir, filename)
+    return "File not found", 404
 
 @app.route("/<path:path>")
-def static_files(path):
-    if os.path.exists(os.path.join(BASE_DIR, path)):
-        return send_from_directory(BASE_DIR, path)
-    return send_from_directory(BASE_DIR, "index.html")
+def catch_all(path):
+    for s_dir in [os.path.join(API_DIR, "static"), os.path.join(ROOT_DIR, "static")]:
+        if os.path.exists(os.path.join(s_dir, path)):
+            return send_from_directory(s_dir, path)
+    return get_html_content(), 200, {"Content-Type": "text/html; charset=utf-8"}
 
 if __name__ == "__main__":
     print("=" * 60)
