@@ -147,7 +147,7 @@
               منصة التأهيل الأكاديمي والعملي لطلاب الحاسبات والهندسة
             </div>
             <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
-              اكسر خوف الامتحان والمناقشة بتدريب حقيقي 🚀
+              اكسر حاجز الامتحانات والمناقشة بتدريب أكاديمي تفاعلي
             </h1>
             <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
               بنك كويزات MCQ تفاعلي للمواد الـ 6 الأساسية، مع تصحيح فوري وشروحات رياضية دقيقة، ومختبر كود ومحاكي مناقشة شفوية (Oral Viva) يضعك في أجواء المعمل الحقيقية.
@@ -351,18 +351,21 @@
 
         <!-- Question Prompt with LaTeX KaTeX Rendering -->
         <div class="bg-slate-950/80 border border-slate-800/90 rounded-2xl p-6 space-y-2 shadow-inner">
-          <div class="text-xs font-bold text-slate-400 flex items-center gap-2">
-            <i data-lucide="help-circle" class="w-4 h-4 text-indigo-400"></i>
-            نص السؤال:
+          <div class="text-xs font-bold text-slate-400 flex items-center justify-between">
+            <span class="flex items-center gap-2">
+              <i data-lucide="help-circle" class="w-4 h-4 text-indigo-400"></i>
+              Question Prompt / نص السؤال:
+            </span>
+            <span class="text-[11px] text-cyan-400 font-mono bg-cyan-500/10 px-2.5 py-0.5 rounded-full border border-cyan-500/20">English Exam • Arabic Explanation</span>
           </div>
-          <div id="quiz-step-prompt" class="text-base sm:text-lg text-slate-100 font-bold leading-relaxed font-sans" dir="rtl">
-            <!-- Dynamically populated question text -->
+          <div id="quiz-step-prompt" class="text-base sm:text-lg text-slate-100 font-semibold leading-relaxed font-sans text-left" dir="ltr">
+            <!-- Dynamically populated English question text -->
           </div>
         </div>
 
         <!-- 4 MCQ Options Container (A, B, C, D) -->
-        <div id="mcq-options-container" class="space-y-3">
-          <!-- Dynamically populated 4 options -->
+        <div id="mcq-options-container" class="space-y-3" dir="ltr">
+          <!-- Dynamically populated 4 options in English -->
         </div>
 
         <!-- Feedback & Explanation Box (Practice Mode) -->
@@ -417,12 +420,16 @@
           </div>
         </div>
 
-        <div class="flex flex-wrap justify-center gap-3 pt-3">
-          <button onclick="handleSubjectSelectChange()" class="btn-glass-primary px-6 py-3 rounded-2xl text-xs font-black transition shadow-lg flex items-center gap-2">
+        <div class="flex flex-wrap justify-center items-center gap-3 pt-3">
+          <button id="quiz-next-subject-btn" onclick="startNextSubjectQuiz()" class="btn-glass-primary px-6 py-3 rounded-2xl text-xs font-black transition shadow-xl flex items-center gap-2.5">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span id="quiz-next-subject-text">الانتقال إلى كويز المادة التالية</span>
+          </button>
+          <button onclick="handleSubjectSelectChange()" class="btn-glass-secondary px-5 py-3 rounded-2xl text-xs font-bold transition shadow-lg flex items-center gap-2">
             <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
             <span>إعادة اختبار المادة</span>
           </button>
-          <button onclick="navigate('viva')" class="btn-glass-secondary px-6 py-3 rounded-2xl text-xs font-extrabold transition flex items-center gap-2 shadow-lg">
+          <button onclick="navigate('viva')" class="btn-glass-secondary px-5 py-3 rounded-2xl text-xs font-extrabold transition flex items-center gap-2 shadow-lg">
             <i data-lucide="code-2" class="w-4 h-4 text-cyan-400"></i>
             <span>انتقل لمختبر الكود ومناقشة المعمل</span>
           </button>

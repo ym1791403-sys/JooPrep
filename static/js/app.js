@@ -8,14 +8,36 @@
  * - Student Readiness Gauge & Subject Mastery Heatmap
  */
 
-// ----------------- Comprehensive 6-Subject MCQ Question Bank -----------------
+// ----------------- Comprehensive 6-Subject MCQ Question Bank (100% English Exams • Arabic Explanations) -----------------
+const SUBJECT_ORDER = [
+  'linear_algebra',
+  'calculus',
+  'basic_electric',
+  'physics',
+  'english',
+  'arabic_intro'
+];
+
+function getNextSubjectKey(currentSubjectKey) {
+  const currentIndex = SUBJECT_ORDER.indexOf(currentSubjectKey);
+  if (currentIndex === -1) return SUBJECT_ORDER[0];
+  const nextIndex = (currentIndex + 1) % SUBJECT_ORDER.length;
+  return SUBJECT_ORDER[nextIndex];
+}
+
+window.startNextSubjectQuiz = function() {
+  const currentKey = state.activeSubjectKey || state.selectedSubject || 'linear_algebra';
+  const nextKey = getNextSubjectKey(currentKey);
+  startQuizForSubject(nextKey);
+};
+
 const SUBJECTS_DATA = {
   linear_algebra: {
     id: "linear_algebra",
     nameAr: "الجبر الخطي",
     nameEn: "Linear Algebra",
     code: "MATH 101",
-    theme: "from-blue-600 via-indigo-600 to-violet-600",
+    theme: "from-indigo-500 via-blue-600 to-cyan-500",
     borderGlow: "hover:border-indigo-500/50 hover:shadow-[0_0_30px_rgba(99,102,241,0.25)]",
     badgeBg: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30",
     icon: "grid-3x3",
@@ -23,7 +45,7 @@ const SUBJECTS_DATA = {
     questions: [
       {
         id: "la_1",
-        question: "ما هي قيمة محدد المصفوفة $A = \\begin{pmatrix} 3 & 2 \\\\ 1 & 4 \\end{pmatrix}$؟",
+        question: "What is the determinant of the 2x2 matrix $A = \begin{pmatrix} 3 & 2 \\ 1 & 4 \end{pmatrix}$?",
         options: [
           { key: "A", text: "10" },
           { key: "B", text: "14" },
@@ -31,55 +53,55 @@ const SUBJECTS_DATA = {
           { key: "D", text: "8" }
         ],
         correctKey: "A",
-        explanation: "قانون محدد مصفوفة 2x2 هو حاصل ضرب القطر الرئيسي ناقص حاصل ضرب القطر الثانوي: $\\det(A) = (3 \\times 4) - (2 \\times 1) = 12 - 2 = 10$."
+        explanation: "قانون محدد مصفوفة 2x2 هو حاصل ضرب عناصر القطر الرئيسي ناقص حاصل ضرب عناصر القطر الثانوي: $\det(A) = (3 \times 4) - (2 \times 1) = 12 - 2 = 10$."
       },
       {
         id: "la_2",
-        question: "تكون المصفوفة المربعة $A$ قابلة للعكس (Invertible / Non-singular) إذا وفقط إذا كان:",
+        question: "A square matrix $A$ is invertible (non-singular) if and only if:",
         options: [
-          { key: "A", text: "$\\det(A) = 0$" },
-          { key: "B", text: "$\\det(A) \\neq 0$" },
-          { key: "C", text: "جميع عناصر القطر الرئيسي تساوي 1" },
-          { key: "D", text: "المصفوفة متماثلة فقط" }
+          { key: "A", text: "$\det(A) = 0$" },
+          { key: "B", text: "$\det(A) \neq 0$" },
+          { key: "C", text: "All main diagonal entries are equal to 1" },
+          { key: "D", text: "The matrix is strictly symmetric" }
         ],
         correctKey: "B",
-        explanation: "الشرط الأساسي لوجود معكوس لمصفوفة مربعة $A^{-1}$ هو أن يكون محددها غير صفري $\\det(A) \\neq 0$ حتى لا نقسم على صفر في قانون المعكوس."
+        explanation: "الشرط الأساسي والضروري لوجود معكوس مصفوفة مربعة $A^{-1}$ هو أن يكون محددها غير صفري $\det(A) \neq 0$ حتى لا نقسم على صفر في صيغة المعكوس $\frac{1}{\det(A)} \operatorname{adj}(A)$."
       },
       {
         id: "la_3",
-        question: "إذا كانت $A$ مصفوفة من الرتبة $3 \\times 2$ و $B$ مصفوفة من الرتبة $2 \\times 4$، فإن رتبة المصفوفة الناتجة $AB$ هي:",
+        question: "If matrix $A$ has dimension $3 \times 2$ and matrix $B$ has dimension $2 \times 4$, what is the dimension of the product matrix $AB$?",
         options: [
-          { key: "A", text: "$2 \\times 2$" },
-          { key: "B", text: "$3 \\times 4$" },
-          { key: "C", text: "$4 \\times 3$" },
-          { key: "D", text: "لا يمكن إجراء عملية الضرب" }
+          { key: "A", text: "$2 \times 2$" },
+          { key: "B", text: "$3 \times 4$" },
+          { key: "C", text: "$4 \times 3$" },
+          { key: "D", text: "Matrix multiplication is undefined" }
         ],
         correctKey: "B",
-        explanation: "لإجراء الضرب يجب أن يتساوى عدد أعمدة الأولى مع صفوف الثانية (2 = 2)، ورتبة الناتج تكون (صفوف الأولى $\\times$ أعمدة الثانية) = $3 \\times 4$."
+        explanation: "لإمكانية ضرب مصفوفتين يجب أن يتساوى عدد أعمدة الأولى مع عدد صفوف الثانية ($2 = 2$). وتكون رتبة المصفوفة الناتجة هي (صفوف الأولى $\times$ أعمدة الثانية) أي $3 \times 4$."
       },
       {
         id: "la_4",
-        question: "مدوّر مصفوفة المدوّر $(A^T)^T$ يساوي دائماً:",
+        question: "For any matrix $A$, the double transpose $(A^T)^T$ is always equal to:",
         options: [
           { key: "A", text: "$-A$" },
           { key: "B", text: "$A^{-1}$" },
           { key: "C", text: "$A$" },
-          { key: "D", text: "$I$ (مصفوفة الوحدة)" }
+          { key: "D", text: "$I$ (Identity Matrix)" }
         ],
         correctKey: "C",
-        explanation: "تدوير المصفوفة مرتين يعيد الصفوف إلى مواقعها الأصلية كصفوف، وبالتالي $(A^T)^T = A$."
+        explanation: "تدوير المصفوفة مرتين يعيد الصفوف والأعمدة إلى وضعها الأصلي تماماً، وبالتالي فإن $(A^T)^T = A$."
       },
       {
         id: "la_5",
-        question: "في نظام المعادلات $Ax = b$، إذا كان $\\det(A) \\neq 0$ فإن للنظام:",
+        question: "In a system of linear equations $Ax = b$ with a square coefficient matrix $A$, if $\det(A) \neq 0$, the system has:",
         options: [
-          { key: "A", text: "حل وحيد فقط (Unique Solution)" },
-          { key: "B", text: "عدد لا نهائي من الحلول" },
-          { key: "C", text: "لا يوجد حل على الإطلاق" },
-          { key: "D", text: "حلين متطابقين فقط" }
+          { key: "A", text: "A unique solution" },
+          { key: "B", text: "Infinitely many solutions" },
+          { key: "C", text: "No solution (inconsistent)" },
+          { key: "D", text: "Exactly two distinct solutions" }
         ],
         correctKey: "A",
-        explanation: "عندما يكون المحدد غير صفري، تكون المصفوفة قابلة للعكس ويمكن إيجاد الحل الوحيد مباشرة بالقانون $x = A^{-1}b$ (قاعدة كرامر)."
+        explanation: "عندما يكون محدد مصفوفة المعاملات غير صفري، تكون المصفوفة قابلة للعكس ويمتلك النظام حلاً وحيداً فقط يُحسب من $x = A^{-1}b$ (قاعدة كرامر Cramer's Rule)."
       }
     ]
   },
@@ -97,19 +119,19 @@ const SUBJECTS_DATA = {
     questions: [
       {
         id: "calc_1",
-        question: "ما هي قيمة النهاية الشهيرة $\\lim_{x \\to 0} \\frac{\\sin(x)}{x}$؟",
+        question: "Evaluate the fundamental trigonometric limit: $\lim_{x \to 0} \frac{\sin(x)}{x}$",
         options: [
           { key: "A", text: "0" },
           { key: "B", text: "1" },
-          { key: "C", text: "$\\infty$" },
-          { key: "D", text: "غير معرّفة" }
+          { key: "C", text: "$\infty$" },
+          { key: "D", text: "Undefined" }
         ],
         correctKey: "B",
-        explanation: "هذه نهاية قياسية أساسية في التفاضل $\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = 1$، ويمكن إثباتها أيضاً بقاعدة لوبيتال $\\frac{\\cos(0)}{1} = 1$."
+        explanation: "هذه نهاية قياسية شهيرة في حساب التفاضل $\lim_{x \to 0} \frac{\sin(x)}{x} = 1$، ويمكن إثباتها بنظرية الشطيرة (Squeeze Theorem) أو باستخدام قاعدة لوبيتال $\frac{\cos(0)}{1} = 1$."
       },
       {
         id: "calc_2",
-        question: "مشتقة الدالة $f(x) = x^4 - 3x^2 + 7$ هي:",
+        question: "What is the first derivative of the polynomial function $f(x) = x^4 - 3x^2 + 7$?",
         options: [
           { key: "A", text: "$4x^3 - 6x$" },
           { key: "B", text: "$4x^3 - 6x + 7$" },
@@ -117,11 +139,11 @@ const SUBJECTS_DATA = {
           { key: "D", text: "$4x^3 - 3x$" }
         ],
         correctKey: "A",
-        explanation: "باستخدام قاعدة القوة $\\frac{d}{dx} x^n = n x^{n-1}$: مشتقة $x^4$ هي $4x^3$، ومشتقة $-3x^2$ هي $-6x$، ومشتقة الثابت 7 هي 0."
+        explanation: "باستخدام قاعدة القوة $\frac{d}{dx} x^n = n x^{n-1}$: مشتقة $x^4$ هي $4x^3$، ومشتقة $-3x^2$ هي $-6x$، ومشتقة الحد الثابت 7 هي 0."
       },
       {
         id: "calc_3",
-        question: "ما هي قيمة التكامل غير المحدود $\\int (3x^2 + 2x) \\, dx$؟",
+        question: "Evaluate the indefinite integral: $\int (3x^2 + 2x) \, dx$",
         options: [
           { key: "A", text: "$x^3 + x^2 + C$" },
           { key: "B", text: "$6x + 2 + C$" },
@@ -129,31 +151,31 @@ const SUBJECTS_DATA = {
           { key: "D", text: "$x^3 + 2x + C$" }
         ],
         correctKey: "A",
-        explanation: "نزيد الأس واحداً ونقسم على الأس الجديد: $\\int 3x^2 dx = x^3$ و $\\int 2x dx = x^2$، وبإضافة ثابت التكامل ينتج $x^3 + x^2 + C$."
+        explanation: "قاعدة تكامل كثيرات الحدود: $\int 3x^2 dx = \frac{3x^3}{3} = x^3$ و $\int 2x dx = \frac{2x^2}{2} = x^2$، وبإضافة ثابت التكامل ينتج $x^3 + x^2 + C$."
       },
       {
         id: "calc_4",
-        question: "مشتقة الدالة الأسية الطبيعية $f(x) = e^{3x}$ هي:",
+        question: "What is the derivative of the exponential function $f(x) = e^{3x}$ with respect to $x$?",
         options: [
           { key: "A", text: "$e^{3x}$" },
           { key: "B", text: "$3e^{3x}$" },
-          { key: "C", text: "$\\frac{1}{3}e^{3x}$" },
+          { key: "C", text: "$\frac{1}{3}e^{3x}$" },
           { key: "D", text: "$3x e^{3x-1}$" }
         ],
         correctKey: "B",
-        explanation: "وفقاً لقاعدة السلسلة (Chain Rule)، مشتقة $e^{u}$ هي $u' \\cdot e^u$؛ وهنا مشتقة الأس $3x$ هي 3، فيكون الناتج $3e^{3x}$."
+        explanation: "وفقاً لقاعدة السلسلة (Chain Rule)، مشتقة $e^{u(x)}$ هي $u'(x) \cdot e^{u(x)}$؛ ومشتقة الأس $3x$ هي 3، لذا الناتج $3e^{3x}$."
       },
       {
         id: "calc_5",
-        question: "تكون للدالة نقطة حرجة (Critical Point) عند $x = c$ إذا كان:",
+        question: "In differential calculus, a function $f(x)$ has a critical point at $x = c$ if:",
         options: [
-          { key: "A", text: "$f'(c) = 0$ أو $f'(c)$ غير موجودة" },
+          { key: "A", text: "$f'(c) = 0$ or $f'(c)$ is undefined" },
           { key: "B", text: "$f(c) = 0$" },
-          { key: "C", text: "$f''(c) > 0$ فقط" },
-          { key: "D", text: "الدالة خطية فقط" }
+          { key: "C", text: "$f''(c) > 0$ strictly" },
+          { key: "D", text: "The function is strictly linear" }
         ],
         correctKey: "A",
-        explanation: "تعريف النقطة الحرجة في حساب التفاضل هو أي نقطة في مجال الدالة تجعل المشتقة الأولى مساوية للصفر أو تجعل المشتقة غير معرّفة."
+        explanation: "تعريف النقطة الحرجة (Critical Point) هو أي نقطة داخل مجال الدالة تجعل المشتقة الأولى مساوية للصفر $f'(c) = 0$ أو تجعل المشتقة غير موجودة أو غير معرّفة."
       }
     ]
   },
@@ -171,63 +193,63 @@ const SUBJECTS_DATA = {
     questions: [
       {
         id: "be_1",
-        question: "وفقاً لقانون كيرشوف للتيار (KCL)، فإن المجموع الجبري للتيارات عند أي عقدة (Node) يساوي:",
+        question: "According to Kirchhoff's Current Law (KCL), the algebraic sum of currents entering and leaving any node is:",
         options: [
-          { key: "A", text: "الجهد الكلي للدائرة" },
-          { key: "B", text: "صفراً ($0$)" },
-          { key: "C", text: "مجموع المقاومات" },
-          { key: "D", text: "ما لا نهاية" }
+          { key: "A", text: "The total circuit source voltage" },
+          { key: "B", text: "Zero ($0$)" },
+          { key: "C", text: "The total branch resistance" },
+          { key: "D", text: "Infinity" }
         ],
         correctKey: "B",
-        explanation: "قانون KCL يعتمد على مبدأ حفظ الشحنة الكهربائية: التيارات الداخلة إلى العقدة تساوي التيارات الخارجة منها، فالمجموع الجبري $\\sum I = 0$."
+        explanation: "قانون كيرشوف للتيار KCL مبني على مبدأ حفظ الشحنة الكهربائية: مجموع التيارات الداخلة إلى أي عقدة يساوي مجموع التيارات الخارجة منها، فالمجموع الجبري $\sum I = 0$."
       },
       {
         id: "be_2",
-        question: "مقاومتان $R_1 = 6\\,\\Omega$ و $R_2 = 3\\,\\Omega$ موصلتان على التوازي؛ المقاومة المكافئة $R_{eq}$ تساوي:",
+        question: "Two resistors $R_1 = 6\,\Omega$ and $R_2 = 3\,\Omega$ are connected in parallel. What is the equivalent resistance $R_{eq}$?",
         options: [
-          { key: "A", text: "$9\\,\\Omega$" },
-          { key: "B", text: "$2\\,\\Omega$" },
-          { key: "C", text: "$3\\,\\Omega$" },
-          { key: "D", text: "$18\\,\\Omega$" }
+          { key: "A", text: "$9\,\Omega$" },
+          { key: "B", text: "$2\,\Omega$" },
+          { key: "C", text: "$3\,\Omega$" },
+          { key: "D", text: "$18\,\Omega$" }
         ],
         correctKey: "B",
-        explanation: "قانون مقاومتين على التوازي هو: $R_{eq} = \\frac{R_1 \\times R_2}{R_1 + R_2} = \\frac{6 \\times 3}{6 + 3} = \\frac{18}{9} = 2\\,\\Omega$."
+        explanation: "قانون مقاومتين متصلتين على التوازي: $R_{eq} = \frac{R_1 \times R_2}{R_1 + R_2} = \frac{6 \times 3}{6 + 3} = \frac{18}{9} = 2\,\Omega$."
       },
       {
         id: "be_3",
-        question: "حسب اتفاقية الإشارات السلبية (Passive Sign Convention)، إذا دخل التيار من الطرف الموجب (+) لعنصر ما، فإن القدرة تكون:",
+        question: "Under the Passive Sign Convention, an electrical circuit element absorbs positive power if:",
         options: [
-          { key: "A", text: "ممتصة وموجبة ($P > 0$)" },
-          { key: "B", text: "موردة وسالبة ($P < 0$)" },
-          { key: "C", text: "مساوية للصفر دائماً" },
-          { key: "D", text: "غير معتمدة على إشارة التيار" }
+          { key: "A", text: "Current enters the positive (+) voltage terminal ($P > 0$)" },
+          { key: "B", text: "Current exits the positive (+) terminal" },
+          { key: "C", text: "The voltage across the element equals zero" },
+          { key: "D", text: "The element resistance is infinite" }
         ],
         correctKey: "A",
-        explanation: "إذا دخل التيار إلى القطب الموجب لعنصر، فهذا يعني أن العنصر يمتص طاقة من الدائرة (Absorbing Power) وتكون إشارة القدرة موجبة $+P = VI$."
+        explanation: "في اتفاقية الإشارات السلبية (Passive Sign Convention)، عندما يدخل التيار من الطرف الموجب للجهد يكون حاصل الضرب $P = V \times I > 0$ موجباً، مما يعني أن العنصر يمتص طاقة من الدائرة."
       },
       {
         id: "be_4",
-        question: "مصباح كهربي مقاومته $10\\,\\Omega$ يمر به تيار مقداره $2\\text{ A}$، ما هي القدرة المستهلكة في المصباح؟",
+        question: "Which formula calculates the Joule heating power dissipated in a resistor of resistance $R$ carrying current $I$?",
         options: [
-          { key: "A", text: "$20\\text{ W}$" },
-          { key: "B", text: "$40\\text{ W}$" },
-          { key: "C", text: "$200\\text{ W}$" },
-          { key: "D", text: "$5\\text{ W}$" }
+          { key: "A", text: "$P = I^2 R$" },
+          { key: "B", text: "$P = I / R$" },
+          { key: "C", text: "$P = V / I$" },
+          { key: "D", text: "$P = I R^2$" }
         ],
-        correctKey: "B",
-        explanation: "قانون القدرة بدلالة التيار والمقاومة هو $P = I^2 R = (2)^2 \\times 10 = 4 \\times 10 = 40\\text{ Watts}$."
+        correctKey: "A",
+        explanation: "القدرة الحرارية المبددة في مقاومة تُحسب من قانون جول: $P = V \times I = (I \cdot R) \times I = I^2 R$ أو $P = \frac{V^2}{R}$."
       },
       {
         id: "be_5",
-        question: "في دائرة تيار مستمر (DC Steady State)، يسلك المكثف (Capacitor) سلوك:",
+        question: "In a direct current (DC) steady-state circuit, an ideal capacitor acts as:",
         options: [
-          { key: "A", text: "دائرة قصر (Short Circuit)" },
-          { key: "B", text: "دائرة مفتوحة (Open Circuit)" },
-          { key: "C", text: "مقاومة قيمتها $1\\,\\Omega$" },
-          { key: "D", text: "مصدر جهد مستمر" }
+          { key: "A", text: "A short circuit ($0\,\Omega$)" },
+          { key: "B", text: "An open circuit (infinite resistance)" },
+          { key: "C", text: "An independent voltage source" },
+          { key: "D", text: "An ideal amplifier" }
         ],
         correctKey: "B",
-        explanation: "في حالة الاستقرار مع التيار المستمر DC، ينعدم تغير الجهد مع الزمن $\\frac{dv}{dt} = 0$، وبما أن $i = C \\frac{dv}{dt}$، فإن التيار يساوي صفراً، فيتصرف المكثف كدائرة مفتوحة Open Circuit."
+        explanation: "في دوائر التيار المستمر (DC) عند الاستقرار، التيار عبر المكثف يُعطى بالعلاقة $i = C \frac{dv}{dt} = 0$ لأن الجهد ثابت ومشقته صفرية، وبالتالي يتصرف المكثف كدائرة مفتوحة (Open Circuit)."
       }
     ]
   },
@@ -245,63 +267,63 @@ const SUBJECTS_DATA = {
     questions: [
       {
         id: "phys_1",
-        question: "وفقاً لقانون كولوم، القوة الكهربية المتبادلة بين شحنتين نقطيتين تتناسب:",
+        question: "According to Coulomb's Law, the electrostatic force between two stationary point charges is inversely proportional to:",
         options: [
-          { key: "A", text: "طردياً مع المسافة بينهما" },
-          { key: "B", text: "عكسياً مع مربع المسافة بينهما ($1/r^2$)" },
-          { key: "C", text: "طردياً مع مربع المسافة" },
-          { key: "D", text: "عكسياً مع حاصل ضرب الشحنتين" }
+          { key: "A", text: "The distance between them ($r$)" },
+          { key: "B", text: "The square of the distance between them ($r^2$)" },
+          { key: "C", text: "The product of their charges" },
+          { key: "D", text: "The square root of distance" }
         ],
         correctKey: "B",
-        explanation: "قانون كولوم هو $F = k \\frac{|q_1 q_2|}{r^2}$؛ القوة تتناسب طردياً مع حاصل ضرب الشحنتين وعكسياً مع مربع المسافة بينهما."
+        explanation: "قانون كولوم ينص على أن $F = k \frac{|q_1 q_2|}{r^2}$؛ القوة تتناسب طردياً مع حاصل ضرب الشحنتين وعكسياً مع مربع المسافة الفاصلة بينهما ($1/r^2$)."
       },
       {
         id: "phys_2",
-        question: "جسم كتلته $4\\text{ kg}$ يتحرك بسرعة ثابتة مقدارها $3\\text{ m/s}$، ما هي طاقة حركته (Kinetic Energy)؟",
+        question: "An object with mass $m = 4\text{ kg}$ travels at a constant velocity of $v = 3\text{ m/s}$. What is its kinetic energy?",
         options: [
-          { key: "A", text: "$12\\text{ Joules}$" },
-          { key: "B", text: "$18\\text{ Joules}$" },
-          { key: "C", text: "$36\\text{ Joules}$" },
-          { key: "D", text: "$24\\text{ Joules}$" }
+          { key: "A", text: "$12\text{ Joules}$" },
+          { key: "B", text: "$18\text{ Joules}$" },
+          { key: "C", text: "$36\text{ Joules}$" },
+          { key: "D", text: "$24\text{ Joules}$" }
         ],
         correctKey: "B",
-        explanation: "قانون طاقة الحركة هو $KE = \\frac{1}{2} m v^2 = \\frac{1}{2} \\times 4 \\times (3)^2 = 2 \\times 9 = 18\\text{ Joules}$."
+        explanation: "قانون طاقة الحركة الميكانيكية هو $KE = \frac{1}{2} m v^2 = \frac{1}{2} \times 4 \times (3)^2 = 2 \times 9 = 18\text{ Joules}$."
       },
       {
         id: "phys_3",
-        question: "وحدة قياس شدة المجال الكهربائي (Electric Field) في النظام الدولي هي:",
+        question: "What is the standard SI unit for Electric Field intensity ($E$)?",
         options: [
-          { key: "A", text: "$\\text{Newton / Coulomb (N/C)}$ أو $\\text{Volt / meter (V/m)}$" },
-          { key: "B", text: "$\\text{Joule / Coulomb}$" },
-          { key: "C", text: "$\\text{Tesla}$" },
-          { key: "D", text: "$\\text{Watt / meter}$" }
+          { key: "A", text: "$\text{Newton / Coulomb (N/C)}$ or $\text{Volt / meter (V/m)}$" },
+          { key: "B", text: "$\text{Joule / Coulomb}$" },
+          { key: "C", text: "$\text{Tesla}$" },
+          { key: "D", text: "$\text{Watt / meter}$" }
         ],
         correctKey: "A",
-        explanation: "المجال الكهربائي يُعرّف بأنه القوة المؤثرة على وحدة الشحنات الموجبة $E = F / q$ ووحدته $\\text{N/C}$ وتكافئ $\\text{V/m}$."
+        explanation: "شدة المجال الكهربائي هي القوة الكهربائية المؤثرة على وحدة الشحنات الموجبة $E = F / q$، لذا وحدتها في النظام الدولي هي $\text{N/C}$ وتكافئ تماماً $\text{V/m}$."
       },
       {
         id: "phys_4",
-        question: "القانون الأول للديناميكا الحرارية يعبر في جوهره عن مبدأ:",
+        question: "The First Law of Thermodynamics is fundamentally a statement of:",
         options: [
-          { key: "A", text: "حفظ الشحنة الكهربية" },
-          { key: "B", text: "حفظ الطاقة (Energy Conservation)" },
-          { key: "C", text: "زيادة الإنتروبيا" },
-          { key: "D", text: "توازن الضغط والحرارة فقط" }
+          { key: "A", text: "Conservation of electric charge" },
+          { key: "B", text: "Conservation of energy" },
+          { key: "C", text: "Entropy continuously increasing" },
+          { key: "D", text: "Thermal equilibrium without heat transfer" }
         ],
         correctKey: "B",
-        explanation: "ينص القانون الأول للديناميكا الحرارية على أن التغير في الطاقة الداخلية لنظام معزول يساوي الحرارة المضافة مطروحاً منها الشغل المبذول $\\Delta U = Q - W$، وهو تطبيق مباشر لحفظ الطاقة."
+        explanation: "القانون الأول للديناميكا الحرارية يمثل مبدأ حفظ الطاقة: التغير في الطاقة الداخلية للنظام يساوي كمية الحرارة المضافة مطروحاً منها الشغل المنجز $\Delta U = Q - W$."
       },
       {
         id: "phys_5",
-        question: "إذا كانت سرعة الضوء في الفراغ $c$، فإن سرعته داخل وسط مادي معامل انكساره $n = 1.5$ تكون:",
+        question: "If the speed of light in vacuum is $c$, what is its propagation speed in an optical medium with refractive index $n = 1.5$?",
         options: [
-          { key: "A", text: "$1.5\\,c$" },
+          { key: "A", text: "$1.5\,c$" },
           { key: "B", text: "$c / 1.5$" },
           { key: "C", text: "$c$" },
-          { key: "D", text: "$2.25\\,c$" }
+          { key: "D", text: "$2.25\,c$" }
         ],
         correctKey: "B",
-        explanation: "معامل الانكسار يُعرّف بالنسبة $n = c / v$، وبالتالي سرعة الضوء في الوسط هي $v = c / n = c / 1.5$."
+        explanation: "معامل الانكسار البصري يُعرّف بأنه نسبة سرعة الضوء في الفراغ إلى سرعته في الوسط $n = c / v$، وبالتالي فإن سرعة الضوء في الوسط هي $v = c / n = c / 1.5$."
       }
     ]
   },
@@ -331,19 +353,19 @@ const SUBJECTS_DATA = {
       },
       {
         id: "eng_2",
-        question: "What is the precise meaning of the computing term 'Concurrent execution'?",
+        question: "What is the precise definition of the computing term 'Concurrent execution'?",
         options: [
-          { key: "A", text: "Running tasks strictly one after another" },
+          { key: "A", text: "Running tasks strictly sequentially one after another" },
           { key: "B", text: "Multiple tasks progressing during overlapping time periods" },
-          { key: "C", text: "Deleting outdated processes from memory" },
-          { key: "D", text: "Compiling code into machine language" }
+          { key: "C", text: "Deleting outdated processes from primary memory" },
+          { key: "D", text: "Compiling source code directly into machine instructions" }
         ],
         correctKey: "B",
-        explanation: "المصطلح 'Concurrency' في علوم الحاسب يعني إدارة وتنفيذ عدة مهام في فترات زمنية متداخلة دون الحاجة لانتهاء مهمة بالكامل لبدء الأخرى."
+        explanation: "المصطلح 'Concurrency' في هندسة الحاسوب ونظم التشغيل يعني معالجة وإدارة مهام متعددة في فترات زمنية متداخلة دون انتظار اكتمال كل مهمة على حدة."
       },
       {
         id: "eng_3",
-        question: "Choose the grammatically correct conditional sentence:",
+        question: "Choose the grammatically correct technical conditional sentence:",
         options: [
           { key: "A", text: "If the algorithm is optimized, execution time will decrease." },
           { key: "B", text: "If the algorithm will be optimized, execution time decreases." },
@@ -351,23 +373,23 @@ const SUBJECTS_DATA = {
           { key: "D", text: "If the algorithm optimize, time will decreased." }
         ],
         correctKey: "A",
-        explanation: "الحالة الشرطية الأولى (First Conditional) تتكون من: If + مضارع بسيط (is optimized) ثم will + المصدر (will decrease)."
+        explanation: "الحالة الشرطية الأولى (First Conditional) تتكون من: If + مضارع بسيط (is optimized) يعقبه في جواب الشرط will + المصدر (will decrease)."
       },
       {
         id: "eng_4",
-        question: "The term 'Bandwidth' in networking refers to:",
+        question: "In computer networking, the term 'Bandwidth' refers to:",
         options: [
-          { key: "A", text: "The physical weight of the network cable" },
-          { key: "B", text: "The maximum rate of data transfer across a given path" },
-          { key: "C", text: "The software used to browse the internet" },
-          { key: "D", text: "The battery consumption of a router" }
+          { key: "A", text: "The physical mass of network cables" },
+          { key: "B", text: "The maximum rate of data transfer across a given communication path" },
+          { key: "C", text: "The browser software used to navigate web portals" },
+          { key: "D", text: "The battery consumption of a wireless network adapter" }
         ],
         correctKey: "B",
-        explanation: "مصطلح عرض النطاق الترددي (Bandwidth) يعبر عن أقصى كمية بيانات يمكن نقلها عبر مسار اتصال في وحدة الزمن (غالباً بالـ Mbps أو Gbps)."
+        explanation: "عرض النطاق الترددي (Bandwidth) يعبر عن الطاقة القصوى لنقل حجم البيانات عبر قناة أو مسار شبكي في وحدة زمنية محددة (مثل Mbps أو Gbps)."
       },
       {
         id: "eng_5",
-        question: "Select the word that correctly completes the statement: 'The software architecture must be _______ to handle future increases in workload.'",
+        question: "Select the word that correctly completes the sentence: 'The software architecture must be _______ to support future growth in workloads.'",
         options: [
           { key: "A", text: "Scalable" },
           { key: "B", text: "Redundant" },
@@ -375,7 +397,7 @@ const SUBJECTS_DATA = {
           { key: "D", text: "Volatile" }
         ],
         correctKey: "A",
-        explanation: "كلمة 'Scalable' (قابلة للتوسع) هي الكلمة الهندسية الصحيحة لوصف النظام القادر على التكيف مع زيادة حجم العمل والبيانات."
+        explanation: "كلمة 'Scalable' (قابلة للتوسع والاستيعاب) هي المصطلح الهندسي الصحيح لوصف النظام البرمجي القادر على التوسع بسلاسة عند زيادة الحمل والبيانات."
       }
     ]
   },
@@ -393,63 +415,63 @@ const SUBJECTS_DATA = {
     questions: [
       {
         id: "ar_1",
-        question: "في الجملة التالية: 'إنّ المهندسينَ قادرونَ على الابتكار'، إعراب كلمة 'قادرون' هو:",
+        question: "In Arabic grammar, what is the grammatical parsing (إعراب) of the word 'قادرون' in the sentence: 'إنّ المهندسينَ قادرونَ على الابتكار' ?",
         options: [
-          { key: "A", text: "خبر إنّ مرفوع وعلامة رفعه الواو لأنه جمع مذكر سالم" },
-          { key: "B", text: "اسم إنّ منصوب وعلامة نصبه الياء" },
-          { key: "C", text: "نعت مرفوع وعلامة رفعه الضمة" },
-          { key: "D", text: "مبتدأ مؤخر مرفوع بالواو" }
+          { key: "A", text: "Khabar Inna (خبر إنّ) raised with Waw (مرفوع بالواو)" },
+          { key: "B", text: "Ism Inna (اسم إنّ) accusative with Yaa (منصوب بالياء)" },
+          { key: "C", text: "Adjective (نعت) raised with Damma" },
+          { key: "D", text: "Delayed subject (مبتدأ مؤخر)" }
         ],
         correctKey: "A",
-        explanation: "'إنّ' حرف ناسخ ينصب المبتدأ (المهندسينَ) ويرفع الخبر؛ فـ 'قادرون' خبر إنّ مرفوع بالواو لأنه جمع مذكر سالم."
+        explanation: "الحرف الناسخ 'إنّ' ينصب المبتدأ اسماً له (المهندسينَ منصوب بالياء) ويرفع الخبر خبراً له؛ وكلمة 'قادرونَ' خبر إنّ مرفوع وعلامة رفعه الواو لأنه جمع مذكر سالم."
       },
       {
         id: "ar_2",
-        question: "أي الكلمات التالية كُتبت همزتها همزة وصل صحيحة؟",
+        question: "Which of the following words correctly begins with Hamzat Wasl (همزة وصل) according to standard Arabic orthography?",
         options: [
-          { key: "A", text: "إستخدام" },
-          { key: "B", text: "استخدام" },
+          { key: "A", text: "استخدام (Istikhdam)" },
+          { key: "B", text: "إستخدام" },
           { key: "C", text: "أستخدام" },
           { key: "D", text: "إستخراج" }
         ],
-        correctKey: "B",
-        explanation: "الفعل السداسي وأمره ومصدره همزتها همزة وصل دائماً بدون همزة رسمية: (استخدمَ - استخدِمْ - استخدام)."
+        correctKey: "A",
+        explanation: "الفعل السداسي وماضيه وأمره ومصدره همزتها همزة وصل دائماً بدون همزة قطع: (استخدمَ - استخدِمْ - استخدام)."
       },
       {
         id: "ar_3",
-        question: "الهدف الجوهري من 'الملخص التنفيذي (Executive Summary)' في التقارير الهندسية هو:",
+        question: "What is the primary purpose of an 'Executive Summary' in an engineering technical report?",
         options: [
-          { key: "A", text: "سرد السيرة الذاتية للمهندسين المشاركين" },
-          { key: "B", text: "تقديم لمحة شاملة وموجزة عن المشكلة والنتائج والحل لصناع القرار" },
-          { key: "C", text: "إدراج شفرات الأكواد البرمجية بالكامل" },
-          { key: "D", text: "وضع مسرد المصطلحات المعربة فقط" }
+          { key: "A", text: "To summarize project objectives, methodology, key findings, and recommendations for decision makers" },
+          { key: "B", text: "To list the personal contact details and salaries of all contributors" },
+          { key: "C", text: "To provide raw unformatted database tables without context" },
+          { key: "D", text: "To replace the conclusion and references chapter" }
         ],
-        correctKey: "B",
-        explanation: "الملخص التنفيذي يُكتب لتمكين المسؤول وصانع القرار من معرفة جوهر المشكلة والنتائج والتوصية الأساسية دون الحاجة لقراءة التقرير الفني المطول."
+        correctKey: "A",
+        explanation: "الملخص التنفيذي (Executive Summary) هو مستند موجز وشامل يوضع في أول التقرير الفني ليمكّن صناع القرار من استيعاب أهداف المشروع ونتائجه وتوصياته بدقائق معدودة."
       },
       {
         id: "ar_4",
-        question: "علامة الترقيم المناسبة بين الجملة وسببها في الكتابة الأكاديمية هي:",
+        question: "In formal Arabic technical writing, what is the standard function of the semicolon (الفاصلة المنقوطة '؛')?",
         options: [
-          { key: "A", text: "الفاصلة المنقوطة (؛)" },
-          { key: "B", text: "النقطتان الرأسيتان (:)" },
-          { key: "C", text: "علامة الحذف (...)" },
-          { key: "D", text: "الشرطة (-)" }
+          { key: "A", text: "To separate two clauses where one is the cause or explanation of the other" },
+          { key: "B", text: "To signal the conclusion of a full paragraph" },
+          { key: "C", text: "To introduce quoted verbatim speech" },
+          { key: "D", text: "To mark the transition between unrelated chapters" }
         ],
         correctKey: "A",
-        explanation: "الفاصلة المنقوطة (؛) توضع دائماً بين جملتين إحداهما سبب أو تعليل للأخرى، مثل: 'تم تحسين الخوارزمية؛ لأن حجم البيانات تضاعف'."
+        explanation: "الفاصلة المنقوطة (؛) تُوضع بين جملتين إحداهما سبباً أو علّة للأخرى، كقولنا: 'تم تحسين الخوارزمية؛ لتقليص استهلاك الذاكرة'."
       },
       {
         id: "ar_5",
-        question: "المصطلح العربي الأدق المعتمد لمفهوم 'Artificial Intelligence' هو:",
+        question: "What is the standardized and officially approved Arabic technical translation for 'Artificial Intelligence'?",
         options: [
           { key: "A", text: "الذكاء الاصطناعي" },
-          { key: "B", text: "الذكاء المصنوع" },
-          { key: "C", text: "الحساب الآلي الذاتي" },
-          { key: "D", text: "العقل التقني" }
+          { key: "B", text: "العقل الآلي" },
+          { key: "C", text: "الحساب المبرمج" },
+          { key: "D", text: "التفكير الحاسوبي" }
         ],
         correctKey: "A",
-        explanation: "المصطلح العلمي والمعجمي المعتمد في مجامع اللغة العربية والجامعات هو 'الذكاء الاصطناعي'."
+        explanation: "المصطلح المعياري المعتمد دولياً وفي مجامع اللغة العربية لـ Artificial Intelligence هو 'الذكاء الاصطناعي'."
       }
     ]
   }
@@ -808,6 +830,21 @@ function finishMCQQuiz() {
     confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } });
   }
 
+  // Update Next Subject Button
+  const currentKey = state.activeSubjectKey || state.selectedSubject || 'linear_algebra';
+  const nextKey = getNextSubjectKey(currentKey);
+  const nextSubject = SUBJECTS_DATA[nextKey];
+  const nextBtn = document.getElementById('quiz-next-subject-btn');
+  const nextText = document.getElementById('quiz-next-subject-text');
+  if (nextText && nextSubject) {
+    nextText.innerHTML = `الانتقال إلى كويز: ${nextSubject.nameEn} (${nextSubject.nameAr})`;
+  }
+  if (nextBtn) {
+    nextBtn.onclick = function() {
+      startQuizForSubject(nextKey);
+    };
+  }
+
   // Render question-by-question review list
   renderQuizReviewList();
 }
@@ -818,27 +855,36 @@ function renderQuizReviewList() {
   container.innerHTML = '';
 
   state.quizQuestions.forEach((q, idx) => {
-    const userChoice = state.userAnswers[q.id] || "لم تجب";
+    const userChoice = state.userAnswers[q.id] || "لم تجب (No Answer)";
     const isCorrect = userChoice === q.correctKey;
 
     const div = document.createElement('div');
-    div.className = `p-4 rounded-2xl border text-xs sm:text-sm space-y-2 ${isCorrect ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-200' : 'bg-rose-950/20 border-rose-500/30 text-rose-200'}`;
+    div.className = `p-4 sm:p-5 rounded-2xl border text-xs sm:text-sm space-y-2.5 ${isCorrect ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-200' : 'bg-rose-950/30 border-rose-500/40 text-rose-200'} backdrop-blur-md`;
     div.innerHTML = `
       <div class="flex items-center justify-between font-bold">
-        <span>سؤال ${idx + 1}: ${q.question}</span>
-        <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-black ${isCorrect ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'}">
-          ${isCorrect ? 'صحيح ✓' : 'خطأ ✗'}
+        <span class="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-200 text-xs font-mono">Question ${idx + 1}</span>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-black ${isCorrect ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-500/40' : 'bg-rose-500/25 text-rose-300 border border-rose-500/40'}">
+          ${isCorrect ? 'صحيح ✓ Correct' : 'خطأ ✗ Incorrect'}
         </span>
       </div>
-      <div class="text-xs text-slate-300 font-sans">
-        إجابتك: <strong class="${isCorrect ? 'text-emerald-400' : 'text-rose-400'}">${userChoice}</strong> &bull; الإجابة الصحيحة: <strong class="text-emerald-400">${q.correctKey}</strong>
+      <div class="font-bold text-slate-100 text-left font-sans text-sm sm:text-base leading-relaxed" dir="ltr">
+        ${formatMathText(q.question)}
       </div>
-      <div class="text-[11px] text-slate-400 leading-relaxed pt-1 border-t border-slate-800">
-        ${q.explanation}
+      <div class="text-xs text-slate-300 font-sans flex flex-wrap items-center gap-4 text-left" dir="ltr">
+        <span>Your Answer: <strong class="${isCorrect ? 'text-emerald-400' : 'text-rose-400'} font-bold">${userChoice}</strong></span>
+        <span>Correct Answer: <strong class="text-emerald-400 font-bold">${q.correctKey}</strong></span>
+      </div>
+      <div class="text-xs text-slate-300 leading-relaxed pt-2.5 border-t border-slate-800/80 text-right space-y-1" dir="rtl">
+        <span class="text-indigo-300 font-bold block flex items-center gap-1.5">
+          <i data-lucide="book-open" class="w-3.5 h-3.5 text-indigo-400"></i>
+          التفسير والحل الرياضي بالعربية:
+        </span>
+        <div class="leading-relaxed text-slate-200 font-sans">${formatMathText(q.explanation)}</div>
       </div>
     `;
     container.appendChild(div);
   });
+  if (window.lucide) lucide.createIcons();
 }
 
 function setQuizMode(mode) {
