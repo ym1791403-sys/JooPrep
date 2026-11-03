@@ -1,129 +1,100 @@
-/* JooPrep Custom CSS Styling */
+/* JooPrep Modern Design System Stylesheet */
 
-/* KaTeX formula RTL & LTR adjustment */
+/* KaTeX Formula LTR and Clean Math Presentation */
 .katex, .katex-display, .katex-html {
   direction: ltr !important;
   unicode-bidi: isolate !important;
   text-align: center;
 }
 
-/* Scrollbar refinement */
+.katex-display {
+  margin: 0.75rem 0 !important;
+  padding: 0.5rem 0 !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Custom Refined Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: rgba(7, 10, 18, 0.8);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.4);
+  background: rgba(99, 102, 241, 0.35);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 102, 241, 0.7);
+  background: rgba(99, 102, 241, 0.65);
 }
 
-/* Custom Keypad Buttons */
+/* Custom Math Keypad Buttons */
 .keypad-btn {
-  padding: 0.6rem 0.4rem;
-  background-color: rgba(30, 41, 59, 0.9);
-  border: 1px solid rgba(51, 65, 85, 0.8);
-  border-radius: 0.5rem;
+  padding: 0.7rem 0.4rem;
+  background-color: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  border-radius: 0.75rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: #f8fafc;
   text-align: center;
-  transition: all 0.15s ease-in-out;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   user-select: none;
 }
 .keypad-btn:hover {
-  background-color: rgba(99, 102, 241, 0.25);
+  background-color: rgba(99, 102, 241, 0.2);
   border-color: rgba(99, 102, 241, 0.5);
   transform: translateY(-1px);
 }
 .keypad-btn:active {
-  transform: scale(0.95);
+  transform: scale(0.96);
 }
 
 /* Visual Matrix Input Cells */
 .matrix-cell {
-  background-color: #090d16;
+  background-color: #070c18;
   border: 1px solid #334155;
-  border-radius: 0.5rem;
-  padding: 0.5rem;
+  border-radius: 0.75rem;
+  padding: 0.65rem;
   text-align: center;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.875rem;
-  color: #f8fafc;
+  color: #ffffff;
   outline: none;
+  transition: border-color 0.2s;
 }
 .matrix-cell:focus {
   border-color: #6366f1;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
 }
 
-/* Chat bubble styling for Viva Defense */
+/* Viva Defense Chat Bubbles */
 .viva-bubble-examiner {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
-  border: 1px solid rgba(147, 51, 234, 0.25);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 27, 75, 0.5));
+  border: 1px solid rgba(147, 51, 234, 0.3);
   border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
 }
 
 .viva-bubble-student {
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(67, 56, 202, 0.35));
-  border: 1px solid rgba(99, 102, 241, 0.4);
+  background: linear-gradient(135deg, rgba(67, 56, 202, 0.3), rgba(79, 70, 229, 0.15));
+  border: 1px solid rgba(99, 102, 241, 0.45);
   border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
 }
 
-/* Light Mode Overrides */
-html:not(.dark) body {
-  background-color: #f8fafc;
-  color: #0f172a;
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-html:not(.dark) header {
-  background-color: rgba(255, 255, 255, 0.85);
-  border-color: #e2e8f0;
-}
-html:not(.dark) .bg-slate-900 {
-  background-color: #ffffff;
-  border-color: #e2e8f0;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-html:not(.dark) .bg-slate-950 {
-  background-color: #f1f5f9;
-  border-color: #cbd5e1;
-}
-html:not(.dark) .text-white {
-  color: #0f172a;
-}
-html:not(.dark) .text-slate-100 {
-  color: #1e293b;
-}
-html:not(.dark) .text-slate-200 {
-  color: #334155;
-}
-html:not(.dark) .text-slate-300 {
-  color: #475569;
-}
-html:not(.dark) .text-slate-400 {
-  color: #64748b;
-}
-html:not(.dark) .border-slate-800 {
-  border-color: #e2e8f0;
-}
-html:not(.dark) .viva-bubble-examiner {
-  background: #ffffff;
-  border-color: #d8b4fe;
-}
-html:not(.dark) .keypad-btn {
-  background-color: #ffffff;
-  border-color: #cbd5e1;
-  color: #1e293b;
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
 }
 
-/* Print Stylesheet for PDF Export */
+/* Print Stylesheet for Clean PDF Export */
 @media print {
-  header, nav, #audio-toggle-btn, .btn-primary, #viva-input-card, #quiz-problem-card, button {
+  header, nav, #audio-toggle-btn, .btn-primary, #viva-input-card, #quiz-problem-card, button, .no-print {
     display: none !important;
   }
   body {
@@ -136,12 +107,13 @@ html:not(.dark) .keypad-btn {
     margin: 0 !important;
     padding: 0 !important;
   }
-  .bg-slate-900, .bg-slate-950 {
+  .bg-slate-900, .bg-slate-950, .rounded-3xl, .rounded-2xl {
     background: #ffffff !important;
-    border: 1px solid #cccccc !important;
+    border: 1px solid #d1d5db !important;
     color: #000000 !important;
+    box-shadow: none !important;
   }
-  .text-white, .text-slate-200, .text-slate-300 {
+  .text-white, .text-slate-100, .text-slate-200, .text-slate-300 {
     color: #000000 !important;
   }
 }

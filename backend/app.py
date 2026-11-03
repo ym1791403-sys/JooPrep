@@ -12,12 +12,15 @@ import os
 import sys
 import json
 import uuid
-
-# Set UTF-8 encoding for standard output
-sys.stdout.reconfigure(encoding='utf-8')
-sys.stderr.reconfigure(encoding='utf-8')
 from datetime import datetime, date
 from flask import Flask, request, jsonify, send_from_directory
+
+# Safe stdout reconfiguration for serverless environments
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
 
 from database import init_db, get_db
 from math_engine import ProblemEngine, StepSolver
@@ -25,8 +28,14 @@ from viva_engine import CodeAnalyzer, PERSONAS, get_persona, VivaSessionManager,
 from readiness import ReadinessCalculator
 
 # Initialize Flask app
-FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
-app = Flask(__name__, static_folder=os.path.join(FRONTEND_DIR, "static"), template_folder=FRONTEND_DIR)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+app = Flask(__name__, static_folder=os.path.join(BASE_DIR, "static"), template_folder=BASE_DIR)
+
+# Safe database initialization
+try:
+    init_db()
+except Exception as e:
+    print(f"DB Init note: {e}")
 
 @app.after_request
 def add_cors_headers(response):
@@ -416,13 +425,13 @@ def resolve_error():
 
 @app.route("/")
 def index():
-    return send_from_directory(FRONTEND_DIR, "index.html")
+    return send_from_directory(BASE_DIR, "index.html")
 
 @app.route("/<path:path>")
 def static_files(path):
-    if os.path.exists(os.path.join(FRONTEND_DIR, path)):
-        return send_from_directory(FRONTEND_DIR, path)
-    return send_from_directory(FRONTEND_DIR, "index.html")
+    if os.path.exists(os.path.join(BASE_DIR, path)):
+        return send_from_directory(BASE_DIR, path)
+    return send_from_directory(BASE_DIR, "index.html")
 
 if __name__ == "__main__":
     print("=" * 60)
