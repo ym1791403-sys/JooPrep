@@ -8,7 +8,7 @@
   <!-- Instant Theme Initializer (prevents flicker) -->
   <script>
     (function() {
-      const saved = localStorage.getItem('jooprep_theme') || 'dark';
+      const saved = localStorage.getItem('jooprep_theme') || 'light';
       document.documentElement.setAttribute('data-theme', saved);
       if (saved === 'dark') {
         document.documentElement.classList.add('dark');
@@ -127,9 +127,10 @@
 
       <!-- Right Controls: Theme, Audio & Profile -->
       <div class="flex items-center gap-2.5">
-        <!-- Theme Mode Toggle Button -->
-        <button id="theme-toggle-btn" onclick="toggleTheme()" title="تبديل المظهر (فاتح / داكن)" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-amber-400 transition hover:border-slate-700">
-          <i data-lucide="moon" id="theme-icon" class="w-4 h-4 text-amber-300"></i>
+        <!-- Theme Mode Toggle Button (White & Black Switch) -->
+        <button id="theme-toggle-btn" onclick="toggleTheme()" title="تبديل المظهر بين الأبيض والأسود" class="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-700/80 bg-slate-900/80 hover:border-blue-500 transition shadow-sm cursor-pointer select-none">
+          <i data-lucide="sun" id="theme-icon" class="w-4 h-4 text-amber-400"></i>
+          <span id="theme-label" class="text-xs font-bold text-slate-200 hidden sm:inline">الوضع الفاتح</span>
         </button>
 
         <!-- Audio Readout Toggle Button -->
@@ -142,7 +143,7 @@
           <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-500 to-cyan-500 text-white font-black flex items-center justify-center text-xs shadow-sm">
             أ
           </div>
-          <span class="text-xs font-bold text-slate-200 hidden sm:inline" id="header-user-name">أحمد محمود</span>
+          <span class="text-xs font-bold text-slate-200 hidden sm:inline" id="header-user-name">طالب هندسة وحاسبات</span>
         </button>
       </div>
 
@@ -470,9 +471,9 @@
             <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-purple-400"></i>
             محاكاة مناقشة المعمل الشفوية (Defense / Viva)
           </div>
-          <h2 class="text-2xl font-black text-white">اكسر رعب المناقشة الشفوية قبل المعمل</h2>
+          <h2 class="text-2xl font-black text-white">الاستعداد الأكاديمي المتقدم للمناقشة الشفوية</h2>
           <p class="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-            الصق كود مشروعك، واختر شخصية الممتحن واللهجة المناسبة؛ السيستم هيحلل الكود ويبدأ يطرح عليك أسئلة غير متوقعة في الـ Edge Cases والذاكرة والـ Big-O، ويقيمك بمعايير المعمل الرسمية.
+            أدخل كود مشروعك البرمجي، وحدد نمط التقييم ومستوى التحدي؛ وسيقوم النظام الذكي بتحليل الخوارزميات وطرح أسئلة نوعية متقدمة في إدارة الذاكرة، الحالات الخاصة، والتعقيد الحسابي، مع تقييم أكاديمي فوري.
           </p>
         </div>
 
@@ -515,10 +516,10 @@
                   <input type="radio" name="viva-persona" value="strict_ta" checked class="mt-1 text-purple-600 focus:ring-purple-500">
                   <div class="text-xs space-y-1">
                     <div class="font-extrabold text-white flex items-center gap-1.5">
-                      <span>👨‍🏫 المعيد الصارم</span>
-                      <span class="text-[10px] text-rose-400 bg-rose-500/15 px-2 py-0.5 rounded-full font-bold">حالات حافة وذاكرة</span>
+                      <span>👨‍🏫 ممتحن تقني متخصص</span>
+                      <span class="text-[10px] text-rose-400 bg-rose-500/15 px-2 py-0.5 rounded-full font-bold">حالات خاصة وإدارة الذاكرة</span>
                     </div>
-                    <p class="text-slate-400 leading-relaxed">يركز على الـ Pointers، تسريب الذاكرة، وكسر حدود المصفوفات.</p>
+                    <p class="text-slate-400 leading-relaxed">يركز على المؤشرات (Pointers)، تسريب الذاكرة، وضبط حدود المصفوفات.</p>
                   </div>
                 </label>
 
@@ -527,7 +528,7 @@
                   <input type="radio" name="viva-persona" value="academic_prof" class="mt-1 text-purple-600 focus:ring-purple-500">
                   <div class="text-xs space-y-1">
                     <div class="font-extrabold text-white flex items-center gap-1.5">
-                      <span>🎓 الأستاذ الأكاديمي</span>
+                      <span>🎓 أستاذ أكاديمي</span>
                       <span class="text-[10px] text-indigo-400 bg-indigo-500/15 px-2 py-0.5 rounded-full font-bold">Big-O والتصميم</span>
                     </div>
                     <p class="text-slate-400 leading-relaxed">يركز على التعقيد الزمني والمكاني والمفاضلة بين هياكل البيانات.</p>
@@ -539,10 +540,10 @@
                   <input type="radio" name="viva-persona" value="friendly_ta" class="mt-1 text-purple-600 focus:ring-purple-500">
                   <div class="text-xs space-y-1">
                     <div class="font-extrabold text-white flex items-center gap-1.5">
-                      <span>🤝 المعيد الودود</span>
-                      <span class="text-[10px] text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full font-bold">تدريب بتلميحات</span>
+                      <span>🤝 مدرب تفاعلي</span>
+                      <span class="text-[10px] text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full font-bold">إرشاد وتوجيه تدريجي</span>
                     </div>
-                    <p class="text-slate-400 leading-relaxed">هادئ ويشجعك، ويقدم تلميحات لو وقفت في نقطة صعبة.</p>
+                    <p class="text-slate-400 leading-relaxed">أسلوب علمي داعم يوجهك خطوة بخطوة للحل النموذجي.</p>
                   </div>
                 </label>
 
@@ -551,10 +552,10 @@
                   <input type="radio" name="viva-persona" value="surprise_doc" class="mt-1 text-purple-600 focus:ring-purple-500">
                   <div class="text-xs space-y-1">
                     <div class="font-extrabold text-white flex items-center gap-1.5">
-                      <span>⚡ الدكتور المفاجئ</span>
-                      <span class="text-[10px] text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded-full font-bold">أسئلة 'ماذا لو؟'</span>
+                      <span>⚡ لجنة تقييم متقدمة</span>
+                      <span class="text-[10px] text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded-full font-bold">سيناريوهات معقدة</span>
                     </div>
-                    <p class="text-slate-400 leading-relaxed">يطرح سيناريوهات ضغط واقعية وتحديات غير متوقعة.</p>
+                    <p class="text-slate-400 leading-relaxed">يطرح تحديات متقدمة لاختبار استقرار الكود تحت الضغط البرمجي.</p>
                   </div>
                 </label>
               </div>
@@ -566,7 +567,7 @@
                 <div>
                   <label class="text-xs font-bold text-slate-300 block mb-1">لهجة المناقشة:</label>
                   <select id="viva-language-select" class="w-full bg-slate-950 border border-slate-700 text-xs rounded-xl p-2.5 text-slate-200 font-semibold">
-                    <option value="mixed" selected>مصري أكاديمي مختلط (الأقرب للواقع)</option>
+                    <option value="mixed" selected>مصطلحات تقنية معتمدة (ثنائي اللغة)</option>
                     <option value="ar">عربي فصيح</option>
                     <option value="en">English (Official)</option>
                   </select>
@@ -602,7 +603,7 @@
             <div id="active-persona-avatar" class="text-3xl p-1 bg-slate-800 rounded-2xl">👨‍🏫</div>
             <div>
               <div class="flex items-center gap-2">
-                <h3 id="active-persona-name" class="font-black text-white text-base">المعيد الصارم</h3>
+                <h3 id="active-persona-name" class="font-black text-white text-base">ممتحن تقني متخصص</h3>
                 <span id="active-topic-badge" class="text-[10px] bg-purple-500/20 text-purple-300 px-2.5 py-0.5 rounded-full border border-purple-500/30 font-bold">
                   حالات الحافة (Edge-case)
                 </span>
@@ -629,14 +630,14 @@
           <!-- Turns populated dynamically -->
         </div>
 
-        <!-- Thinking Indicator ("الممتحن بيفكر...") -->
+        <!-- Thinking Indicator ("جارٍ تحليل الإجابة...") -->
         <div id="viva-thinking-indicator" class="hidden rounded-2xl bg-slate-900/90 border border-slate-800 p-4 flex items-center gap-3 shadow-md">
           <div class="flex space-x-1.5 space-x-reverse">
             <span class="w-2.5 h-2.5 bg-purple-400 rounded-full animate-bounce"></span>
             <span class="w-2.5 h-2.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
             <span class="w-2.5 h-2.5 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
           </div>
-          <span class="text-xs font-bold text-slate-300">الممتحن بيراجع الكود وبيحلل إجابتك...</span>
+          <span class="text-xs font-bold text-slate-300">جارٍ مراجعة الكود وتحليل الإجابة علمياً...</span>
         </div>
 
         <!-- Student Response Box -->
@@ -714,7 +715,7 @@
             <div class="p-5 rounded-2xl bg-rose-950/20 border border-rose-500/30 space-y-3">
               <h4 class="font-extrabold text-rose-400 text-sm flex items-center gap-2">
                 <i data-lucide="alert-octagon" class="w-4 h-4"></i>
-                3 نقاط ضعف لازم تعالجهم قبل المعمل:
+                نقاط هامة بحاجة إلى مراجعة وتطوير:
               </h4>
               <ul id="report-weaknesses-list" class="space-y-2 text-xs text-slate-200 leading-relaxed list-disc list-inside">
                 <!-- Populated via JS -->
@@ -766,9 +767,9 @@
             <i data-lucide="file-check" class="w-3.5 h-3.5"></i>
             ورقة التحضير الذكية (Smart Prep Sheet)
           </div>
-          <h2 class="text-2xl font-black text-white mt-1.5">10 أسئلة فخ متوقعة مع إجاباتها النموذجية</h2>
+          <h2 class="text-2xl font-black text-white mt-1.5">10 أسئلة تقنية متقدمة وشائعة مع إجاباتها النموذجية</h2>
           <p class="text-xs text-slate-400 mt-1 max-w-xl leading-relaxed">
-            مبنية خصيصاً على هيكل كودك؛ توضح لك السؤال، وسبب الفخ اللي المعيد بيختبرك فيه، والإجابة الدقيقة اللي تبهر الممتحن.
+            مبنية مباشرة على هيكل الكود؛ توضح لك السؤال المتوقع، والهدف الأكاديمي الدقيق منه، والإجابة النموذجية المعتمدة.
           </p>
         </div>
 
@@ -829,7 +830,7 @@
             أ
           </div>
           <div>
-            <h2 class="text-xl font-black text-white" id="profile-display-name">أحمد محمود</h2>
+            <h2 class="text-xl font-black text-white" id="profile-display-name">طالب هندسة وحاسبات</h2>
             <p class="text-xs text-slate-400 font-semibold" id="profile-display-college">كلية الحاسبات والذكاء الاصطناعي</p>
           </div>
         </div>
@@ -841,7 +842,7 @@
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">الكلية / الجامعة (اسم عام لكافة الكليات):</label>
+            <label class="block text-xs font-bold text-slate-300 mb-1">الكلية / الجامعة:</label>
             <input type="text" id="profile-input-college" placeholder="مثال: كلية الحاسبات والمعلومات جامعة القاهرة" class="w-full bg-slate-950 border border-slate-700/80 rounded-2xl px-4 py-3 text-sm text-slate-100 outline-none focus:border-indigo-500 font-semibold">
           </div>
 

@@ -514,13 +514,15 @@ const state = {
 
 // ----------------- Theme Switcher Engine -----------------
 function initTheme() {
-  const saved = localStorage.getItem('jooprep_theme') || 'dark';
+  const saved = localStorage.getItem('jooprep_theme') || 'light';
   applyTheme(saved);
 }
 
 function applyTheme(theme) {
   const root = document.documentElement;
   const icon = document.getElementById('theme-icon');
+  const label = document.getElementById('theme-label');
+  const btn = document.getElementById('theme-toggle-btn');
   
   if (theme === 'dark') {
     root.setAttribute('data-theme', 'dark');
@@ -530,6 +532,12 @@ function applyTheme(theme) {
       icon.setAttribute('data-lucide', 'sun');
       icon.className = 'w-4 h-4 text-amber-300';
     }
+    if (label) {
+      label.innerText = 'الوضع الفاتح ☀️';
+    }
+    if (btn) {
+      btn.title = 'التبديل إلى الوضع الأبيض (الفاتح)';
+    }
   } else {
     root.setAttribute('data-theme', 'light');
     root.classList.add('light');
@@ -537,6 +545,12 @@ function applyTheme(theme) {
     if (icon) {
       icon.setAttribute('data-lucide', 'moon');
       icon.className = 'w-4 h-4 text-blue-600';
+    }
+    if (label) {
+      label.innerText = 'الوضع الداكن 🌙';
+    }
+    if (btn) {
+      btn.title = 'التبديل إلى الوضع الأسود (الداكن)';
     }
   }
   localStorage.setItem('jooprep_theme', theme);
@@ -1153,10 +1167,10 @@ function startVivaSession() {
   state.vivaScores = [];
 
   const personaNames = {
-    strict_ta: { name: "المعيد الصارم", avatar: "👨‍🏫", tone: "صارم ودقيق، يبحث عن الأخطاء الصامتة وحالات الحافة", welcome: "أهلاً بك. الكود بتاعك مفتوح قدامي، وهنبدأ المناقشة فوراً. ركز في إجاباتك وما تلفش وتدور؛ عايز إجابات علمية دقيقة." },
-    academic_prof: { name: "الأستاذ الأكاديمي", avatar: "🎓", tone: "نظري وعميق، يركز على المبادئ والتعقيد والبدائل", welcome: "مرحباً يا باشمهندس. الغرض من المناقشة معرفة الأساس العلمي لاختياراتك في هذا الكود. لماذا كتبت هذا الحل بالتحديد؟" },
-    friendly_ta: { name: "المعيد الودود", avatar: "🤝", tone: "مشجع وصبور، يوجه بتلميحات تدريجية", welcome: "أهلاً بيك يا بطل! متقلقش خالص، دي جلسة تدريب عشان تتعود على جو المعمل الحقيقي وتدخل وإنت واثق في نفسك." },
-    surprise_doc: { name: "الدكتور المفاجئ", avatar: "⚡", tone: "غير متوقع، يطرح أسئلة ضغط واقعية", welcome: "مساء الخير. الكود شغال على المثال البسيط ده جميل، بس هل هيتحمل لو رميت عليه ضغط عملي حقيقي؟ هطرح عليك سيناريوهات وأشوف هتحلها إزاي." }
+    strict_ta: { name: "ممتحن تقني متخصص", avatar: "👨‍🏫", tone: "فحص دقيق للأخطاء الصامتة وحالات الحافة وتسريب الذاكرة", welcome: "أهلاً بك. تم فحص الكود البرمجي المقدم، وسنبدأ جلسة المناقشة الآن. يرجى التركيز وتقديم تبريرات علمية وخوارزمية دقيقة." },
+    academic_prof: { name: "أستاذ أكاديمي", avatar: "🎓", tone: "تحليل نظري معمق للتعقيد الحسابي وهياكل البيانات والمفاضلة الخوارزمية", welcome: "مرحباً بك يا مهندس. الغرض من هذه المناقشة هو قياس استيعابك للمبادئ العلمية المعتمدة في تصميم وبناء هذا الكود." },
+    friendly_ta: { name: "مدرب تفاعلي", avatar: "🤝", tone: "توجيه تدريجي وإرشادات علمية داعمة", welcome: "أهلاً بك. هذه جلسة محاكاة تدريبية لاكتساب الثقة والتعود على أجواء المناقشة الأكاديمية والعملية بالكلية." },
+    surprise_doc: { name: "لجنة تقييم متقدمة", avatar: "⚡", tone: "سيناريوهات تطبيقية وتحديات معقدة في بيئات الإنتاج", welcome: "أهلاً بك. الكود البرمجي يعمل على الحالات الافتراضية؛ سنختبر الآن أداءه واستقراره تحت ضغط السيناريوهات العملية المتقدمة." }
   };
   const p = personaNames[state.vivaPersona] || personaNames.strict_ta;
 
@@ -1406,16 +1420,16 @@ function toggleSpeechRecognition() {
 // ----------------- Smart Prep Sheet (10 Trap Questions) -----------------
 function loadLatestPrepSheet() {
   const questions = [
-    { category: "التعقيد الحسابي (Big-O)", question: "ما هو التعقيد الزمني والمكاني للبرنامج ككل؟", trapReason: "المعيد يختبر هل حفظت الكود أم تحسب عدد العمليات بالنسبة لحجم المدخلات N.", modelAnswer: "التعقيد الزمني هو O(N) والمكاني O(1) إضافي ما لم نستخدم مصفوفات ديناميكية." },
-    { category: "إدارة الذاكرة (Memory)", question: "أين تُخزن المتغيرات المحلية؟ وما الفرق بين الـ Stack والـ Heap؟", trapReason: "سؤال كلاسيكي في المعمل للتمييز بين الذاكرة التلقائية السريعة والمحجوزة ديناميكياً بـ new.", modelAnswer: "المتغيرات العادية تُحجز على الـ Stack تلقائياً، بينما new تحجز على الـ Heap ويلزم تحريرها بـ delete لتجنب تسريب الذاكرة." },
-    { category: "حالات الحافة (Edge Cases)", question: "ماذا يحدث إذا مرر المستخدم مدخلات فارغة أو قيماً سالبة؟", trapReason: "المعيد يريد أن يرى هل فكرت في المدخلات غير المثالية.", modelAnswer: "يجب وضع فحص حماية (Guard Condition) في بداية الدالة للتحقق من أن القيم سليمة وإرجاع كود خطأ." },
-    { category: "المؤشرات (Pointers)", question: "هل قمت بتمرير المعاملات بالقيمة أم بالمرجع؟ ولماذا؟", trapReason: "معرفة هل الطالب يدرك تكلفة نسخ الكائنات الكبيرة في الذاكرة.", modelAnswer: "استخدمت Pass by Reference لتجنب إنشاء نسخة مكلفة في الذاكرة وتسريع الأداء مع حماية البيانات بـ const." },
-    { category: "هياكل البيانات (Data Structures)", question: "لماذا اخترت هذه البنية بالتحديد دون غيرها؟", trapReason: "اختبار الوعي المعماري والمفاضلة بين سرعة البحث والإدراج.", modelAnswer: "اخترت هذا الهيكل لأن العمليات تتطلب وصولاً مباشراً بالفهرس O(1)." },
-    { category: "البدائل التصميمية (Design)", question: "لو طلبنا منك تحويل الدالة من Recursion إلى Loops عادية، كيف ستفعلها؟", trapReason: "التأكد من فهم ميكانيكية الـ Call Stack وحساب شرط التوقف.", modelAnswer: "سنستخدم حلقة while مع مكدس يدوي لتخزين الحالات لتوفير استهلاك ذاكرة النظام." },
-    { category: "الأمان والاستقرار (Sanitization)", question: "كيف يتصرف البرنامج لو أدخل المستخدم نصاً في خانة رقم صحيح؟", trapReason: "اختبار تعاملك مع فشل مجرى الإدخال cin.fail.", modelAnswer: "يتم التحقق من حالة الإدخال وتطهير الـ buffer وطباعة رسالة توجيهية للمستخدم." },
-    { category: "العتاد والكاش (Hardware)", question: "كيف يؤثر ترتيب قراءة عناصر المصفوفة على كفاءة الـ Cache؟", trapReason: "سؤال تميز لمعرفة فهم الطالب للـ Spatial Locality.", modelAnswer: "القراءة صفاً صفاً في مصفوفات C++ تستفيد من خطوط الكاش وتقلل الـ Cache Misses." },
-    { category: "التوسع (Scalability)", question: "لو تضاعفت كمية البيانات من 1000 عنصر إلى 100 مليون، ما التعديل اللازم؟", trapReason: "معرفة هل لديك نظرة مستقبلية لتجاوز حدود الـ RAM.", modelAnswer: "سنحتاج لمعالجة متدفقة (Chunking) مع خوارزميات الذاكرة الخارجية والتوزيع المتوازي." },
-    { category: "الكود النظيف (Clean Code)", question: "ماذا يعني مبدأ المسؤولية الواحدة (SRP) في دوالك؟", trapReason: "التأكد من أن الكود منظم وليس عشوائياً.", modelAnswer: "كل دالة تؤدي مهمة واحدة محددة ومستقلة، وأسماء المتغيرات معبرة ذاتياً (Self-documenting)." }
+    { category: "التعقيد الحسابي (Big-O)", question: "ما هو التعقيد الزمني والمكاني للبرنامج ككل؟", trapReason: "قياس فهم الطالب للتعقيد الحسابي وحساب عدد العمليات بالنسبة لحجم المدخلات N.", modelAnswer: "التعقيد الزمني هو O(N) والمكاني O(1) إضافي ما لم نستخدم مصفوفات ديناميكية." },
+    { category: "إدارة الذاكرة (Memory)", question: "أين تُخزن المتغيرات المحلية؟ وما الفرق بين الـ Stack والـ Heap؟", trapReason: "التمييز بين الذاكرة التلقائية (Stack) والذاكرة الديناميكية (Heap).", modelAnswer: "المتغيرات العادية تُحجز على الـ Stack تلقائياً، بينما new تحجز على الـ Heap ويلزم تحريرها بـ delete لتجنب تسريب الذاكرة." },
+    { category: "حالات الحافة (Edge Cases)", question: "ماذا يحدث إذا مرر المستخدم مدخلات فارغة أو قيماً سالبة؟", trapReason: "التحقق من قدرة البرنامج على معالجة المدخلات الاستثنائية والحالات الحدية (Edge Cases).", modelAnswer: "يجب وضع فحص حماية (Guard Condition) في بداية الدالة للتحقق من أن القيم سليمة وإرجاع كود خطأ." },
+    { category: "المؤشرات (Pointers)", question: "هل قمت بتمرير المعاملات بالقيمة أم بالمرجع؟ ولماذا؟", trapReason: "فهم كفاءة الذاكرة وتكلفة نسخ البيانات الكبيرة عند التمرير.", modelAnswer: "استخدمت Pass by Reference لتجنب إنشاء نسخة مكلفة في الذاكرة وتسريع الأداء مع حماية البيانات بـ const." },
+    { category: "هياكل البيانات (Data Structures)", question: "لماذا اخترت هذه البنية بالتحديد دون غيرها؟", trapReason: "قياس الوعي المعماري والمفاضلة بين سرعة البحث والإدراج والاستهلاك المكاني.", modelAnswer: "اخترت هذا الهيكل لأن العمليات تتطلب وصولاً مباشراً بالفهرس O(1)." },
+    { category: "البدائل التصميمية (Design)", question: "لو طلبنا منك تحويل الدالة من Recursion إلى Loops عادية، كيف ستفعلها؟", trapReason: "استيعاب ميكانيكية استدعاء الدوال وتجنب فيضان الذاكرة Stack Overflow.", modelAnswer: "سنستخدم حلقة while مع مكدس يدوي لتخزين الحالات لتوفير استهلاك ذاكرة النظام." },
+    { category: "الأمان والاستقرار (Sanitization)", question: "كيف يتصرف البرنامج لو أدخل المستخدم نصاً في خانة رقم صحيح؟", trapReason: "معالجة أخطاء الإدخال غير المتوقعة وحماية تدفق البرنامج.", modelAnswer: "يتم التحقق من حالة الإدخال وتطهير الـ buffer وطباعة رسالة توجيهية للمستخدم." },
+    { category: "العتاد والكاش (Hardware)", question: "كيف يؤثر ترتيب قراءة عناصر المصفوفة على كفاءة الـ Cache؟", trapReason: "فهم مبدأ المحلية المكانية (Spatial Locality) وكفاءة استغلال ذاكرة التخزين المؤقت Cache.", modelAnswer: "القراءة صفاً صفاً في مصفوفات C++ تستفيد من خطوط الكاش وتقلل الـ Cache Misses." },
+    { category: "التوسع (Scalability)", question: "لو تضاعفت كمية البيانات من 1000 عنصر إلى 100 مليون، ما التعديل اللازم؟", trapReason: "القدرة على تصميم خوارزميات تتوسع لمعالجة البيانات الضخمة.", modelAnswer: "سنحتاج لمعالجة متدفقة (Chunking) مع خوارزميات الذاكرة الخارجية والتوزيع المتوازي." },
+    { category: "الكود النظيف (Clean Code)", question: "ماذا يعني مبدأ المسؤولية الواحدة (SRP) في دوالك؟", trapReason: "الالتزام بقواعد كتابة الكود النظيف وقابلية الصيانة والتطوير.", modelAnswer: "كل دالة تؤدي مهمة واحدة محددة ومستقلة، وأسماء المتغيرات معبرة ذاتياً (Self-documenting)." }
   ];
 
   const container = document.getElementById('prep-sheet-questions-container');
@@ -1431,11 +1445,11 @@ function loadLatestPrepSheet() {
           <span class="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-300 flex items-center justify-center font-mono text-xs font-bold border border-indigo-500/30">${idx + 1}</span>
           ${q.category}
         </span>
-        <span class="text-[10px] text-slate-500 font-mono">سؤال فخ متوقع</span>
+        <span class="text-[10px] text-slate-500 font-mono">سؤال تقني متقدم</span>
       </div>
       <div><h4 class="font-black text-white text-sm sm:text-base leading-relaxed">${q.question}</h4></div>
       <div class="p-3.5 rounded-2xl bg-amber-950/20 border border-amber-500/30 text-xs text-amber-200 leading-relaxed">
-        <strong class="text-amber-400 block mb-1 font-black">⚠️ سبب الفخ (المعيد بيختبر إيه هنا؟):</strong>
+        <strong class="text-amber-400 block mb-1 font-black">🎯 الهدف الأكاديمي من السؤال:</strong>
         ${q.trapReason}
       </div>
       <div class="p-3.5 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 text-xs text-emerald-200 leading-relaxed">
