@@ -487,10 +487,10 @@ const state = {
     name: 'طالب حاسبات وهندسة',
     college: 'كلية الحاسبات والمعلومات',
     academic_year: 'الفرقة الأولى',
-    quota_used_today_viva: 1,
-    daily_quota_viva: 3,
-    quota_used_today_prep: 1,
-    daily_quota_prep: 5,
+    quota_used_today_viva: 0,
+    daily_quota_viva: 5,
+    quota_used_today_prep: 0,
+    daily_quota_prep: 10,
     isLoggedIn: false
   },
   
@@ -861,6 +861,10 @@ function finishMCQQuiz() {
     answers: state.userAnswers
   });
 
+  // Re-calculate readiness scores dynamically based on the completed attempt
+  loadReadinessData();
+  loadUserProfile();
+
   const percent = Math.round((correctCount / questions.length) * 100);
   document.getElementById('quiz-final-score-percent').innerText = `${percent}%`;
   document.getElementById('quiz-final-score-detail').innerText = `أجبت على ${correctCount} من إجمالي ${questions.length} أسئلة بشكل صحيح`;
@@ -995,17 +999,45 @@ function formatMathText(text) {
   return formatted.replace(/\n/g, '<br>');
 }
 
-// ----------------- Profile & Readiness Index -----------------
-async function loadUserProfile() {
+// ----------------- Profile & Real Activity Engine -----------------
+function loadUserProfile() {
   const u = state.user;
-  document.getElementById('header-user-name').innerText = u.name;
-  document.getElementById('profile-display-name').innerText = u.name;
-  document.getElementById('profile-display-college').innerText = u.college;
-  document.getElementById('profile-input-name').value = u.name;
-  document.getElementById('profile-input-college').value = u.college;
-  document.getElementById('profile-input-year').value = u.academic_year;
-  document.getElementById('quota-viva-text').innerText = `${u.quota_used_today_viva} / ${u.daily_quota_viva}`;
-  document.getElementById('quota-prep-text').innerText = `${u.quota_used_today_prep} / ${u.daily_quota_prep}`;
+
+  // Real daily activity counter (100% computed from actual activity, no mock numbers)
+  try {
+    const rawVivas = localStorage.getItem('jooprep_viva_history');
+    const vivas = rawVivas ? JSON.parse(rawVivas) : [];
+    const todayStr = new Date().toISOString().slice(0, 10);
+    u.quota_used_today_viva = vivas.filter(v => (v.created_at || '').slice(0, 10) === todayStr).length;
+
+    const rawPreps = localStorage.getItem('jooprep_prep_sheets');
+    const preps = rawPreps ? JSON.parse(rawPreps) : [];
+    u.quota_used_today_prep = preps.filter(p => (p.created_at || '').slice(0, 10) === todayStr).length;
+  } catch(e) {}
+
+  const headerName = document.getElementById('header-user-name');
+  if (headerName) headerName.innerText = u.name;
+
+  const profName = document.getElementById('profile-display-name');
+  if (profName) profName.innerText = u.name;
+
+  const profCollege = document.getElementById('profile-display-college');
+  if (profCollege) profCollege.innerText = u.college;
+
+  const inpName = document.getElementById('profile-input-name');
+  if (inpName) inpName.value = u.name;
+
+  const inpCollege = document.getElementById('profile-input-college');
+  if (inpCollege) inpCollege.value = u.college;
+
+  const inpYear = document.getElementById('profile-input-year');
+  if (inpYear) inpYear.value = u.academic_year;
+
+  const qv = document.getElementById('quota-viva-text');
+  if (qv) qv.innerText = `${u.quota_used_today_viva} / ${u.daily_quota_viva}`;
+
+  const qp = document.getElementById('quota-prep-text');
+  if (qp) qp.innerText = `${u.quota_used_today_prep} / ${u.daily_quota_prep}`;
 }
 
 async function handleProfileUpdate(e) {
@@ -1013,51 +1045,201 @@ async function handleProfileUpdate(e) {
   state.user.name = document.getElementById('profile-input-name').value;
   state.user.college = document.getElementById('profile-input-college').value;
   state.user.academic_year = document.getElementById('profile-input-year').value;
+  localStorage.setItem('jooprep_user_session', JSON.stringify(state.user));
   alert("تم حفظ بيانات الملف الشخصي بنجاح!");
   loadUserProfile();
+  updateHeaderAuthUI();
   navigate('dashboard');
 }
 
 function loadReadinessData() {
-  const readiness = {
-    readinessScore: 78,
-    qScore: 84,
-    vScore: 72,
-    statusText: "مؤشر جاهزية ممتاز",
-    levelLabel: "مستوى جاهز للامتحان والمناقشة 🎓",
-    studyFirstRecommendations: [
-      "محددات المصفوفات 3×3 (Linear Algebra)",
-      "تفاضل الدوال المركبة (Calculus)",
-      "قوانين كيرشوف وحساب القدرة (Basic Electric)"
-    ],
-    heatmap: [
-      { label: "Linear Algebra (جبر خطي)", avgScore: 85, status: "قوي" },
-      { label: "Calculus (تفاضل وتكامل)", avgScore: 72, status: "متوسط" },
-      { label: "Basic Electric (دوائر كهربية)", avgScore: 68, status: "متوسط" },
-      { label: "Physics (فيزياء هندسية)", avgScore: 75, status: "قوي" },
-      { label: "English (لغة إنجليزية)", avgScore: 90, status: "ممتاز" },
-      { label: "Arabic Intro (لغة عربية وتواصل)", avgScore: 92, status: "ممتاز" }
-    ]
-  };
+  // 1. Get real quiz attempts from localStorage
+  let quizAttempts = [];
+  try {
+    const rawQuizzes = localStorage.getItem('jooprep_quiz_attempts');
+    quizAttempts = rawQuizzes ? JSON.parse(rawQuizzes) : [];
+  } catch(e) {}
 
-  const score = Math.round(readiness.readinessScore);
-  document.getElementById('readiness-score-display').innerText = `${score}%`;
-  document.getElementById('readiness-level-label').innerText = readiness.levelLabel;
-  document.getElementById('readiness-status-badge').innerText = readiness.statusText;
+  // 2. Get real viva history from localStorage
+  let vivaSessions = [];
+  try {
+    const rawVivas = localStorage.getItem('jooprep_viva_history');
+    vivaSessions = rawVivas ? JSON.parse(rawVivas) : [];
+  } catch(e) {}
 
-  const offset = 251.2 - (251.2 * score) / 100;
+  // 3. Get real errors from error notebook
+  const errors = getStoredErrors();
+
+  const dialDisplay = document.getElementById('readiness-score-display');
+  const levelLabel = document.getElementById('readiness-level-label');
+  const statusBadge = document.getElementById('readiness-status-badge');
   const circle = document.getElementById('readiness-gauge-circle');
-  circle.style.strokeDashoffset = offset;
-  circle.setAttribute('class', 'text-emerald-500 transition-all duration-1000 ease-out');
+  const qDisplay = document.getElementById('q-score-display');
+  const vDisplay = document.getElementById('v-score-display');
+  const studyTopics = document.getElementById('study-first-topics');
+  const lastAct = document.getElementById('dashboard-last-activity');
 
-  document.getElementById('q-score-display').innerText = `${readiness.qScore}%`;
-  document.getElementById('v-score-display').innerText = `${readiness.vScore}%`;
+  // If no activity at all yet
+  if (quizAttempts.length === 0 && vivaSessions.length === 0) {
+    if (dialDisplay) dialDisplay.innerText = '0%';
+    if (levelLabel) levelLabel.innerText = 'ابدأ أول كويز لقياس مستواك 🚀';
+    if (statusBadge) {
+      statusBadge.innerText = 'بانتظار أول تقييم (0%)';
+      statusBadge.className = 'text-[11px] px-3 py-1 rounded-full font-bold bg-slate-800 text-slate-300 border border-slate-700';
+    }
+    if (circle) {
+      circle.style.strokeDashoffset = 251.2;
+      circle.setAttribute('class', 'text-slate-800 transition-all duration-1000 ease-out');
+    }
+    if (qDisplay) qDisplay.innerText = '0%';
+    if (vDisplay) vDisplay.innerText = '0%';
+    if (studyTopics) studyTopics.innerText = 'لم تبدأ أي كويز بعد. اختر مادة من الأسفل وابدأ الكويز لتحليل مستواك وتحديد نقاط الضعف بدقة.';
+    if (lastAct) lastAct.innerText = 'لا يوجد نشاط سابق';
 
-  if (readiness.studyFirstRecommendations) {
-    document.getElementById('study-first-topics').innerText = readiness.studyFirstRecommendations.join(' • ');
+    renderHeatmap([
+      { key: 'linear_algebra', label: 'Linear Algebra (الجبر الخطي)', avgScore: 0, status: 'لم يُختبر بعد', count: 0 },
+      { key: 'calculus', label: 'Calculus (التفاضل والتكامل)', avgScore: 0, status: 'لم يُختبر بعد', count: 0 },
+      { key: 'basic_electric', label: 'Basic Electric (الدوائر الكهربية)', avgScore: 0, status: 'لم يُختبر بعد', count: 0 },
+      { key: 'physics', label: 'Physics (الفيزياء الهندسية)', avgScore: 0, status: 'لم يُختبر بعد', count: 0 },
+      { key: 'english', label: 'English (اللغة الإنجليزية)', avgScore: 0, status: 'لم يُختبر بعد', count: 0 },
+      { key: 'arabic_intro', label: 'Arabic Intro (اللغة العربية والتواصل)', avgScore: 0, status: 'لم يُختبر بعد', count: 0 }
+    ]);
+    return;
   }
 
-  renderHeatmap(readiness.heatmap);
+  // Calculate real Q (Quiz Accuracy Average)
+  let qScore = 0;
+  if (quizAttempts.length > 0) {
+    const qSum = quizAttempts.reduce((acc, curr) => acc + (Number(curr.percentage) || Number(curr.percent) || 0), 0);
+    qScore = Math.round(qSum / quizAttempts.length);
+  }
+
+  // Calculate real V (Viva Score Average)
+  let vScore = 0;
+  if (vivaSessions.length > 0) {
+    const vSum = vivaSessions.reduce((acc, curr) => acc + (Number(curr.finalScore) || Number(curr.final_score) || 0), 0);
+    vScore = Math.round(vSum / vivaSessions.length);
+  }
+
+  // Calculate real R (Readiness Index: R = 0.5 * Q + 0.5 * V)
+  let rScore = 0;
+  if (quizAttempts.length > 0 && vivaSessions.length > 0) {
+    rScore = Math.round(0.5 * qScore + 0.5 * vScore);
+  } else if (quizAttempts.length > 0) {
+    rScore = qScore;
+  } else {
+    rScore = vScore;
+  }
+
+  if (dialDisplay) dialDisplay.innerText = `${rScore}%`;
+  if (qDisplay) qDisplay.innerText = quizAttempts.length > 0 ? `${qScore}%` : '0%';
+  if (vDisplay) vDisplay.innerText = vivaSessions.length > 0 ? `${vScore}%` : '0%';
+
+  if (circle) {
+    const offset = 251.2 - (251.2 * rScore) / 100;
+    circle.style.strokeDashoffset = offset;
+    if (rScore >= 75) {
+      circle.setAttribute('class', 'text-emerald-500 transition-all duration-1000 ease-out');
+    } else if (rScore >= 50) {
+      circle.setAttribute('class', 'text-amber-500 transition-all duration-1000 ease-out');
+    } else {
+      circle.setAttribute('class', 'text-rose-500 transition-all duration-1000 ease-out');
+    }
+  }
+
+  if (statusBadge && levelLabel) {
+    if (rScore >= 85) {
+      statusBadge.innerText = 'مستوى ممتاز ومستعد للامتحان 🎓';
+      statusBadge.className = 'text-[11px] px-3 py-1 rounded-full font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+      levelLabel.innerText = 'جاهز للامتحان والمناقشة بامتياز';
+    } else if (rScore >= 70) {
+      statusBadge.innerText = 'مستوى جيد جداً 📈';
+      statusBadge.className = 'text-[11px] px-3 py-1 rounded-full font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40';
+      levelLabel.innerText = 'مستوى متقدم — واصل التدريب';
+    } else if (rScore >= 50) {
+      statusBadge.innerText = 'يحتاج لمزيد من التدريب ⚠️';
+      statusBadge.className = 'text-[11px] px-3 py-1 rounded-full font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+      levelLabel.innerText = 'مستوى متوسط — راجع الأخطاء';
+    } else {
+      statusBadge.innerText = 'بحاجة لمراجعة مكثفة 🚨';
+      statusBadge.className = 'text-[11px] px-3 py-1 rounded-full font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40';
+      levelLabel.innerText = 'مستوى أولي — ركز على التوصيات';
+    }
+  }
+
+  // Calculate Real Subject Heatmap from user's actual attempts
+  const subjectsMap = {
+    linear_algebra: { label: "Linear Algebra (الجبر الخطي)", total: 0, count: 0 },
+    calculus: { label: "Calculus (التفاضل والتكامل)", total: 0, count: 0 },
+    basic_electric: { label: "Basic Electric (الدوائر الكهربية)", total: 0, count: 0 },
+    physics: { label: "Physics (الفيزياء الهندسية)", total: 0, count: 0 },
+    english: { label: "English (اللغة الإنجليزية)", total: 0, count: 0 },
+    arabic_intro: { label: "Arabic Intro (اللغة العربية والتواصل)", total: 0, count: 0 }
+  };
+
+  quizAttempts.forEach(att => {
+    if (subjectsMap[att.subject]) {
+      subjectsMap[att.subject].total += (Number(att.percentage) || Number(att.percent) || 0);
+      subjectsMap[att.subject].count += 1;
+    }
+  });
+
+  const heatmapItems = Object.keys(subjectsMap).map(key => {
+    const s = subjectsMap[key];
+    if (s.count === 0) {
+      return { key, label: s.label, avgScore: 0, status: 'لم يُختبر بعد', count: 0 };
+    }
+    const avg = Math.round(s.total / s.count);
+    let st = 'يحتاج تركيز 🚨';
+    if (avg >= 80) st = 'ممتاز 🎓';
+    else if (avg >= 60) st = 'متوسط 📈';
+    return { key, label: s.label, avgScore: avg, status: st, count: s.count };
+  });
+
+  renderHeatmap(heatmapItems);
+
+  // Real "ذاكر ده الأول" recommendation
+  if (studyTopics) {
+    if (errors.length > 0) {
+      const errorSubjects = [...new Set(errors.map(e => {
+        const s = SUBJECTS_DATA[e.subject];
+        return s ? `${s.nameEn} (${s.nameAr})` : e.subject;
+      }))];
+      studyTopics.innerText = `بناءً على أخطائك المسجلة (${errors.length} أخطاء): ننصحك بالتركيز على مراجعة أسئلة: ${errorSubjects.join(' • ')}`;
+    } else {
+      const attempted = heatmapItems.filter(h => h.count > 0);
+      if (attempted.length > 0) {
+        attempted.sort((a, b) => a.avgScore - b.avgScore);
+        const lowest = attempted[0];
+        if (lowest.avgScore < 80) {
+          studyTopics.innerText = `أقل معدل أداء حالي لديك هو في مادة ${lowest.label} بنسبة ${lowest.avgScore}%. ننصحك بإعادة حل كويز هذه المادة لرفع الجاهزية.`;
+        } else {
+          studyTopics.innerText = `أداؤك متميز في كافة المواد التي اختبرتها حتى الآن! يمكنك تجربة محاكي الشفوي لاختبار نفسك في المعمل.`;
+        }
+      } else {
+        studyTopics.innerText = 'اختر مادة من الأسفل وابدأ الكويز لتحليل مستواك وتحديد الموضوعات الأهم للمذاكرة.';
+      }
+    }
+  }
+
+  // Update last activity date
+  if (lastAct) {
+    const lastQuiz = quizAttempts[0];
+    const lastViva = vivaSessions[0];
+    let latestDate = null;
+    if (lastQuiz && lastQuiz.created_at) latestDate = new Date(lastQuiz.created_at);
+    if (lastViva && lastViva.created_at) {
+      const vDate = new Date(lastViva.created_at);
+      if (!latestDate || vDate > latestDate) latestDate = vDate;
+    }
+    if (latestDate) {
+      lastAct.innerText = latestDate.toLocaleDateString('ar-EG', {
+        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+    } else {
+      lastAct.innerText = 'اليوم';
+    }
+  }
 }
 
 function renderHeatmap(items) {
@@ -1069,23 +1251,28 @@ function renderHeatmap(items) {
     const bar = document.createElement('div');
     bar.className = "space-y-1.5";
     
-    let colorClass = "bg-rose-500";
-    let textClass = "text-rose-400";
-    if (item.avgScore >= 80) {
-      colorClass = "bg-emerald-500";
-      textClass = "text-emerald-400";
-    } else if (item.avgScore >= 60) {
-      colorClass = "bg-amber-500";
-      textClass = "text-amber-400";
+    let colorClass = "bg-slate-700";
+    let textClass = "text-slate-400";
+    if (item.count > 0) {
+      if (item.avgScore >= 80) {
+        colorClass = "bg-emerald-500";
+        textClass = "text-emerald-400";
+      } else if (item.avgScore >= 60) {
+        colorClass = "bg-amber-500";
+        textClass = "text-amber-400";
+      } else {
+        colorClass = "bg-rose-500";
+        textClass = "text-rose-400";
+      }
     }
 
     bar.innerHTML = `
       <div class="flex items-center justify-between text-xs font-bold">
         <span class="text-slate-200">${item.label}</span>
-        <span class="${textClass} font-mono">${Math.round(item.avgScore)}% (${item.status})</span>
+        <span class="${textClass} font-mono">${item.count > 0 ? `${item.avgScore}% (${item.status})` : item.status}</span>
       </div>
       <div class="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
-        <div class="h-full ${colorClass} rounded-full transition-all duration-700" style="width: ${item.avgScore}%"></div>
+        <div class="h-full ${colorClass} rounded-full transition-all duration-700" style="width: ${item.count > 0 ? item.avgScore : 0}%"></div>
       </div>
     `;
     container.appendChild(bar);
@@ -1093,6 +1280,34 @@ function renderHeatmap(items) {
 }
 
 // ----------------- Code Lab & Viva Defense Simulator -----------------
+
+// ----------------- Dynamic Code Viva Engine -----------------
+function detectCodeLanguage(code) {
+  if (/#include|std::|cout|cin|nullptr/.test(code)) return 'C++';
+  if (/def\s+|import\s+|elif\s+|print\(|:\s*$/.test(code)) return 'Python';
+  if (/public\s+class|System\.out\.println/.test(code)) return 'Java';
+  if (/console\.log|const\s+|let\s+|=>/.test(code)) return 'JavaScript';
+  if (/#include\s*<stdio\.h>|printf/.test(code)) return 'C';
+  return 'الكود المقدم';
+}
+
+function generateDynamicVivaQuestions(code, lang) {
+  const hasLoops = /for\s*\(|while\s*\(|for\s+\w+\s+in/.test(code);
+  const hasPointersOrNew = /new\s+|malloc|\*|\->|delete\s+/.test(code);
+
+  return [
+    `أهلاً بك في مناقشة مشروعك بلغة (${lang}). اشرح باختصار البنية العامة للكود، وتدفق التنفيذ من البداية حتى النهاية.`,
+    hasLoops
+      ? `لاحظت وجود تكرارات (Loops) في الكود؛ ما هو التعقيد الزمني (Time Complexity) للعمليات بدقة (Big-O)؟ وهل هناك مجال لتحسين الأداء؟`
+      : `ما هو التعقيد الحسابي (Big-O) للخوارزمية المنفذة؟ وما هو التعقيد المكاني (Space Complexity) الإضافي؟`,
+    hasPointersOrNew
+      ? `الكود يستخدم مؤشرات أو تخصيصاً ديناميكياً؛ أين تُحجز هذه المتغيرات في الذاكرة (Stack أم Heap)؟ وكيف تضمن تفادي تسريب الذاكرة (Memory Leak)؟`
+      : `كيف تتم إدارة الذاكرة ونطاق المتغيرات (Scope & Lifetime) أثناء تشغيل هذا البرنامج؟`,
+    `لو أدخل المستخدم مدخلات سالبة أو غير متوقعة أو مصفوفة فارغة (Edge Cases)، كيف يتعامل كودك مع هذه الحالات لتفادي الانهيار (Runtime Error)؟`,
+    `لو طُلب منك إعادة بناء هذا الكود ليعمل في نظام موزع يتحمل ملايين العمليات في الثانية، ما هي هياكل البيانات والتقنيات التي ستعتمدها؟`
+  ];
+}
+
 function insertSampleCode() {
   const sample = `// مشروع شجرة البحث الثنائية وتطبيق خوارزميات الترتيب
 #include <iostream>
@@ -1147,24 +1362,30 @@ function startVivaSession() {
   state.vivaPersona = personaRadio ? personaRadio.value : 'strict_ta';
   state.vivaLanguage = document.getElementById('viva-language-select').value;
   state.vivaLevel = parseInt(document.getElementById('viva-level-select').value, 10);
+  
+  // Real dynamic analysis of student code
+  const lang = detectCodeLanguage(code);
+  state.vivaLangName = lang;
+  state.vivaQuestionsList = generateDynamicVivaQuestions(code, lang);
   state.vivaCurrentTurn = 1;
   state.vivaScores = [];
 
   const personaNames = {
-    strict_ta: { name: "ممتحن تقني متخصص", avatar: "👨‍🏫", tone: "فحص دقيق للأخطاء الصامتة وحالات الحافة وتسريب الذاكرة", welcome: "أهلاً بك. تم فحص الكود البرمجي المقدم، وسنبدأ جلسة المناقشة الآن. يرجى التركيز وتقديم تبريرات علمية وخوارزمية دقيقة." },
-    academic_prof: { name: "أستاذ أكاديمي", avatar: "🎓", tone: "تحليل نظري معمق للتعقيد الحسابي وهياكل البيانات والمفاضلة الخوارزمية", welcome: "مرحباً بك يا مهندس. الغرض من هذه المناقشة هو قياس استيعابك للمبادئ العلمية المعتمدة في تصميم وبناء هذا الكود." },
-    friendly_ta: { name: "مدرب تفاعلي", avatar: "🤝", tone: "توجيه تدريجي وإرشادات علمية داعمة", welcome: "أهلاً بك. هذه جلسة محاكاة تدريبية لاكتساب الثقة والتعود على أجواء المناقشة الأكاديمية والعملية بالكلية." },
-    surprise_doc: { name: "لجنة تقييم متقدمة", avatar: "⚡", tone: "سيناريوهات تطبيقية وتحديات معقدة في بيئات الإنتاج", welcome: "أهلاً بك. الكود البرمجي يعمل على الحالات الافتراضية؛ سنختبر الآن أداءه واستقراره تحت ضغط السيناريوهات العملية المتقدمة." }
+    strict_ta: { name: "ممتحن تقني متخصص", avatar: "👨‍🏫", tone: "فحص دقيق للأخطاء الصامتة وحالات الحافة وتسريب الذاكرة", welcome: `أهلاً بك. تم فحص الكود البرمجي المقدم (${lang})، وسنبدأ جلسة المناقشة الآن. يرجى التركيز وتقديم تبريرات علمية وخوارزمية دقيقة.` },
+    academic_prof: { name: "أستاذ أكاديمي", avatar: "🎓", tone: "تحليل نظري معمق للتعقيد الحسابي وهياكل البيانات والمفاضلة الخوارزمية", welcome: `مرحباً بك يا مهندس. سنناقش الآن المبادئ العلمية وخوارزميات الكود المكتوب بـ (${lang}) لقياس استيعابك الأكاديمي المكتسب.` },
+    friendly_ta: { name: "مدرب تفاعلي", avatar: "🤝", tone: "توجيه تدريجي وإرشادات علمية داعمة", welcome: `أهلاً يا بطل! كودك بلغة (${lang}) جاهز وممتاز. لا تقلق، هدفنا نتدرب معاً على طريقة التفكير العلمي والمناقشة بثقة.` },
+    surprise_doc: { name: "لجنة تقييم متقدمة", avatar: "⚡", tone: "سيناريوهات تطبيقية وتحديات معقدة في بيئات الإنتاج", welcome: `أهلاً بك. سنختبر الآن أداء كودك (${lang}) واستقراره تحت ضغط السيناريوهات العملية المعقدة والـ Edge Cases.` }
   };
+
   const p = personaNames[state.vivaPersona] || personaNames.strict_ta;
 
   document.getElementById('viva-setup-screen').classList.add('hidden');
   document.getElementById('viva-active-screen').classList.remove('hidden');
   document.getElementById('viva-report-screen').classList.add('hidden');
 
-  document.getElementById('active-persona-name').innerText = p.name;
-  document.getElementById('active-persona-avatar').innerText = p.avatar;
-  document.getElementById('active-persona-tone').innerText = p.tone;
+  document.getElementById('viva-active-avatar').innerText = p.avatar;
+  document.getElementById('viva-active-name').innerText = p.name;
+  document.getElementById('viva-active-tone').innerText = p.tone;
   document.getElementById('viva-turn-counter').innerText = `دور 1 من ${state.vivaMaxTurns}`;
   document.getElementById('viva-current-score').innerText = `--/10`;
 
@@ -1173,23 +1394,27 @@ function startVivaSession() {
 
   addExaminerMessage(p.welcome);
   setTimeout(() => {
-    addExaminerQuestion("بص على دالة insertHelper: إيه اللي هيحصل لو مررت لها مؤشر فاضي (nullptr)؟ وفين الـ Boundary Check اللي بيحميك؟", "حالات الحافة والذاكرة");
-  }, 700);
+    addExaminerQuestion(state.vivaQuestionsList[0], `${lang} — الهيكل العام`);
+  }, 900);
 }
 
-function addExaminerMessage(text) {
+function addExaminerMessage(msg) {
   const stream = document.getElementById('viva-dialogue-stream');
   const div = document.createElement('div');
-  div.className = "viva-bubble-examiner p-4 text-xs sm:text-sm text-slate-200 leading-relaxed max-w-2xl animate-fade-in shadow-md";
-  div.innerHTML = `<span class="font-extrabold text-purple-400 block mb-1">الممتحن:</span>${text}`;
+  div.className = "viva-bubble-examiner p-4 sm:p-5 text-xs sm:text-sm text-slate-200 leading-relaxed max-w-2xl border-l-4 border-l-purple-500 shadow-xl animate-fade-in";
+  div.innerHTML = `
+    <span class="font-black text-purple-400 block mb-1">الممتحن:</span>
+    <div class="leading-relaxed">${msg}</div>
+  `;
   stream.appendChild(div);
   stream.scrollTop = stream.scrollHeight;
+  if (state.audioEnabled) speakText(msg);
 }
 
 function addExaminerQuestion(question, topic) {
   const stream = document.getElementById('viva-dialogue-stream');
   const div = document.createElement('div');
-  div.className = "viva-bubble-examiner p-4 sm:p-5 text-xs sm:text-sm text-slate-100 font-semibold leading-relaxed max-w-2xl border-l-4 border-l-purple-500 shadow-xl animate-fade-in";
+  div.className = "viva-bubble-examiner p-4 sm:p-5 text-xs sm:text-sm text-slate-200 leading-relaxed max-w-2xl border-l-4 border-l-purple-500 shadow-xl animate-fade-in";
   div.innerHTML = `
     <div class="flex items-center justify-between text-[11px] text-purple-300 mb-2 font-sans">
       <span class="font-black flex items-center gap-1.5"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i>سؤال المناقشة (${state.vivaCurrentTurn}):</span>
@@ -1200,7 +1425,6 @@ function addExaminerQuestion(question, topic) {
   stream.appendChild(div);
   stream.scrollTop = stream.scrollHeight;
   if (window.lucide) lucide.createIcons();
-
   if (state.audioEnabled) speakText(question);
 }
 
@@ -1232,38 +1456,42 @@ function submitVivaTurn() {
 
   setTimeout(() => {
     thinking.classList.add('hidden');
-    const words = answer.split(' ').length;
-    let score = 6.0;
-    let verdict = 'partial';
-    let critique = 'إجابة جيدة ووصلت لنصف الفكرة، لكن كان ينقصك توضيح كيفية حماية البرنامج لو تغيرت المدخلات.';
-    let missing = ["ربط الإجابة بالتعقيد الحسابي المباشر", "توضيح سيناريو معالجة الـ Edge Cases"];
+    
+    // Real dynamic scoring of student response based on substantive depth & keywords
+    const words = answer.split(/\s+/).filter(Boolean).length;
+    const techKeywords = ['big-o', 'stack', 'heap', 'memory', 'leak', 'loop', 'complexity', 'edge case', 'ذاكرة', 'تعقيد', 'مصفوفة', 'حالات حافة', 'كفاءة', 'pointer', 'مؤشر', 'تحسين', 'نطاق', 'دالة', 'خوارزمية', 'استدعاء', 'تزامن'];
+    const matchedKeywords = techKeywords.filter(k => answer.toLowerCase().includes(k)).length;
 
-    if (words > 12) {
-      score = 8.8;
+    let turnScore = 5.0;
+    let verdict = 'partial';
+    let critique = '';
+    let missing = [];
+
+    if (words >= 15 && matchedKeywords >= 2) {
+      turnScore = 9.5;
       verdict = 'correct';
-      critique = 'ممتاز جداً! شرح مقنع ومترابط علمياً مع استدلال سليم بسلوك الكود وإدارة الذاكرة.';
-      missing = [];
-    } else if (words < 4) {
-      score = 2.5;
+      critique = 'إجابة متميزة وشاملة! استخدمت المصطلحات التقنية بدقة وفسرت منطق العمل وإدارة الذاكرة.';
+    } else if (words >= 8 || matchedKeywords >= 1) {
+      turnScore = 7.5;
+      verdict = 'partial';
+      critique = 'إجابة جيدة ووصلت للفكرة، لكن كان ينقصك توضيح التعقيد الحسابي بدقة وتأثيره على الأداء.';
+      missing = ["تأصيل التعقيد الحسابي المباشر", "توضيح معالجة الـ Edge Cases"];
+    } else {
+      turnScore = 3.5;
       verdict = 'wrong';
-      critique = 'إجابة مقتضبة جداً، حاول دائماً التفكير بصوت مسموع واستخدام المصطلحات التقنية.';
+      critique = 'إجابة مقتضبة جداً، احرص على استخدام المصطلحات العلمية وتبرير خياراتك البرمجية بالتفصيل.';
       missing = ["الإجابة المباشرة على السؤال", "المصطلحات التقنية المفسرة للحل"];
     }
 
-    const nextQuestions = [
-      "لو شجرة البحث أصبحت غير متزنة (Skewed Tree)، التعقيد الزمني لعملية البحث هيتحول لـ O(N)؛ إزاي تحل المشكلة دي هندسياً؟",
-      "أين يتم تخزين العقد (Nodes) التي تم إنشاؤها عبر new؟ وهل يوجد Memory Leak لو انتهى البرنامج دون عمل delete؟",
-      "كيف يتعامل البرنامج لو أدخل المستخدم قيمة مكررة بالفعل داخل الشجرة؟",
-      "لو طلب منك تحويل دالة الإدراج من الطريقة التكرارية إلى طريقة الحلقات العادية، إيه التعديل اللي هتعمله؟"
-    ];
+    const nextQ = state.vivaCurrentTurn < state.vivaMaxTurns ? state.vivaQuestionsList[state.vivaCurrentTurn] : null;
 
     const evalRes = {
-      score: score,
+      score: turnScore,
       verdict: verdict,
       critique: critique,
       missing: missing,
-      nextQuestion: state.vivaCurrentTurn < state.vivaMaxTurns ? nextQuestions[(state.vivaCurrentTurn - 1) % nextQuestions.length] : null,
-      topic: "Big-O وإدارة الذاكرة",
+      nextQuestion: nextQ,
+      topic: `${state.vivaLangName || 'الكود'} — دور ${state.vivaCurrentTurn}`,
       isLastTurn: state.vivaCurrentTurn >= state.vivaMaxTurns
     };
 
@@ -1282,7 +1510,7 @@ function submitVivaTurn() {
         addExaminerQuestion(evalRes.nextQuestion, evalRes.topic);
       }, 1000);
     }
-  }, 900);
+  }, 800);
 }
 
 function renderTurnCritique(evalRes) {
@@ -1328,25 +1556,26 @@ function renderTurnCritique(evalRes) {
 }
 
 function finishVivaSession() {
+  // Real calculated score from actual scores across turns (No mock/default 82%)
   const avg = state.vivaScores.length > 0 
-    ? (state.vivaScores.reduce((a, b) => a + b, 0) / state.vivaScores.length) * 10 
-    : 82;
+    ? Math.round((state.vivaScores.reduce((a, b) => a + b, 0) / state.vivaScores.length) * 10)
+    : 0;
 
   const rep = {
-    overallScore: Math.round(avg),
-    badge: avg >= 75 ? "جاهز بامتياز للمناقشة 🎓" : "أداء جيد ومستوى متوسط 📈",
-    verdictMessage: "أداء قوي يعكس فهمك لآلية عمل الكود وتسلسل التنفيذ، مع ضرورة التركيز على تحسين سرعة الإجابة في أسئلة الـ Edge Cases.",
-    strengths: [
-      "فهم عميق لهيكل الكود وتسلسل التنفيذ",
-      "استيعاب ممتاز لمفهوم الحجز الديناميكي للذاكرة",
-      "القدرة على تبرير الخيارات البرمجية بثقة"
-    ],
-    weaknesses: [
-      "التردد عند السؤال عن التعقيد الحسابي بدقة (Big-O)",
-      "إغفال حالات الحافة مثل القوائم الفارغة والمؤشرات الخالية",
-      "الحاجة لتعميق الشرح واستخدام مصطلحات علمية أوضح"
-    ],
-    reviewTopics: ["تحسينات الذاكرة وإزالة Dangling Pointers", "حساب Big-O Notation بدقة", "معالجة الـ Exceptions"]
+    overallScore: avg,
+    badge: avg >= 85 ? "جاهز بامتياز للمناقشة 🎓" : (avg >= 65 ? "أداء جيد ومستوى متوسط 📈" : "يحتاج لمزيد من التدريب ⚠️"),
+    verdictMessage: avg >= 85
+      ? "أداء متميز يعكس استيعابك الكامل لمنطق الكود وتسلسل التنفيذ وكفاءة الخوارزمية."
+      : (avg >= 65
+          ? "أداء جيد ولديك فهم لآلية عمل الكود، مع الحاجة لتعميق الشرح واستخدام مصطلحات علمية أوضح في الـ Edge Cases."
+          : "تحتاج إلى مراجعة أسس إدارة الذاكرة وحساب التعقيد الحسابي بدقة قبل دخول المناقشة الفعلية."),
+    strengths: avg >= 65
+      ? ["استيعاب منطق الكود وتسلسل التنفيذ", "القدرة على توضيح الهدف من العمليات البرمجية", "استخدام مصطلحات علمية في التبرير"]
+      : ["المحاولة والمشاركة في الإجابة عن الأسئلة البرمجية"],
+    weaknesses: avg < 85
+      ? ["التردد عند السؤال عن التعقيد الحسابي بدقة (Big-O)", "إغفال حالات الحافة (Edge Cases) وإدارة الذاكرة"]
+      : [],
+    reviewTopics: ["حساب Big-O Notation بدقة", "معالجة حالات الحافة والـ Exceptions", "إدارة الذاكرة ونطاق المتغيرات"]
   };
 
   document.getElementById('viva-active-screen').classList.add('hidden');
@@ -1366,13 +1595,17 @@ function finishVivaSession() {
     confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
   }
 
-  // Sync viva session to Supabase database
+  // Sync viva session to Supabase and LocalStorage
   syncVivaSessionToSupabase({
     persona: state.vivaPersona,
     codeSnippet: document.getElementById('viva-code-input') ? document.getElementById('viva-code-input').value : '',
     finalScore: rep.overallScore,
     feedback: rep.verdictMessage
   });
+
+  // Re-calculate real readiness scores and profile quotas immediately!
+  loadUserProfile();
+  loadReadinessData();
 }
 
 function finishVivaSessionEarly() {
@@ -1454,7 +1687,19 @@ function loadLatestPrepSheet() {
 }
 
 function generatePrepSheetForCode() {
+  const code = document.getElementById('viva-code-input') ? document.getElementById('viva-code-input').value.trim() : '';
+  const lang = detectCodeLanguage(code);
+
+  // Log generation in prep sheets history for real daily quota calculation
+  try {
+    const raw = localStorage.getItem('jooprep_prep_sheets');
+    const list = raw ? JSON.parse(raw) : [];
+    list.unshift({ id: 'prep_' + Date.now(), lang, created_at: new Date().toISOString() });
+    localStorage.setItem('jooprep_prep_sheets', JSON.stringify(list.slice(0, 30)));
+  } catch(e) {}
+
   loadLatestPrepSheet();
+  loadUserProfile();
   navigate('prep-sheet');
 }
 
