@@ -198,14 +198,14 @@
           <p class="text-xs text-zinc-400 mt-1">اكتب بياناتك لحفظ نقاطك وفتح المستويات تلقائياً</p>
         </div>
 
-        <form onsubmit="handleLoginSubmit(event)" class="space-y-4 text-xs">
+        <form onsubmit="handleLoginSubmit(event); return false;" class="space-y-4 text-xs">
           
           <!-- Email Input -->
           <div class="space-y-1.5">
             <label class="block font-bold text-zinc-300 text-xs">البريد الإلكتروني</label>
             <div class="form-input-container flex items-center px-3.5 py-2.5 gap-2.5">
               <i data-lucide="mail" class="w-4 h-4 text-zinc-500 flex-shrink-0"></i>
-              <input type="email" id="login-email" required placeholder="name@example.com" dir="ltr" class="w-full bg-transparent text-white outline-none font-sans text-xs sm:text-sm">
+              <input type="text" id="login-email" required placeholder="البريد الإلكتروني أو كود الطالب أو الاسم" dir="ltr" class="w-full bg-transparent text-white outline-none font-sans text-xs sm:text-sm">
             </div>
           </div>
 
@@ -222,7 +222,7 @@
           </div>
 
           <!-- Submit Button -->
-          <button type="submit" id="btn-login-submit" onclick="handleLoginSubmit(event)" class="w-full bg-[#00c982] hover:bg-[#00b374] text-zinc-950 font-black py-3.5 rounded-xl shadow-lg shadow-emerald-500/20 active:scale-98 transition flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer mt-2">
+          <button type="button" id="btn-login-submit" onclick="handleLoginSubmit(event)" class="w-full bg-[#00c982] hover:bg-[#00b374] text-zinc-950 font-black py-3.5 rounded-xl shadow-lg shadow-emerald-500/20 active:scale-98 transition flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer mt-2">
             <span>تسجيل الدخول</span>
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
           </button>
@@ -325,7 +325,7 @@
           <p class="text-xs text-zinc-400 mt-1">سجل حسابك لحفظ كل مستوياتك ونقاطك سحابياً</p>
         </div>
 
-        <form onsubmit="handleRegisterSubmit(event)" class="space-y-3.5 text-xs">
+        <form onsubmit="handleRegisterSubmit(event); return false;" class="space-y-3.5 text-xs">
           
           <!-- Full Name Input -->
           <div class="space-y-1">
@@ -351,7 +351,7 @@
             <label class="block font-bold text-zinc-300 text-xs">البريد الإلكتروني</label>
             <div class="form-input-container flex items-center px-3.5 py-2.5 gap-2.5">
               <i data-lucide="mail" class="w-4 h-4 text-zinc-500 flex-shrink-0"></i>
-              <input type="email" id="reg-email" required placeholder="name@example.com" dir="ltr" class="w-full bg-transparent text-white outline-none font-sans text-xs sm:text-sm">
+              <input type="text" id="reg-email" required placeholder="name@example.com أو كودك الجامعي" dir="ltr" class="w-full bg-transparent text-white outline-none font-sans text-xs sm:text-sm">
             </div>
           </div>
 
@@ -368,7 +368,7 @@
           </div>
 
           <!-- Submit Button -->
-          <button type="submit" id="btn-reg-submit" onclick="handleRegisterSubmit(event)" class="w-full bg-[#00c982] hover:bg-[#00b374] text-zinc-950 font-black py-3.5 rounded-xl shadow-lg shadow-emerald-500/20 active:scale-98 transition flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer mt-2">
+          <button type="button" id="btn-reg-submit" onclick="handleRegisterSubmit(event)" class="w-full bg-[#00c982] hover:bg-[#00b374] text-zinc-950 font-black py-3.5 rounded-xl shadow-lg shadow-emerald-500/20 active:scale-98 transition flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer mt-2">
             <i data-lucide="sparkles" class="w-4 h-4 text-zinc-950"></i>
             <span>إنشاء الحساب والمزامنة</span>
           </button>
@@ -548,7 +548,7 @@
 
       showAlert('تم إنشاء الحساب بنجاح! جاري تحويلك للمنصة...', 'success');
       setTimeout(() => {
-        window.location.href = '/#dashboard';
+        window.location.replace('/#dashboard');
       }, 350);
     }
 
@@ -623,7 +623,7 @@
       localStorage.setItem('jooprep_user_session', JSON.stringify(userSession));
       showAlert('تم تسجيل الدخول بنجاح! جاري تحويلك للمنصة...', 'success');
       setTimeout(() => {
-        window.location.href = '/#dashboard';
+        window.location.replace('/#dashboard');
       }, 350);
     }
 
@@ -653,7 +653,7 @@
       localStorage.setItem('jooprep_user_session', JSON.stringify(googleUser));
       showAlert('مرحباً بك! تم الاتصال بحساب Google بنجاح 🎉', 'success');
       setTimeout(() => {
-        window.location.href = '/#dashboard';
+        window.location.replace('/#dashboard');
       }, 400);
     }
 
@@ -670,7 +670,7 @@
       localStorage.setItem('jooprep_user_session', JSON.stringify(guest));
       showAlert('مرحباً بك! تم الدخول بنمط الزائر التجريبي...', 'success');
       setTimeout(() => {
-        window.location.href = '/#dashboard';
+        window.location.replace('/#dashboard');
       }, 300);
     }
 

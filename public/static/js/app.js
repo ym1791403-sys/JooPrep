@@ -1,3 +1,20 @@
+// ----------------- Synchronous Session Restore -----------------
+function restoreLocalUserSessionSync() {
+  try {
+    const stored = localStorage.getItem('jooprep_user_session');
+    if (stored) {
+      const u = JSON.parse(stored);
+      if (u && u.isLoggedIn) {
+        state.user = { ...state.user, ...u, isLoggedIn: true };
+        return true;
+      }
+    }
+  } catch(e) {}
+  return false;
+}
+// Immediate synchronous invoke before any view renders
+restoreLocalUserSessionSync();
+
 /**
  * JooPrep v2 Client Engine
  * 6 Academic Subjects: Linear Algebra, Calculus, Basic Electric, Physics, English, Arabic Introduction
@@ -525,22 +542,20 @@ window.toggleAudio = function() {};
 
 // ----------------- Initialization -----------------
 document.addEventListener('DOMContentLoaded', () => {
+  // 1. Immediately restore session synchronously
+  restoreLocalUserSessionSync();
   initTheme();
   if (window.lucide) lucide.createIcons();
 
   loadCustomQuestions();
   initSupabaseClient();
+
+  // 2. checkAuthSession handles all auth verification and initial view navigation
   checkAuthSession();
 
   renderSubjectsGrid();
   loadUserProfile();
   loadReadinessData();
-
-  // Initial URL Hash page navigation
-  const initHash = (window.location.hash || '').replace('#', '');
-  if (initHash && ['dashboard', 'quizzes', 'viva', 'prep-sheet', 'error-notebook', 'profile', 'auth'].includes(initHash)) {
-    navigate(initHash);
-  }
 
   const codeInput = document.getElementById('viva-code-input');
   if (codeInput) {
@@ -556,6 +571,11 @@ function navigate(viewName) {
   if (viewName === 'auth') {
     window.location.href = '/login.html';
     return;
+  }
+
+  // Ensure synchronous session is checked before deciding
+  if (!state.user || !state.user.isLoggedIn) {
+    restoreLocalUserSessionSync();
   }
 
   // Strict Authentication Guard
