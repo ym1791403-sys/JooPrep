@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0B1220">
+  <title>تسجيل الدخول — JooPrep للأكاديميا</title>
+  
+  <!-- Modern Geometric Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Supabase Official JavaScript Client SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Readex Pro', 'Cairo', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg: #0B1220;
+      --sf: #131C2E;
+      --bd: #263247;
+      --tx: #E8EEF9;
+      --mu: #92A0B8;
+      --p:  #2563EB;
+      --pt: #8DB4FF;
+      --sc: #0D9488;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--tx);
+      font-family: 'Readex Pro', 'Cairo', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+</head>
+<body class="bg-[#0B1220] text-slate-100 flex flex-col justify-between p-4 sm:p-6 min-h-screen">
+
+  <!-- Top Simple Navigation -->
+  <header class="max-w-md w-full mx-auto flex items-center justify-between py-2">
+    <a href="/" class="flex items-center gap-2.5 group">
+      <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-sm shadow-md">
+        J
+      </div>
+      <div class="flex flex-col">
+        <span class="font-black text-base text-white tracking-tight">JooPrep</span>
+        <span class="text-[10px] text-slate-400 font-mono">منصة التأهيل الأكاديمي</span>
+      </div>
+    </a>
+
+    <a href="/" class="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-1.5 transition px-3 py-1.5 rounded-lg hover:bg-slate-800/60">
+      <span>الرئيسية</span>
+      <i data-lucide="arrow-left" class="w-4 h-4"></i>
+    </a>
+  </header>
+
+  <!-- Main Auth Card -->
+  <main class="max-w-md w-full mx-auto my-auto py-6">
+    <div class="bg-[#131C2E] border border-[#263247] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
+      
+      <!-- Card Title & Subtitle -->
+      <div class="text-center space-y-2">
+        <h1 class="text-2xl font-black text-white tracking-tight" id="auth-title">تسجيل الدخول إلى حسابك</h1>
+        <p class="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
+          سجّل دخولك لحفظ نتائج الكويزات وسجل المناقشات ودفتر الأخطاء سحابياً.
+        </p>
+      </div>
+
+      <!-- Google (Gmail) OAuth One-Click Button -->
+      <button type="button" onclick="handleGoogleLogin()" class="w-full py-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-slate-500 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-3 transition shadow-md cursor-pointer active:scale-98">
+        <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span>المتابعة باستخدام حساب Google (Gmail)</span>
+      </button>
+
+      <!-- Divider -->
+      <div class="relative flex py-1 items-center">
+        <div class="flex-grow border-t border-slate-800"></div>
+        <span class="flex-shrink mx-3 text-slate-500 text-[11px] font-mono">أو بالبريد الإلكتروني</span>
+        <div class="flex-grow border-t border-slate-800"></div>
+      </div>
+
+      <!-- Mode Switcher Tabs -->
+      <div class="flex p-1 rounded-xl bg-slate-950 border border-slate-800 text-xs font-bold">
+        <button type="button" id="tab-login" onclick="switchTab('login')" class="flex-1 py-2 rounded-lg font-black bg-blue-600 text-white shadow-sm transition">
+          تسجيل الدخول
+        </button>
+        <button type="button" id="tab-register" onclick="switchTab('register')" class="flex-1 py-2 rounded-lg font-bold text-slate-400 hover:text-white transition">
+          حساب جديد
+        </button>
+      </div>
+
+      <!-- Alert Box -->
+      <div id="alert-box" class="hidden p-3.5 rounded-xl text-xs font-bold space-y-1"></div>
+
+      <!-- Form 1: Login -->
+      <form id="form-login" onsubmit="doLogin(event)" class="space-y-4 text-xs">
+        <div class="space-y-1.5">
+          <label class="block font-bold text-slate-300">البريد الإلكتروني:</label>
+          <div class="relative">
+            <i data-lucide="mail" class="w-4 h-4 text-slate-500 absolute right-3.5 top-3.5"></i>
+            <input type="email" id="login-email" required placeholder="student@gmail.com" dir="ltr" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl pr-10 pl-3.5 py-3 text-slate-100 outline-none transition font-sans text-xs sm:text-sm">
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block font-bold text-slate-300">كلمة المرور:</label>
+          <div class="relative">
+            <i data-lucide="lock" class="w-4 h-4 text-slate-500 absolute right-3.5 top-3.5"></i>
+            <input type="password" id="login-password" required placeholder="••••••••" dir="ltr" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl pr-10 pl-3.5 py-3 text-slate-100 outline-none transition font-sans text-xs sm:text-sm">
+          </div>
+        </div>
+
+        <button type="submit" id="btn-login-submit" class="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-sm shadow-lg flex items-center justify-center gap-2 transition cursor-pointer active:scale-98">
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          <span>دخول إلى الحساب</span>
+        </button>
+      </form>
+
+      <!-- Form 2: Register -->
+      <form id="form-register" onsubmit="doRegister(event)" class="hidden space-y-3.5 text-xs">
+        <div class="space-y-1">
+          <label class="block font-bold text-slate-300">الاسم الثلاثي أو المستعار:</label>
+          <div class="relative">
+            <i data-lucide="user" class="w-4 h-4 text-slate-500 absolute right-3.5 top-3.5"></i>
+            <input type="text" id="reg-name" required placeholder="مثال: يوسف محمود" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl pr-10 pl-3.5 py-2.5 text-slate-100 outline-none transition font-sans text-xs">
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="block font-bold text-slate-300">البريد الإلكتروني:</label>
+          <div class="relative">
+            <i data-lucide="mail" class="w-4 h-4 text-slate-500 absolute right-3.5 top-3.5"></i>
+            <input type="email" id="reg-email" required placeholder="student@gmail.com" dir="ltr" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl pr-10 pl-3.5 py-2.5 text-slate-100 outline-none transition font-sans text-xs">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="block font-bold text-slate-300">الكلية / الجامعة:</label>
+            <input type="text" id="reg-college" required placeholder="كلية الحاسبات والمعلومات" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3 py-2.5 text-slate-100 outline-none transition font-sans text-xs">
+          </div>
+          <div class="space-y-1">
+            <label class="block font-bold text-slate-300">الفرقة الدراسية:</label>
+            <select id="reg-year" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3 py-2.5 text-slate-100 outline-none transition font-sans text-xs">
+              <option value="الفرقة الأولى">الفرقة الأولى</option>
+              <option value="الفرقة الثانية">الفرقة الثانية</option>
+              <option value="الفرقة الثالثة">الفرقة الثالثة</option>
+              <option value="الفرقة الرابعة">الفرقة الرابعة</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="block font-bold text-slate-300">كلمة المرور (6 أحرف على الأقل):</label>
+          <div class="relative">
+            <i data-lucide="lock" class="w-4 h-4 text-slate-500 absolute right-3.5 top-3.5"></i>
+            <input type="password" id="reg-password" minlength="6" required placeholder="••••••••" dir="ltr" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl pr-10 pl-3.5 py-2.5 text-slate-100 outline-none transition font-sans text-xs">
+          </div>
+        </div>
+
+        <button type="submit" id="btn-reg-submit" class="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-sm shadow-lg flex items-center justify-center gap-2 transition cursor-pointer active:scale-98">
+          <i data-lucide="user-check" class="w-4 h-4"></i>
+          <span>إنشاء الحساب ومزامنة البيانات</span>
+        </button>
+      </form>
+
+      <!-- Fast Guest Demo Access -->
+      <div class="pt-2 border-t border-slate-800">
+        <button type="button" onclick="doGuestLogin()" class="w-full py-2.5 rounded-xl bg-slate-950 hover:bg-slate-900 border border-slate-800 text-slate-300 font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>تجربة سريعة بدون حساب (Guest Mode)</span>
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="text-center text-xs text-slate-500 py-3 font-mono">
+    &copy; 2026 JooPrep Academic Platform. All rights reserved.
+  </footer>
+
+  <script>
+    const SUPABASE_URL = "https://orkkywadwtowixbfdnby.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_Qa9dPkIrUw0zYC5-qEy45w_6khXdv-l";
+
+    let supabase = null;
+    if (window.supabase && typeof window.supabase.createClient === 'function') {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+      });
+    }
+
+    if (window.lucide) lucide.createIcons();
+
+    function switchTab(tab) {
+      const fLog = document.getElementById('form-login');
+      const fReg = document.getElementById('form-register');
+      const tLog = document.getElementById('tab-login');
+      const tReg = document.getElementById('tab-register');
+      const title = document.getElementById('auth-title');
+      const alert = document.getElementById('alert-box');
+      if (alert) alert.classList.add('hidden');
+
+      if (tab === 'login') {
+        fLog.classList.remove('hidden');
+        fReg.classList.add('hidden');
+        tLog.className = "flex-1 py-2 rounded-lg font-black bg-blue-600 text-white shadow-sm transition";
+        tReg.className = "flex-1 py-2 rounded-lg font-bold text-slate-400 hover:text-white transition";
+        title.innerText = "تسجيل الدخول إلى حسابك";
+      } else {
+        fLog.classList.add('hidden');
+        fReg.classList.remove('hidden');
+        tReg.className = "flex-1 py-2 rounded-lg font-black bg-blue-600 text-white shadow-sm transition";
+        tLog.className = "flex-1 py-2 rounded-lg font-bold text-slate-400 hover:text-white transition";
+        title.innerText = "إنشاء حساب طالب جديد";
+      }
+    }
+
+    function showAlert(msg, type = 'error') {
+      const box = document.getElementById('alert-box');
+      if (!box) return;
+      box.classList.remove('hidden');
+      if (type === 'error') {
+        box.className = "p-3.5 rounded-xl text-xs font-bold space-y-1 bg-rose-950/40 border border-rose-500/40 text-rose-300";
+        box.innerHTML = `<div class="flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i><span>${msg}</span></div>`;
+      } else {
+        box.className = "p-3.5 rounded-xl text-xs font-bold space-y-1 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300";
+        box.innerHTML = `<div class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i><span>${msg}</span></div>`;
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    async function handleGoogleLogin() {
+      if (supabase) {
+        try {
+          const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: { redirectTo: window.location.origin }
+          });
+          if (error) showAlert(`تعذر فتح اتصال Google: ${error.message}`, 'error');
+        } catch(e) {
+          showAlert(`حدث خطأ: ${e.message}`, 'error');
+        }
+      } else {
+        showAlert('جاري توجيهك إلى تسجيل الدخول عبر Google...', 'success');
+      }
+    }
+
+    async function doLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const btn = document.getElementById('btn-login-submit');
+      if (btn) btn.innerHTML = '<span class="animate-spin inline-block">⏳</span> جاري التحقق...';
+
+      try {
+        if (supabase) {
+          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+          if (error) {
+            showAlert(`بيانات الدخول غير صحيحة: ${error.message}`, 'error');
+            if (btn) btn.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i><span>دخول إلى الحساب</span>';
+            if (window.lucide) lucide.createIcons();
+            return;
+          }
+          if (data && data.user) {
+            const u = data.user;
+            const session = {
+              id: u.id,
+              email: u.email,
+              name: u.user_metadata?.full_name || u.email.split('@')[0],
+              college: u.user_metadata?.college || 'كلية الحاسبات والمعلومات',
+              academic_year: u.user_metadata?.academic_year || 'الفرقة الأولى',
+              isLoggedIn: true
+            };
+            localStorage.setItem('jooprep_user_session', JSON.stringify(session));
+            showAlert('تم تسجيل الدخول بنجاح! جاري تحويلك للمنصة...', 'success');
+            setTimeout(() => window.location.href = '/', 600);
+            return;
+          }
+        } else {
+          const session = {
+            id: 'local_' + Date.now(),
+            email: email,
+            name: email.split('@')[0],
+            college: 'كلية الحاسبات والمعلومات',
+            academic_year: 'الفرقة الأولى',
+            isLoggedIn: true
+          };
+          localStorage.setItem('jooprep_user_session', JSON.stringify(session));
+          showAlert('تم تسجيل الدخول بنجاح! جاري تحويلك للمنصة...', 'success');
+          setTimeout(() => window.location.href = '/', 600);
+        }
+      } catch(err) {
+        showAlert(`خطأ: ${err.message}`, 'error');
+      } finally {
+        if (btn) {
+          btn.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i><span>دخول إلى الحساب</span>';
+          if (window.lucide) lucide.createIcons();
+        }
+      }
+    }
+
+    async function doRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const college = document.getElementById('reg-college').value.trim();
+      const year = document.getElementById('reg-year').value;
+      const password = document.getElementById('reg-password').value;
+      const btn = document.getElementById('btn-reg-submit');
+      if (btn) btn.innerHTML = '<span class="animate-spin inline-block">⏳</span> جاري إنشاء الحساب...';
+
+      try {
+        if (supabase) {
+          const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: { full_name: name, college, academic_year: year }
+            }
+          });
+          if (error) {
+            showAlert(`فشل إنشاء الحساب: ${error.message}`, 'error');
+            if (btn) btn.innerHTML = '<i data-lucide="user-check" class="w-4 h-4"></i><span>إنشاء الحساب ومزامنة البيانات</span>';
+            if (window.lucide) lucide.createIcons();
+            return;
+          }
+          const session = {
+            id: (data.user && data.user.id) || ('user_' + Date.now()),
+            email,
+            name,
+            college,
+            academic_year: year,
+            isLoggedIn: true
+          };
+          localStorage.setItem('jooprep_user_session', JSON.stringify(session));
+          showAlert('تم إنشاء الحساب بنجاح في قاعدة بيانات Supabase! جاري تحويلك للمنصة...', 'success');
+          setTimeout(() => window.location.href = '/', 800);
+        } else {
+          const session = {
+            id: 'local_' + Date.now(),
+            email,
+            name,
+            college,
+            academic_year: year,
+            isLoggedIn: true
+          };
+          localStorage.setItem('jooprep_user_session', JSON.stringify(session));
+          showAlert('تم إنشاء الحساب بنجاح! جاري تحويلك للمنصة...', 'success');
+          setTimeout(() => window.location.href = '/', 800);
+        }
+      } catch(err) {
+        showAlert(`خطأ: ${err.message}`, 'error');
+      } finally {
+        if (btn) {
+          btn.innerHTML = '<i data-lucide="user-check" class="w-4 h-4"></i><span>إنشاء الحساب ومزامنة البيانات</span>';
+          if (window.lucide) lucide.createIcons();
+        }
+      }
+    }
+
+    function doGuestLogin() {
+      const guest = {
+        id: 'demo_guest_student',
+        email: 'guest.student@jooprep.edu',
+        name: 'طالب زائر (Guest)',
+        college: 'كلية الحاسبات والمعلومات',
+        academic_year: 'الفرقة الأولى',
+        isLoggedIn: true
+      };
+      localStorage.setItem('jooprep_user_session', JSON.stringify(guest));
+      showAlert('مرحباً بك! تم تفعيل وضع الطالب الزائر. جاري تحويلك...', 'success');
+      setTimeout(() => window.location.href = '/', 500);
+    }
+  </script>
+</body>
+</html>

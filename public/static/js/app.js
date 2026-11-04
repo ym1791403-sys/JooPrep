@@ -15,7 +15,7 @@ const SUBJECT_ORDER = [
   'basic_electric',
   'physics',
   'english',
-  'arabic_intro'
+  'cs_intro'
 ];
 
 function getNextSubjectKey(currentSubjectKey) {
@@ -402,76 +402,76 @@ const SUBJECTS_DATA = {
     ]
   },
 
-  arabic_intro: {
-    id: "arabic_intro",
-    nameAr: "مقدمة في اللغة العربية والتواصل",
-    nameEn: "Arabic Introduction",
-    code: "ARAB 101",
-    theme: "from-rose-500 via-pink-600 to-purple-600",
-    borderGlow: "hover:border-rose-500/50 hover:shadow-[0_0_30px_rgba(244,63,94,0.25)]",
-    badgeBg: "bg-rose-500/15 text-rose-300 border-rose-500/30",
-    icon: "feather",
-    description: "أساسيات الصياغة التعبيرية، قواعد النحو والصرف للكتابة الأكاديمية، مهارات العرض والإقناع، وتوثيق المصطلحات العلمية.",
+  cs_intro: {
+    id: "cs_intro",
+    nameAr: "مقدمة في علوم الحاسب",
+    nameEn: "Introduction to Computer Science",
+    code: "CS 101",
+    theme: "from-teal-600 via-emerald-600 to-cyan-600",
+    borderGlow: "hover:border-teal-500/50",
+    badgeBg: "bg-teal-500/15 text-teal-300 border-teal-500/30",
+    icon: "cpu",
+    description: "المفاهيم الأساسية لعلوم الحاسب، الخوارزميات، تمثيل البيانات والأنظمة الثنائية، شبكات الحاسب، ونظم التشغيل.",
     questions: [
       {
-        id: "ar_1",
-        question: "In Arabic grammar, what is the grammatical parsing (إعراب) of the word 'قادرون' in the sentence: 'إنّ المهندسينَ قادرونَ على الابتكار' ?",
+        id: "cs_1",
+        question: "What is the binary representation of the decimal number 13?",
         options: [
-          { key: "A", text: "Khabar Inna (خبر إنّ) raised with Waw (مرفوع بالواو)" },
-          { key: "B", text: "Ism Inna (اسم إنّ) accusative with Yaa (منصوب بالياء)" },
-          { key: "C", text: "Adjective (نعت) raised with Damma" },
-          { key: "D", text: "Delayed subject (مبتدأ مؤخر)" }
+          { key: "A", text: "1101" },
+          { key: "B", text: "1011" },
+          { key: "C", text: "1110" },
+          { key: "D", text: "1001" }
         ],
         correctKey: "A",
-        explanation: "الحرف الناسخ 'إنّ' ينصب المبتدأ اسماً له (المهندسينَ منصوب بالياء) ويرفع الخبر خبراً له؛ وكلمة 'قادرونَ' خبر إنّ مرفوع وعلامة رفعه الواو لأنه جمع مذكر سالم."
+        explanation: "تحويل العدد 13 إلى النظام الثنائي: $13 = 8 + 4 + 0 + 1 = 2^3 + 2^2 + 0 + 2^0 = (1101)_2$."
       },
       {
-        id: "ar_2",
-        question: "Which of the following words correctly begins with Hamzat Wasl (همزة وصل) according to standard Arabic orthography?",
+        id: "cs_2",
+        question: "Which component of the Central Processing Unit (CPU) executes arithmetic and logic operations?",
         options: [
-          { key: "A", text: "استخدام (Istikhdam)" },
-          { key: "B", text: "إستخدام" },
-          { key: "C", text: "أستخدام" },
-          { key: "D", text: "إستخراج" }
+          { key: "A", text: "Control Unit (CU)" },
+          { key: "B", text: "Arithmetic Logic Unit (ALU)" },
+          { key: "C", text: "Program Counter (PC)" },
+          { key: "D", text: "Memory Address Register (MAR)" }
         ],
-        correctKey: "A",
-        explanation: "الفعل السداسي وماضيه وأمره ومصدره همزتها همزة وصل دائماً بدون همزة قطع: (استخدمَ - استخدِمْ - استخدام)."
+        correctKey: "B",
+        explanation: "وحدة الحساب والمنطق (ALU - Arithmetic Logic Unit) هي المسؤولة عن تنفيذ العمليات الحسابية والمنطقية داخل المعالج."
       },
       {
-        id: "ar_3",
-        question: "What is the primary purpose of an 'Executive Summary' in an engineering technical report?",
+        id: "cs_3",
+        question: "What is the primary role of an Operating System Kernel?",
         options: [
-          { key: "A", text: "To summarize project objectives, methodology, key findings, and recommendations for decision makers" },
-          { key: "B", text: "To list the personal contact details and salaries of all contributors" },
-          { key: "C", text: "To provide raw unformatted database tables without context" },
-          { key: "D", text: "To replace the conclusion and references chapter" }
+          { key: "A", text: "Compiling source code to machine instructions" },
+          { key: "B", text: "Designing user interface layouts" },
+          { key: "C", text: "Managing hardware resources, memory allocation, and CPU scheduling" },
+          { key: "D", text: "Browsing web applications over HTTP" }
         ],
-        correctKey: "A",
-        explanation: "الملخص التنفيذي (Executive Summary) هو مستند موجز وشامل يوضع في أول التقرير الفني ليمكّن صناع القرار من استيعاب أهداف المشروع ونتائجه وتوصياته بدقائق معدودة."
+        correctKey: "C",
+        explanation: "نواة نظام التشغيل (Kernel) هي المسؤولة عن إدارة موارد الحاسوب المادية والذاكرة وتوزيع العمليات على المعالج بأمان."
       },
       {
-        id: "ar_4",
-        question: "In formal Arabic technical writing, what is the standard function of the semicolon (الفاصلة المنقوطة '؛')?",
+        id: "cs_4",
+        question: "Which algorithmic paradigm does Binary Search employ on sorted arrays?",
         options: [
-          { key: "A", text: "To separate two clauses where one is the cause or explanation of the other" },
-          { key: "B", text: "To signal the conclusion of a full paragraph" },
-          { key: "C", text: "To introduce quoted verbatim speech" },
-          { key: "D", text: "To mark the transition between unrelated chapters" }
+          { key: "A", text: "Divide and Conquer" },
+          { key: "B", text: "Greedy Strategy" },
+          { key: "C", text: "Brute Force" },
+          { key: "D", text: "Backtracking" }
         ],
         correctKey: "A",
-        explanation: "الفاصلة المنقوطة (؛) تُوضع بين جملتين إحداهما سبباً أو علّة للأخرى، كقولنا: 'تم تحسين الخوارزمية؛ لتقليص استهلاك الذاكرة'."
+        explanation: "خوارزمية البحث الثنائي تطبق استراتيجية فرّق تسُد (Divide and Conquer) بتقسيم مجال البحث إلى النصفين في كل خطوة لتحقيق تعقيد زمني $O(\\log N)$."
       },
       {
-        id: "ar_5",
-        question: "What is the standardized and officially approved Arabic technical translation for 'Artificial Intelligence'?",
+        id: "cs_5",
+        question: "Which transport layer protocol guarantees reliable, ordered packet delivery over the Internet?",
         options: [
-          { key: "A", text: "الذكاء الاصطناعي" },
-          { key: "B", text: "العقل الآلي" },
-          { key: "C", text: "الحساب المبرمج" },
-          { key: "D", text: "التفكير الحاسوبي" }
+          { key: "A", text: "UDP (User Datagram Protocol)" },
+          { key: "B", text: "TCP (Transmission Control Protocol)" },
+          { key: "C", text: "IP (Internet Protocol)" },
+          { key: "D", text: "DNS (Domain Name System)" }
         ],
-        correctKey: "A",
-        explanation: "المصطلح المعياري المعتمد دولياً وفي مجامع اللغة العربية لـ Artificial Intelligence هو 'الذكاء الاصطناعي'."
+        correctKey: "B",
+        explanation: "بروتوكول TCP يوفر اتصالاً موثوقاً مع تأكيد الوصول (ACK) والترتيب وإعادة الإرسال عند فقدان أي حزمة بيانات."
       }
     ]
   }
@@ -1138,7 +1138,7 @@ function loadReadinessData() {
       { key: 'basic_electric', label: 'Basic Electric (الدوائر الكهربية)', avgScore: 0, status: 'لم يُختبر بعد', count: 0 },
       { key: 'physics', label: 'Physics (الفيزياء الهندسية)', avgScore: 0, status: 'لم يُختبر بعد', count: 0 },
       { key: 'english', label: 'English (اللغة الإنجليزية)', avgScore: 0, status: 'لم يُختبر بعد', count: 0 },
-      { key: 'arabic_intro', label: 'Arabic Intro (اللغة العربية والتواصل)', avgScore: 0, status: 'لم يُختبر بعد', count: 0 }
+      { key: 'cs_intro', label: 'CS Intro (مقدمة في علوم الحاسب)', avgScore: 0, status: 'لم يُختبر بعد', count: 0 }
     ]);
     return;
   }
@@ -1210,7 +1210,7 @@ function loadReadinessData() {
     basic_electric: { label: "Basic Electric (الدوائر الكهربية)", total: 0, count: 0 },
     physics: { label: "Physics (الفيزياء الهندسية)", total: 0, count: 0 },
     english: { label: "English (اللغة الإنجليزية)", total: 0, count: 0 },
-    arabic_intro: { label: "Arabic Intro (اللغة العربية والتواصل)", total: 0, count: 0 }
+    cs_intro: { label: "CS Intro (مقدمة في علوم الحاسب)", total: 0, count: 0 }
   };
 
   quizAttempts.forEach(att => {
@@ -2200,5 +2200,27 @@ async function syncErrorToSupabase(errorItem) {
         explanation: errorItem.explanation || ''
       }]);
     } catch(e) {}
+  }
+}
+
+
+// ----------------- Google (Gmail) OAuth Login -----------------
+async function handleGoogleLogin() {
+  if (supabaseClient) {
+    try {
+      const { data, error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin
+        }
+      });
+      if (error) {
+        showAuthAlert(`تعذر الاتصال بـ Google: ${error.message}`, 'error');
+      }
+    } catch(err) {
+      showAuthAlert(`حدث خطأ أثناء الاتصال بـ Google: ${err.message}`, 'error');
+    }
+  } else {
+    showAuthAlert('جاري توجيهك إلى تسجيل الدخول عبر Google...', 'success');
   }
 }

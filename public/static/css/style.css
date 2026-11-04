@@ -90,10 +90,7 @@ body {
   overflow-y: hidden;
 }
 
-/* Ambient Glow Orbs */
-.theme-ambient-orb {
-  opacity: 0.85;
-}
+
 
 /* ==========================================================================
    Typography & Strict Contrast Protection (Dark)
