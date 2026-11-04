@@ -66,6 +66,20 @@
       transition: background-color 0.2s ease, color 0.2s ease;
     }
     
+    /* Keyframes for Logo Floating & Interactive Topo Canvas */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-7px) rotate(1deg); }
+    }
+    .animate-float {
+      animation: floatSlow 4s ease-in-out infinite;
+    }
+    .interactive-topo-canvas {
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+    }
+
     /* Topographic contour background */
     .topo-bg {
       background: radial-gradient(circle at 50% 30%, #063024 0%, #031c15 60%, #02120e 100%);
@@ -125,13 +139,16 @@
 
   <!-- Top Simple Navigation Bar -->
   <header class="max-w-4xl w-full mx-auto flex items-center justify-between py-2 mb-4">
-    <a href="/" class="flex items-center gap-2.5 group">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-zinc-950 font-black text-base shadow-md">
-        J
+    <a href="/" class="flex items-center gap-3 group">
+      <div class="w-10 h-10 rounded-2xl p-1 bg-slate-900/90 border border-emerald-500/40 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-105 group-hover:border-emerald-400 transition-all duration-300">
+        <img src="/static/img/logo.svg" alt="JooPrep Logo" class="w-8 h-8 object-contain filter drop-shadow-[0_0_8px_rgba(0,201,130,0.5)]">
       </div>
       <div class="flex flex-col">
-        <span class="font-black text-base text-white tracking-tight">JooPrep</span>
-        <span class="text-[10px] text-zinc-400 font-mono">منصة التأهيل الأكاديمي</span>
+        <div class="flex items-center gap-1.5">
+          <span class="font-black text-lg text-white tracking-tight">Joo<span class="text-[#00c982]">Prep</span></span>
+          <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Official</span>
+        </div>
+        <span class="text-[10px] text-zinc-400 font-medium">المنصة الأكاديمية الذكية لطلاب الهندسة والحاسبات</span>
       </div>
     </a>
 
@@ -223,74 +240,63 @@
 
       </div>
 
-      <!-- Right Column: Topographic Wavy Graphic Panel -->
-      <div class="topo-bg rounded-2xl sm:rounded-[1.5rem] p-8 sm:p-10 flex flex-col items-center justify-center text-center space-y-6 order-1 md:order-2 overflow-hidden border border-emerald-500/20">
+      <!-- Right Column: Interactive Topographic Animated Panel -->
+      <div class="topo-bg rounded-2xl sm:rounded-[1.5rem] p-8 sm:p-10 flex flex-col items-center justify-center text-center space-y-6 order-1 md:order-2 overflow-hidden border border-emerald-500/25 relative group select-none">
         
-        <!-- Organic Topographic Wavy SVG Lines -->
-        <svg class="topo-svg-pattern" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" preserveAspectRatio="none">
-          <path d="M-50,80 Q100,20 200,90 T450,70" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.45"/>
-          <path d="M-50,130 Q120,70 210,140 T450,120" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.4"/>
-          <path d="M-50,180 Q110,120 220,190 T450,170" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.38"/>
-          <path d="M-50,230 Q130,170 230,240 T450,220" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.42"/>
-          <path d="M-50,280 Q140,220 240,290 T450,270" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.45"/>
-          <path d="M-50,330 Q120,270 230,340 T450,320" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.4"/>
-          <path d="M-50,380 Q150,320 250,390 T450,370" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.35"/>
-          <path d="M-50,430 Q130,370 240,440 T450,420" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.4"/>
-          <path d="M-50,480 Q140,420 250,490 T450,470" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.45"/>
-        </svg>
+        <!-- Interactive Topographic Canvas (Fully mouse reactive, waves, ripples & particles) -->
+        <canvas id="canvas-login-topo" class="interactive-topo-canvas absolute inset-0 w-full h-full pointer-events-auto cursor-crosshair"></canvas>
 
-        <div class="relative z-10 w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-lg shadow-emerald-500/10">
-          <i data-lucide="sparkles" class="w-7 h-7"></i>
+        <!-- Subtle Ambient Lighting -->
+        <div class="absolute inset-0 bg-gradient-to-b from-emerald-500/5 via-transparent to-black/40 pointer-events-none"></div>
+
+        <!-- Brand Emblem with Floating Animation & Glow -->
+        <div class="relative z-10 w-20 h-20 rounded-3xl bg-slate-950/85 border border-emerald-500/40 p-3 flex items-center justify-center shadow-2xl shadow-emerald-500/30 backdrop-blur-md hover:scale-110 transition duration-500 cursor-pointer animate-float">
+          <img src="/static/img/logo.svg" alt="JooPrep Emblem" class="w-full h-full object-contain filter drop-shadow-[0_0_14px_rgba(0,201,130,0.6)]">
         </div>
 
-        <div class="relative z-10 space-y-2">
+        <div class="relative z-10 space-y-2 pointer-events-none">
           <h3 class="text-2xl font-black text-white tracking-tight">أهلاً بيك في JooPrep!</h3>
           <p class="text-xs sm:text-sm text-zinc-300 max-w-xs leading-relaxed">
             لسه جديد معانا؟ انضم لمنصة JooPrep، اتعلم وتدرب على الكويزات والشفوي واضمن امتيازك في الـ 6 مواد.
           </p>
         </div>
 
-        <button type="button" onclick="switchAuthMode('register')" class="relative z-10 border border-emerald-500/60 hover:bg-emerald-500/15 hover:border-emerald-400 text-white font-bold px-8 py-2.5 rounded-xl transition cursor-pointer text-xs sm:text-sm active:scale-95 shadow-md">
-          إنشاء حساب جديد
+        <button type="button" onclick="switchAuthMode('register')" class="relative z-10 border border-emerald-500/60 hover:bg-emerald-500/20 hover:border-emerald-400 text-white font-bold px-8 py-2.5 rounded-xl transition cursor-pointer text-xs sm:text-sm active:scale-95 shadow-lg shadow-emerald-950/50 flex items-center gap-2">
+          <span>إنشاء حساب جديد</span>
+          <i data-lucide="arrow-left" class="w-4 h-4 text-emerald-400"></i>
         </button>
 
       </div>
 
     </div>
 
-
     <!-- ================= MODE 2: REGISTER (إنشاء حساب جديد) ================= -->
     <div id="auth-mode-register" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
       
-      <!-- Left Column: Topographic Wavy Graphic Panel -->
-      <div class="topo-bg rounded-2xl sm:rounded-[1.5rem] p-8 sm:p-10 flex flex-col items-center justify-center text-center space-y-6 order-1 md:order-1 overflow-hidden border border-emerald-500/20">
+      <!-- Left Column: Interactive Topographic Animated Panel -->
+      <div class="topo-bg rounded-2xl sm:rounded-[1.5rem] p-8 sm:p-10 flex flex-col items-center justify-center text-center space-y-6 order-1 md:order-1 overflow-hidden border border-emerald-500/25 relative group select-none">
         
-        <!-- Organic Topographic Wavy SVG Lines -->
-        <svg class="topo-svg-pattern" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" preserveAspectRatio="none">
-          <path d="M-50,80 Q100,20 200,90 T450,70" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.45"/>
-          <path d="M-50,130 Q120,70 210,140 T450,120" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.4"/>
-          <path d="M-50,180 Q110,120 220,190 T450,170" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.38"/>
-          <path d="M-50,230 Q130,170 230,240 T450,220" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.42"/>
-          <path d="M-50,280 Q140,220 240,290 T450,270" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.45"/>
-          <path d="M-50,330 Q120,270 230,340 T450,320" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.4"/>
-          <path d="M-50,380 Q150,320 250,390 T450,370" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.35"/>
-          <path d="M-50,430 Q130,370 240,440 T450,420" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.4"/>
-          <path d="M-50,480 Q140,420 250,490 T450,470" fill="none" stroke="#10b981" stroke-width="1.2" opacity="0.45"/>
-        </svg>
+        <!-- Interactive Topographic Canvas (Fully mouse reactive, waves, ripples & particles) -->
+        <canvas id="canvas-register-topo" class="interactive-topo-canvas absolute inset-0 w-full h-full pointer-events-auto cursor-crosshair"></canvas>
 
-        <div class="relative z-10 w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-lg shadow-emerald-500/10">
-          <i data-lucide="sparkles" class="w-7 h-7"></i>
+        <!-- Subtle Ambient Lighting -->
+        <div class="absolute inset-0 bg-gradient-to-b from-emerald-500/5 via-transparent to-black/40 pointer-events-none"></div>
+
+        <!-- Brand Emblem with Floating Animation & Glow -->
+        <div class="relative z-10 w-20 h-20 rounded-3xl bg-slate-950/85 border border-emerald-500/40 p-3 flex items-center justify-center shadow-2xl shadow-emerald-500/30 backdrop-blur-md hover:scale-110 transition duration-500 cursor-pointer animate-float">
+          <img src="/static/img/logo.svg" alt="JooPrep Emblem" class="w-full h-full object-contain filter drop-shadow-[0_0_14px_rgba(0,201,130,0.6)]">
         </div>
 
-        <div class="relative z-10 space-y-2">
+        <div class="relative z-10 space-y-2 pointer-events-none">
           <h3 class="text-2xl font-black text-white tracking-tight">عندك حساب بالفعل؟</h3>
           <p class="text-xs sm:text-sm text-zinc-300 max-w-xs leading-relaxed">
             سجل دخولك عشان ترجع لمستوياتك ونقاطك وإنجازاتك في أي وقت من أي جهاز.
           </p>
         </div>
 
-        <button type="button" onclick="switchAuthMode('login')" class="relative z-10 border border-emerald-500/60 hover:bg-emerald-500/15 hover:border-emerald-400 text-white font-bold px-8 py-2.5 rounded-xl transition cursor-pointer text-xs sm:text-sm active:scale-95 shadow-md">
-          تسجيل الدخول
+        <button type="button" onclick="switchAuthMode('login')" class="relative z-10 border border-emerald-500/60 hover:bg-emerald-500/20 hover:border-emerald-400 text-white font-bold px-8 py-2.5 rounded-xl transition cursor-pointer text-xs sm:text-sm active:scale-95 shadow-lg shadow-emerald-950/50 flex items-center gap-2">
+          <span>تسجيل الدخول</span>
+          <i data-lucide="arrow-left" class="w-4 h-4 text-emerald-400"></i>
         </button>
 
       </div>
@@ -412,6 +418,20 @@
     }
 
     // Switch between Login and Register Mode
+    let topoLoginEngine = null;
+    let topoRegEngine = null;
+
+    function initTopoAnimations() {
+      if (typeof window.initInteractiveTopoCanvas === 'function') {
+        if (!topoLoginEngine) {
+          topoLoginEngine = window.initInteractiveTopoCanvas('canvas-login-topo', '#auth-mode-login');
+        }
+        if (!topoRegEngine) {
+          topoRegEngine = window.initInteractiveTopoCanvas('canvas-register-topo', '#auth-mode-register');
+        }
+      }
+    }
+
     function switchAuthMode(mode) {
       const loginBox = document.getElementById('auth-mode-login');
       const regBox = document.getElementById('auth-mode-register');
@@ -421,9 +441,15 @@
       if (mode === 'register') {
         if (loginBox) loginBox.classList.add('hidden');
         if (regBox) regBox.classList.remove('hidden');
+        setTimeout(() => {
+          if (topoRegEngine) topoRegEngine.resize();
+        }, 40);
       } else {
         if (regBox) regBox.classList.add('hidden');
         if (loginBox) loginBox.classList.remove('hidden');
+        setTimeout(() => {
+          if (topoLoginEngine) topoLoginEngine.resize();
+        }, 40);
       }
       if (window.lucide) lucide.createIcons();
     }
@@ -661,6 +687,8 @@
     }
 
     initTheme();
+    initTopoAnimations();
+    window.addEventListener('load', initTopoAnimations);
     if (window.lucide) lucide.createIcons();
   </script>
 </body>
