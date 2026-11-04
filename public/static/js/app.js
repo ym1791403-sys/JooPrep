@@ -557,8 +557,26 @@ function navigate(viewName) {
     window.location.href = '/login.html';
     return;
   }
+
+  // Strict Authentication Guard
+  const isLoggedIn = state.user && state.user.isLoggedIn;
+  if (!isLoggedIn) {
+    if (viewName !== 'landing') {
+      showToast('يجب تسجيل الدخول أولاً للوصول إلى هذه الميزة 🔒', 'error');
+      setTimeout(() => {
+        window.location.href = '/login.html';
+      }, 750);
+      return;
+    }
+  } else {
+    // If logged in and requested landing, redirect to dashboard
+    if (viewName === 'landing') {
+      viewName = 'dashboard';
+    }
+  }
+
   state.activeView = viewName;
-  const views = ['dashboard', 'quizzes', 'viva', 'prep-sheet', 'error-notebook', 'profile', 'auth'];
+  const views = ['landing', 'dashboard', 'quizzes', 'viva', 'prep-sheet', 'error-notebook', 'profile', 'auth'];
   
   views.forEach(v => {
     const el = document.getElementById(`view-${v}`);
@@ -592,16 +610,6 @@ function navigate(viewName) {
     }
   });
 
-  // Mobile Auth / Profile active state
-  const mobAuth = document.getElementById('mob-nav-auth');
-  if (mobAuth) {
-    if (viewName === 'auth' || viewName === 'profile') {
-      mobAuth.className = "flex flex-col items-center gap-1 text-cyan-400 font-black";
-    } else {
-      mobAuth.className = "flex flex-col items-center gap-1 text-slate-400 hover:text-white";
-    }
-  }
-
   // URL Hash Routing so navigation behaves like real distinct pages
   try {
     if (window.location.hash !== `#${viewName}`) {
@@ -609,31 +617,25 @@ function navigate(viewName) {
     }
   } catch(e) {}
 
-  // Instant scroll to top to feel like a real distinct page
   window.scrollTo(0, 0);
   document.documentElement.scrollTop = 0;
   document.body.scrollTop = 0;
 
-  if (viewName === 'dashboard') {
-    loadReadinessData();
-  } else if (viewName === 'quizzes') {
-    if (!state.quizQuestions || state.quizQuestions.length === 0) {
-      startQuizForSubject(state.activeSubjectKey || 'linear_algebra');
-    }
-  } else if (viewName === 'prep-sheet') {
-    loadLatestPrepSheet();
-  } else if (viewName === 'error-notebook') {
+  if (viewName === 'error-notebook') {
     loadErrorNotebook();
   }
 
   if (window.lucide) lucide.createIcons();
 }
-
 // Handle Browser Back & Forward buttons
 window.addEventListener('popstate', () => {
-  const hash = (window.location.hash || '').replace('#', '') || 'dashboard';
-  if (['dashboard', 'quizzes', 'viva', 'prep-sheet', 'error-notebook', 'profile', 'auth'].includes(hash)) {
-    navigate(hash);
+  const hash = (window.location.hash || '').replace('#', '') || (state.user && state.user.isLoggedIn ? 'dashboard' : 'landing');
+  if (state.user && state.user.isLoggedIn) {
+    if (['dashboard', 'quizzes', 'viva', 'prep-sheet', 'error-notebook', 'profile'].includes(hash)) {
+      navigate(hash);
+    }
+  } else {
+    navigate('landing');
   }
 });
 // ----------------- Audio & Utilities -----------------
@@ -1963,34 +1965,49 @@ function applyUserSession(userData) {
 
 function updateHeaderAuthUI() {
   const authBtn = document.getElementById('header-auth-btn');
-  const profileBtn = document.getElementById('header-profile-btn');
+  const profileGroup = document.getElementById('header-profile-group');
   const nameEl = document.getElementById('header-user-name');
   const avatarEl = document.getElementById('header-user-avatar');
-  const mobAuthLabel = document.getElementById('mob-nav-auth-label');
+
+  const navAuth = document.getElementById('nav-authenticated-tabs');
+  const navVisitor = document.getElementById('nav-visitor-tabs');
+  const mobAuth = document.getElementById('mob-nav-authenticated');
+  const mobVisitor = document.getElementById('mob-nav-visitor');
 
   if (state.user && state.user.isLoggedIn) {
     if (authBtn) authBtn.classList.add('hidden');
-    if (profileBtn) profileBtn.classList.remove('hidden');
+    if (profileGroup) profileGroup.classList.remove('hidden');
     if (nameEl) nameEl.innerText = state.user.name || 'طالب الأكاديميا';
     if (avatarEl) {
       const initial = (state.user.name && state.user.name.trim().charAt(0)) || 'ط';
       avatarEl.innerText = initial;
     }
-    if (mobAuthLabel) mobAuthLabel.innerText = 'حسابي';
+
+    if (navAuth) navAuth.classList.remove('hidden');
+    if (navVisitor) navVisitor.classList.add('hidden');
+    if (mobAuth) mobAuth.classList.remove('hidden');
+    if (mobVisitor) mobVisitor.classList.add('hidden');
   } else {
     if (authBtn) authBtn.classList.remove('hidden');
-    if (profileBtn) profileBtn.classList.add('hidden');
-    if (mobAuthLabel) mobAuthLabel.innerText = 'تسجيل الدخول';
+    if (profileGroup) profileGroup.classList.add('hidden');
+
+    if (navAuth) navAuth.classList.add('hidden');
+    if (navVisitor) navVisitor.classList.remove('hidden');
+    if (mobAuth) mobAuth.classList.add('hidden');
+    if (mobVisitor) mobVisitor.classList.remove('hidden');
   }
 }
-
 async function checkAuthSession() {
   // 1. Check local session storage first
   const stored = localStorage.getItem('jooprep_user_session');
+  let hasValidSession = false;
   if (stored) {
     try {
       const u = JSON.parse(stored);
-      state.user = { ...state.user, ...u };
+      if (u && u.isLoggedIn) {
+        state.user = { ...state.user, ...u, isLoggedIn: true };
+        hasValidSession = true;
+      }
     } catch(e) {}
   }
 
@@ -2008,6 +2025,10 @@ async function checkAuthSession() {
           academic_year: suUser.user_metadata?.academic_year || 'الفرقة الأولى',
           isLoggedIn: true
         });
+        hasValidSession = true;
+        if (state.activeView === 'landing' || !state.activeView) {
+          navigate('dashboard');
+        }
         return;
       }
     } catch(e) {
@@ -2016,7 +2037,64 @@ async function checkAuthSession() {
   }
 
   updateHeaderAuthUI();
+
+  if (hasValidSession) {
+    loadUserProfile();
+    if (state.activeView === 'landing' || !state.activeView) {
+      navigate('dashboard');
+    }
+  } else {
+    state.user.isLoggedIn = false;
+    navigate('landing');
+  }
 }
+
+window.requireAuthToFeature = function(featureName) {
+  showToast(`يجب تسجيل الدخول أولاً للوصول إلى ${featureName} 🔒`, 'error');
+  setTimeout(() => {
+    window.location.href = '/login.html';
+  }, 750);
+};
+
+window.loginAsDemoGuest = function() {
+  applyUserSession({
+    id: 'guest_' + Date.now(),
+    name: 'طالب هندسة تجريبي',
+    email: 'student@jooprep.edu',
+    college: 'كلية الحاسبات والمعلومات',
+    academic_year: 'الفرقة الأولى',
+    isLoggedIn: true
+  });
+  showToast('مرحباً بك! تم تفعيل وضع الطالب التجريبي بنجاح 🎉');
+  navigate('dashboard');
+};
+
+window.logoutUser = async function() {
+  localStorage.removeItem('jooprep_user_session');
+  state.user = {
+    id: null,
+    email: '',
+    name: 'طالب حاسبات وهندسة',
+    college: 'كلية الحاسبات والمعلومات',
+    academic_year: 'الفرقة الأولى',
+    quota_used_today_viva: 0,
+    daily_quota_viva: 5,
+    quota_used_today_prep: 0,
+    daily_quota_prep: 10,
+    isLoggedIn: false
+  };
+
+  if (supabaseClient) {
+    try {
+      await supabaseClient.auth.signOut();
+    } catch(e) {}
+  }
+
+  updateHeaderAuthUI();
+  navigate('landing');
+  showToast('تم تسجيل الخروج بنجاح 👋');
+};
+
 
 // ----------------- Login Handler -----------------
 async function handleAuthLogin(event) {

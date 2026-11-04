@@ -75,7 +75,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative z-10">
       
       <!-- Brand Logo -->
-      <div class="flex items-center gap-3 cursor-pointer group" onclick="navigate('dashboard')">
+      <div class="flex items-center gap-3 cursor-pointer group" onclick="if(state.user && state.user.isLoggedIn){navigate('dashboard')}else{navigate('landing')}">
         <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 via-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:scale-105 border border-white/20 transition-all duration-300">
           <i data-lucide="graduation-cap" class="w-6 h-6 text-white"></i>
         </div>
@@ -88,8 +88,8 @@
         </div>
       </div>
 
-      <!-- Desktop Navigation Tabs -->
-      <nav class="hidden md:flex items-center gap-1.5 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800 text-xs font-semibold backdrop-blur-md shadow-inner">
+      <!-- Desktop Navigation Tabs: Authenticated Mode -->
+      <nav id="nav-authenticated-tabs" class="hidden md:flex items-center gap-1.5 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800 text-xs font-semibold backdrop-blur-md shadow-inner">
         <button onclick="navigate('dashboard')" id="nav-btn-dashboard" class="nav-link px-4 py-2 rounded-xl transition flex items-center gap-2 text-white bg-indigo-600/20 border border-indigo-500/40 shadow-lg shadow-indigo-500/10 font-bold">
           <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
           الرئيسية
@@ -113,6 +113,26 @@
         </button>
       </nav>
 
+      <!-- Desktop Navigation Tabs: Visitor / Unauthenticated Mode -->
+      <nav id="nav-visitor-tabs" class="hidden md:flex items-center gap-1.5 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800 text-xs font-semibold backdrop-blur-md shadow-inner">
+        <button onclick="navigate('landing')" id="nav-btn-landing" class="nav-link px-4 py-2 rounded-xl transition flex items-center gap-2 text-white bg-indigo-600/20 border border-indigo-500/40 shadow-lg shadow-indigo-500/10 font-bold">
+          <i data-lucide="compass" class="w-4 h-4"></i>
+          نظرة عامة
+        </button>
+        <button onclick="document.getElementById('landing-features').scrollIntoView({behavior:'smooth'})" class="nav-link px-4 py-2 rounded-xl transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          المميزات
+        </button>
+        <button onclick="document.getElementById('landing-subjects').scrollIntoView({behavior:'smooth'})" class="nav-link px-4 py-2 rounded-xl transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+          المواد الـ 6
+        </button>
+        <button onclick="window.location.href='/login.html'" class="nav-link px-4 py-2 rounded-xl transition flex items-center gap-2 text-cyan-300 hover:text-white hover:bg-blue-600/20 font-bold">
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          تسجيل الدخول
+        </button>
+      </nav>
+
       <!-- Right Controls: Dark Mode Toggle & Auth / Profile Navigation -->
       <div class="flex items-center gap-2">
         <!-- Dark Mode Toggle Button (Navy Dark / Light) -->
@@ -129,12 +149,17 @@
           </button>
           
           <!-- Shown when logged in -->
-          <button onclick="navigate('profile')" id="header-profile-btn" class="hidden flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition">
-            <div id="header-user-avatar" class="w-7 h-7 rounded-lg bg-gradient-to-tr from-blue-600 to-teal-400 text-white font-black flex items-center justify-center text-xs shadow-sm">
-              ط
-            </div>
-            <span class="text-xs font-bold text-slate-200 hidden sm:inline" id="header-user-name">طالب هندسة وحاسبات</span>
-          </button>
+          <div id="header-profile-group" class="hidden flex items-center gap-2">
+            <button onclick="navigate('profile')" id="header-profile-btn" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition">
+              <div id="header-user-avatar" class="w-7 h-7 rounded-lg bg-gradient-to-tr from-blue-600 to-teal-400 text-white font-black flex items-center justify-center text-xs shadow-sm">
+                ط
+              </div>
+              <span class="text-xs font-bold text-slate-200 hidden sm:inline" id="header-user-name">طالب هندسة وحاسبات</span>
+            </button>
+            <button type="button" onclick="logoutUser()" title="تسجيل الخروج" class="p-2 rounded-xl border border-slate-800 bg-slate-900/80 hover:bg-rose-950/60 text-slate-400 hover:text-rose-400 transition cursor-pointer">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -144,8 +169,334 @@
   <!-- Main View Container -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
 
-  <!-- ================= VIEW 1: DASHBOARD (الرئيسية) ================= -->
-    <div id="view-dashboard" class="space-y-6">
+    <!-- ================= VIEW 0: LANDING & INTRODUCTORY (الواجهة التعريفية للزوار) ================= -->
+    <div id="view-landing" class="space-y-12 animate-slide-up">
+      
+      <!-- Hero Presentation Section -->
+      <div class="relative overflow-hidden glass-card p-8 sm:p-14 rounded-3xl border border-indigo-500/25 text-center space-y-6">
+        
+        <!-- Animated Badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-600/15 border border-blue-500/30 text-blue-300 text-xs font-black animate-badge-pulse">
+          <i data-lucide="graduation-cap" class="w-4 h-4 text-cyan-400"></i>
+          <span>المنصة الأكاديمية الأولى لتأهيل طلاب الهندسة والحاسبات • 2026</span>
+        </div>
+
+        <!-- Main Title & Subtitle -->
+        <div class="max-w-3xl mx-auto space-y-3">
+          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight">
+            استعد وتفوق في امتحاناتك الهندسية <br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-teal-300">
+              والمناقشات الشفوية بأعلى ثقة
+            </span>
+          </h1>
+          <p class="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed pt-2">
+            منصة تخصصية مصممة للفرقة الأولى لمساعدتك على التفوق في 6 مواد أساسية عبر بنك كويزات تفاعلي بالإنجليزية، محاكي المناقشة الشفوية ومعامل الكود، وأوراق التحضير الذكية.
+          </p>
+        </div>
+
+        <!-- Primary Call-To-Action Buttons -->
+        <div class="flex flex-wrap items-center justify-center gap-3.5 pt-2">
+          <button type="button" onclick="window.location.href='/login.html'" class="btn-glass-primary px-7 py-3.5 rounded-2xl text-xs sm:text-sm font-black shadow-xl flex items-center gap-2.5 transition active:scale-95 cursor-pointer">
+            <i data-lucide="log-in" class="w-4 h-4 text-cyan-300"></i>
+            <span>تسجيل الدخول / إنشاء حساب</span>
+          </button>
+          
+          <button type="button" onclick="loginAsDemoGuest()" class="btn-glass-secondary px-6 py-3.5 rounded-2xl text-xs sm:text-sm font-bold shadow-lg flex items-center gap-2 transition active:scale-95 cursor-pointer">
+            <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+            <span>تجربة المنصة كطالب تجريبي (Guest Mode)</span>
+          </button>
+
+          <button type="button" onclick="document.getElementById('landing-features').scrollIntoView({behavior:'smooth'})" class="px-5 py-3.5 rounded-2xl text-slate-400 hover:text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+            <span>استكشاف المميزات</span>
+            <i data-lucide="arrow-down" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- 3 Highlight Pillars -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 max-w-3xl mx-auto border-t border-slate-800/80">
+          <div class="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 text-center space-y-1">
+            <span class="text-lg font-black text-white font-mono">6 مواد</span>
+            <p class="text-xs text-slate-400">شاملة المنهج الأكاديمي للهندسة والحاسبات</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 text-center space-y-1">
+            <span class="text-lg font-black text-white font-mono">100% English</span>
+            <p class="text-xs text-slate-400">أسئلة بالإنجليزية مع تفسيرات وتلميحات عربية</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 text-center space-y-1">
+            <span class="text-lg font-black text-white font-mono">شفوي ومختبر</span>
+            <p class="text-xs text-slate-400">محاكاة فورية لأسئلة المعيدين والدكاترة</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Access Gating Security Banner -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-indigo-950/30 border border-indigo-500/30 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-bold text-indigo-200">
+        <div class="flex items-center gap-3 text-center sm:text-right">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <span class="block text-white font-black text-sm">نظام حماية وسجلات الطلاب الخاصة</span>
+            <span class="text-slate-400 text-xs">يتطلب الوصول إلى الكويزات، مختبر الكود، ودفتر الأخطاء تسجيل الدخول لحفظ تقدمك سحابياً.</span>
+          </div>
+        </div>
+        <button type="button" onclick="window.location.href='/login.html'" class="btn-glass-primary px-5 py-2.5 rounded-xl text-xs font-black flex items-center gap-1.5 flex-shrink-0 cursor-pointer">
+          <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+          <span>سجّل دخولك للبدء</span>
+        </button>
+      </div>
+
+      <!-- Features Presentation Section -->
+      <div id="landing-features" class="space-y-6">
+        <div class="text-center space-y-1.5">
+          <h2 class="text-2xl sm:text-3xl font-black text-white">مميزات المنصة الأكاديمية المتكاملة</h2>
+          <p class="text-xs sm:text-sm text-slate-400">أربعة محاور رئيسية تم تصميمها لمرافقتك طوال الفصل الدراسي</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          
+          <!-- Feature 1 -->
+          <div onclick="requireAuthToFeature('كويزات المواد الـ 6')" class="glass-card p-6 rounded-3xl border border-slate-800 hover:border-indigo-500/50 transition space-y-4 group cursor-pointer interactive-hover-card">
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30 group-hover:scale-110 transition">
+                <i data-lucide="check-square" class="w-6 h-6"></i>
+              </div>
+              <span class="text-[11px] font-bold text-amber-400 flex items-center gap-1 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
+                <i data-lucide="lock" class="w-3 h-3"></i>
+                يتطلب تسجيل الدخول
+              </span>
+            </div>
+            <div>
+              <h3 class="text-lg font-black text-white group-hover:text-indigo-300 transition">بنك كويزات الـ 6 مواد (MCQ)</h3>
+              <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                تدريب متقدم على 4 اختيارات بنمط امتحانات الميدتيرم والفاينال، مع وضعين: وضع التدريب للتصحيح الفوري ووضع الامتحان بمؤقت زمني ومراجعة تفصيلية.
+              </p>
+            </div>
+            <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-indigo-400">
+              <span>افتح كويزاتك الآن</span>
+              <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition"></i>
+            </div>
+          </div>
+
+          <!-- Feature 2 -->
+          <div onclick="requireAuthToFeature('مختبر الكود والمناقشة الشفوية')" class="glass-card p-6 rounded-3xl border border-slate-800 hover:border-blue-500/50 transition space-y-4 group cursor-pointer interactive-hover-card">
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-2xl bg-blue-600/20 text-blue-400 flex items-center justify-center border border-blue-500/30 group-hover:scale-110 transition">
+                <i data-lucide="code-2" class="w-6 h-6"></i>
+              </div>
+              <span class="text-[11px] font-bold text-amber-400 flex items-center gap-1 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
+                <i data-lucide="lock" class="w-3 h-3"></i>
+                يتطلب تسجيل الدخول
+              </span>
+            </div>
+            <div>
+              <h3 class="text-lg font-black text-white group-hover:text-blue-300 transition">مختبر الكود ومحاكي الشفوي (Viva Defense)</h3>
+              <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                حاكي مناقشة معمل البرمجة والشفوي باختيار شخصية المعيد (المتخصص، المدقق، العملي، أو المشجع) لاختبار كودك وسؤالك في التعقيد والذاكرة.
+              </p>
+            </div>
+            <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-blue-400">
+              <span>بدء محاكاة الشفوي</span>
+              <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition"></i>
+            </div>
+          </div>
+
+          <!-- Feature 3 -->
+          <div onclick="requireAuthToFeature('ورقة التحضير الذكية')" class="glass-card p-6 rounded-3xl border border-slate-800 hover:border-teal-500/50 transition space-y-4 group cursor-pointer interactive-hover-card">
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-2xl bg-teal-600/20 text-teal-400 flex items-center justify-center border border-teal-500/30 group-hover:scale-110 transition">
+                <i data-lucide="file-check-2" class="w-6 h-6"></i>
+              </div>
+              <span class="text-[11px] font-bold text-amber-400 flex items-center gap-1 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
+                <i data-lucide="lock" class="w-3 h-3"></i>
+                يتطلب تسجيل الدخول
+              </span>
+            </div>
+            <div>
+              <h3 class="text-lg font-black text-white group-hover:text-teal-300 transition">ورقة التحضير الذكية (Smart Prep Sheet)</h3>
+              <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                توليد فوري لـ 10 أسئلة فخاخ شائعة يطرحها أساتذة الجامعات في المناقشات مع إجابات نموذجية تفكك التحديات وتضمن درجتك النهائية.
+              </p>
+            </div>
+            <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-teal-400">
+              <span>توليد ورقة التحضير</span>
+              <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition"></i>
+            </div>
+          </div>
+
+          <!-- Feature 4 -->
+          <div onclick="requireAuthToFeature('دفتر الأخطاء ومؤشر الجاهزية')" class="glass-card p-6 rounded-3xl border border-slate-800 hover:border-violet-500/50 transition space-y-4 group cursor-pointer interactive-hover-card">
+            <div class="flex items-center justify-between">
+              <div class="w-12 h-12 rounded-2xl bg-violet-600/20 text-violet-400 flex items-center justify-center border border-violet-500/30 group-hover:scale-110 transition">
+                <i data-lucide="book-x" class="w-6 h-6"></i>
+              </div>
+              <span class="text-[11px] font-bold text-amber-400 flex items-center gap-1 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
+                <i data-lucide="lock" class="w-3 h-3"></i>
+                يتطلب تسجيل الدخول
+              </span>
+            </div>
+            <div>
+              <h3 class="text-lg font-black text-white group-hover:text-violet-300 transition">دفتر الأخطاء الذكي ومؤشر الجاهزية</h3>
+              <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                تسجيل آلي لكافة الإجابات الخاطئة وملاحظات الحل مع قياس مستوى جاهزيتك الأكاديمية بنسبة مئوية ديناميكية ترتفع كلما تدربت.
+              </p>
+            </div>
+            <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-violet-400">
+              <span>استعراض مؤشر الجاهزية</span>
+              <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition"></i>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Subjects Preview Section -->
+      <div id="landing-subjects" class="space-y-6">
+        <div class="text-center space-y-1.5">
+          <h2 class="text-2xl sm:text-3xl font-black text-white">المسارات والمواد الأكاديمية المقررة (6 مواد)</h2>
+          <p class="text-xs sm:text-sm text-slate-400">تم اختيارها وتغطيتها وفقاً للوائح كليات الهندسة والحاسبات</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          
+          <!-- Subject 1 -->
+          <div onclick="requireAuthToFeature('الجبر الخطي')" class="glass-card p-6 rounded-3xl border border-slate-800 hover:border-indigo-500/50 transition flex flex-col justify-between cursor-pointer interactive-hover-card">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center font-bold">
+                  <i data-lucide="grid-3x3" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">MATH 101</span>
+              </div>
+              <h4 class="font-black text-white text-base">الجبر الخطي</h4>
+              <span class="text-xs text-slate-400 font-mono block">Linear Algebra</span>
+              <p class="text-xs text-slate-300">المحددات، المصفوفات، فضاء المتجهات، ونظم المعادلات الخطية.</p>
+            </div>
+            <div class="pt-4 mt-4 border-t border-slate-800 flex items-center justify-between text-xs font-bold text-indigo-400">
+              <span class="flex items-center gap-1 text-slate-400 text-[11px]"><i data-lucide="lock" class="w-3 h-3"></i> مقفل للطلاب المسجلين</span>
+              <span>دخول 🔒</span>
+            </div>
+          </div>
+
+          <!-- Subject 2 -->
+          <div onclick="requireAuthToFeature('التفاضل والتكامل')" class="glass-card p-6 rounded-3xl border border-slate-800 hover:border-blue-500/50 transition flex flex-col justify-between cursor-pointer interactive-hover-card">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold">
+                  <i data-lucide="sigma" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/30">MATH 102</span>
+              </div>
+              <h4 class="font-black text-white text-base">التفاضل والتكامل</h4>
+              <span class="text-xs text-slate-400 font-mono block">Calculus</span>
+              <p class="text-xs text-slate-300">قواعد الاشتقاق، النهايات، تطبيقات التكامل، والمساحات.</p>
+            </div>
+            <div class="pt-4 mt-4 border-t border-slate-800 flex items-center justify-between text-xs font-bold text-blue-400">
+              <span class="flex items-center gap-1 text-slate-400 text-[11px]"><i data-lucide="lock" class="w-3 h-3"></i> مقفل للطلاب المسجلين</span>
+              <span>دخول 🔒</span>
+            </div>
+          </div>
+
+          <!-- Subject 3 -->
+          <div onclick="requireAuthToFeature('الدوائر الكهربية')" class="glass-card p-6 rounded-3xl border border-slate-800 hover:border-amber-500/50 transition flex flex-col justify-between cursor-pointer interactive-hover-card">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-10 h-10 rounded-xl bg-amber-600/20 text-amber-400 flex items-center justify-center font-bold">
+                  <i data-lucide="zap" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">ELEC 101</span>
+              </div>
+              <h4 class="font-black text-white text-base">الدوائر الكهربية</h4>
+              <span class="text-xs text-slate-400 font-mono block">Basic Electric</span>
+              <p class="text-xs text-slate-300">قوانين أوم، كيرشوف KCL/KVL، ونظريات ثيفنن ونورتون.</p>
+            </div>
+            <div class="pt-4 mt-4 border-t border-slate-800 flex items-center justify-between text-xs font-bold text-amber-400">
+              <span class="flex items-center gap-1 text-slate-400 text-[11px]"><i data-lucide="lock" class="w-3 h-3"></i> مقفل للطلاب المسجلين</span>
+              <span>دخول 🔒</span>
+            </div>
+          </div>
+
+          <!-- Subject 4 -->
+          <div onclick="requireAuthToFeature('الفيزياء الهندسية')" class="glass-card p-6 rounded-3xl border border-slate-800 hover:border-violet-500/50 transition flex flex-col justify-between cursor-pointer interactive-hover-card">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-10 h-10 rounded-xl bg-violet-600/20 text-violet-400 flex items-center justify-center font-bold">
+                  <i data-lucide="atom" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-violet-500/15 text-violet-300 border border-violet-500/30">PHYS 101</span>
+              </div>
+              <h4 class="font-black text-white text-base">الفيزياء الهندسية</h4>
+              <span class="text-xs text-slate-400 font-mono block">Physics</span>
+              <p class="text-xs text-slate-300">الميكانيكا الكلاسيكية، قوانين الحركة، والموجات الكهرومغناطيسية.</p>
+            </div>
+            <div class="pt-4 mt-4 border-t border-slate-800 flex items-center justify-between text-xs font-bold text-violet-400">
+              <span class="flex items-center gap-1 text-slate-400 text-[11px]"><i data-lucide="lock" class="w-3 h-3"></i> مقفل للطلاب المسجلين</span>
+              <span>دخول 🔒</span>
+            </div>
+          </div>
+
+          <!-- Subject 5 -->
+          <div onclick="requireAuthToFeature('اللغة الإنجليزية')" class="glass-card p-6 rounded-3xl border border-slate-800 hover:border-emerald-500/50 transition flex flex-col justify-between cursor-pointer interactive-hover-card">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-10 h-10 rounded-xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold">
+                  <i data-lucide="book-open" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">ENG 101</span>
+              </div>
+              <h4 class="font-black text-white text-base">اللغة الإنجليزية</h4>
+              <span class="text-xs text-slate-400 font-mono block">English</span>
+              <p class="text-xs text-slate-300">المصطلحات الهندسية المتخصصة والقراءة والتحليل التقني.</p>
+            </div>
+            <div class="pt-4 mt-4 border-t border-slate-800 flex items-center justify-between text-xs font-bold text-emerald-400">
+              <span class="flex items-center gap-1 text-slate-400 text-[11px]"><i data-lucide="lock" class="w-3 h-3"></i> مقفل للطلاب المسجلين</span>
+              <span>دخول 🔒</span>
+            </div>
+          </div>
+
+          <!-- Subject 6 -->
+          <div onclick="requireAuthToFeature('مقدمة علوم الحاسب')" class="glass-card p-6 rounded-3xl border border-slate-800 hover:border-teal-500/50 transition flex flex-col justify-between cursor-pointer interactive-hover-card">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-10 h-10 rounded-xl bg-teal-600/20 text-teal-400 flex items-center justify-center font-bold">
+                  <i data-lucide="cpu" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-teal-500/15 text-teal-300 border border-teal-500/30">CS 101</span>
+              </div>
+              <h4 class="font-black text-white text-base">مقدمة علوم الحاسب</h4>
+              <span class="text-xs text-slate-400 font-mono block">Introduction to Computer Science</span>
+              <p class="text-xs text-slate-300">الأنظمة الثنائية، المعالجات ALU، الخوارزميات، وشبكات الحاسب.</p>
+            </div>
+            <div class="pt-4 mt-4 border-t border-slate-800 flex items-center justify-between text-xs font-bold text-teal-400">
+              <span class="flex items-center gap-1 text-slate-400 text-[11px]"><i data-lucide="lock" class="w-3 h-3"></i> مقفل للطلاب المسجلين</span>
+              <span>دخول 🔒</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Bottom Enrollment Banner -->
+      <div class="glass-card p-8 sm:p-10 rounded-3xl border border-blue-500/30 text-center space-y-4 shadow-2xl relative overflow-hidden">
+        <div class="max-w-xl mx-auto space-y-2">
+          <h3 class="text-2xl sm:text-3xl font-black text-white">ابدأ رحلة التفوق الأكاديمي الآن مجاناً</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            سجّل دخولك بحساب Google أو بريدك الإلكتروني في ثوانٍ معدودة، وابدأ التدريب والامتحانات الفورية.
+          </p>
+        </div>
+        <div class="pt-2">
+          <button type="button" onclick="window.location.href='/login.html'" class="btn-glass-primary px-8 py-3.5 rounded-2xl text-xs sm:text-sm font-black shadow-xl inline-flex items-center gap-2 cursor-pointer active:scale-95 transition">
+            <i data-lucide="user-check" class="w-4 h-4 text-cyan-300"></i>
+            <span>إنشاء حساب / تسجيل الدخول الآن</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= VIEW 1: DASHBOARD (الرئيسية) ================= -->
+    <div id="view-dashboard" class="hidden space-y-6">
       
       <!-- Modern Glassmorphism Hero Banner -->
       <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950/70 via-slate-900/80 to-slate-950/90 border border-indigo-500/30 p-6 sm:p-9 shadow-2xl backdrop-blur-2xl">
@@ -1058,8 +1409,9 @@
     </div>
   </main>
 
-  <!-- Mobile Bottom Navigation Bar (< 3 clicks fast access) -->
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#080c14]/92 backdrop-blur-2xl border-t border-slate-800 px-3 py-2.5 flex items-center justify-around text-[10px] font-bold text-slate-400 shadow-2xl">
+  <!-- Mobile Bottom Navigation Bar -->
+  <!-- Authenticated Mobile Bar -->
+  <nav id="mob-nav-authenticated" class="hidden md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#080c14]/92 backdrop-blur-2xl border-t border-slate-800 px-3 py-2.5 flex items-center justify-around text-[10px] font-bold text-slate-400 shadow-2xl">
     <button onclick="navigate('dashboard')" id="mob-nav-dashboard" class="flex flex-col items-center gap-1 text-cyan-400 font-black">
       <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
       الرئيسية
@@ -1076,9 +1428,29 @@
       <i data-lucide="book-x" class="w-5 h-5"></i>
       الأخطاء
     </button>
-    <button onclick="if(state.user && state.user.isLoggedIn){navigate('profile')}else{window.location.href='/login.html'}" id="mob-nav-auth" class="flex flex-col items-center gap-1 hover:text-slate-200">
+    <button onclick="navigate('profile')" id="mob-nav-profile" class="flex flex-col items-center gap-1 hover:text-slate-200">
       <i data-lucide="user" class="w-5 h-5"></i>
-      <span id="mob-nav-auth-label">حسابي</span>
+      <span>حسابي</span>
+    </button>
+  </nav>
+
+  <!-- Visitor / Unauthenticated Mobile Bar -->
+  <nav id="mob-nav-visitor" class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#080c14]/92 backdrop-blur-2xl border-t border-slate-800 px-3 py-2.5 flex items-center justify-around text-[10px] font-bold text-slate-400 shadow-2xl">
+    <button onclick="navigate('landing')" class="flex flex-col items-center gap-1 text-cyan-400 font-black">
+      <i data-lucide="compass" class="w-5 h-5"></i>
+      نظرة عامة
+    </button>
+    <button onclick="document.getElementById('landing-features').scrollIntoView({behavior:'smooth'})" class="flex flex-col items-center gap-1 hover:text-slate-200">
+      <i data-lucide="sparkles" class="w-5 h-5"></i>
+      المميزات
+    </button>
+    <button onclick="document.getElementById('landing-subjects').scrollIntoView({behavior:'smooth'})" class="flex flex-col items-center gap-1 hover:text-slate-200">
+      <i data-lucide="book-open" class="w-5 h-5"></i>
+      المواد الـ 6
+    </button>
+    <button onclick="window.location.href='/login.html'" class="flex flex-col items-center gap-1 text-blue-400 font-black">
+      <i data-lucide="log-in" class="w-5 h-5"></i>
+      تسجيل الدخول
     </button>
   </nav>
 
