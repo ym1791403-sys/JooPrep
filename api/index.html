@@ -68,10 +68,7 @@
 </head>
 <body class="bg-[#080c14] text-slate-100 min-h-screen font-sans antialiased selection:bg-indigo-500/30 selection:text-white flex flex-col transition-colors duration-300 overflow-x-hidden relative">
 
-  <!-- Ambient Glassmorphism Background Glow Orbs -->
-  <div class="theme-ambient-orb fixed -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-b from-indigo-600/25 via-blue-600/15 to-transparent blur-[140px] pointer-events-none z-0"></div>
-  <div class="theme-ambient-orb fixed top-[25%] -right-20 w-[500px] h-[500px] bg-cyan-500/15 blur-[160px] pointer-events-none z-0"></div>
-  <div class="theme-ambient-orb fixed -bottom-20 -left-20 w-[600px] h-[400px] bg-violet-600/15 blur-[150px] pointer-events-none z-0"></div>
+
 
   <!-- Top Navigation Header -->
   <header class="sticky top-0 z-50 backdrop-blur-2xl bg-[#080c14]/85 border-b border-slate-800/80 transition-all shadow-xl shadow-black/30">
@@ -116,8 +113,13 @@
         </button>
       </nav>
 
-      <!-- Right Controls: Auth / Profile Navigation -->
+      <!-- Right Controls: Dark Mode Toggle & Auth / Profile Navigation -->
       <div class="flex items-center gap-2">
+        <!-- Dark Mode Toggle Button (Navy Dark / Light) -->
+        <button type="button" onclick="toggleTheme()" id="theme-toggle-btn" title="تبديل المظهر (كحلي ليلي / فاتح)" class="p-2 rounded-xl border border-slate-700/80 bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white transition flex items-center justify-center cursor-pointer shadow-sm active:scale-95">
+          <i data-lucide="sun" id="theme-toggle-icon" class="w-4 h-4 text-amber-400"></i>
+        </button>
+
         <!-- Auth / Profile Control -->
         <div id="header-user-widget" class="flex items-center gap-2">
           <!-- Shown when not logged in -->
@@ -322,7 +324,7 @@
             <option value="basic_electric">الدوائر الكهربية (Basic Electric)</option>
             <option value="physics">الفيزياء الهندسية (Physics)</option>
             <option value="english">اللغة الإنجليزية (English)</option>
-            <option value="arabic_intro">مقدمة اللغة العربية (Arabic Intro)</option>
+            <option value="cs_intro">مقدمة علوم الحاسب (Introduction to Computer Science - CS 101)</option>
           </select>
 
           <!-- Mode Toggle: Practice vs Exam -->
