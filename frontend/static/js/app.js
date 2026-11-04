@@ -1968,35 +1968,109 @@ function updateHeaderAuthUI() {
   const profileGroup = document.getElementById('header-profile-group');
   const nameEl = document.getElementById('header-user-name');
   const avatarEl = document.getElementById('header-user-avatar');
-
-  const navAuth = document.getElementById('nav-authenticated-tabs');
-  const navVisitor = document.getElementById('nav-visitor-tabs');
+  const mainDesktopNav = document.getElementById('main-desktop-nav');
   const mobAuth = document.getElementById('mob-nav-authenticated');
   const mobVisitor = document.getElementById('mob-nav-visitor');
 
-  if (state.user && state.user.isLoggedIn) {
-    if (authBtn) authBtn.classList.add('hidden');
-    if (profileGroup) profileGroup.classList.remove('hidden');
-    if (nameEl) nameEl.innerText = state.user.name || 'طالب الأكاديميا';
-    if (avatarEl) {
-      const initial = (state.user.name && state.user.name.trim().charAt(0)) || 'ط';
-      avatarEl.innerText = initial;
-    }
+  const isLoggedIn = !!(state.user && state.user.isLoggedIn);
 
-    if (navAuth) navAuth.classList.remove('hidden');
-    if (navVisitor) navVisitor.classList.add('hidden');
-    if (mobAuth) mobAuth.classList.remove('hidden');
-    if (mobVisitor) mobVisitor.classList.add('hidden');
-  } else {
-    if (authBtn) authBtn.classList.remove('hidden');
-    if (profileGroup) profileGroup.classList.add('hidden');
-
-    if (navAuth) navAuth.classList.add('hidden');
-    if (navVisitor) navVisitor.classList.remove('hidden');
-    if (mobAuth) mobAuth.classList.add('hidden');
-    if (mobVisitor) mobVisitor.classList.remove('hidden');
+  if (authBtn) {
+    if (isLoggedIn) authBtn.classList.add('hidden');
+    else authBtn.classList.remove('hidden');
   }
+
+  if (profileGroup) {
+    if (isLoggedIn) profileGroup.classList.remove('hidden');
+    else profileGroup.classList.add('hidden');
+  }
+
+  if (nameEl) nameEl.innerText = state.user?.name || 'طالب الأكاديميا';
+  if (avatarEl) {
+    const initial = (state.user?.name && state.user.name.trim().charAt(0)) || 'ط';
+    avatarEl.innerText = initial;
+  }
+
+  if (mainDesktopNav) {
+    if (isLoggedIn) {
+      const cur = state.activeView || 'dashboard';
+      mainDesktopNav.innerHTML = `
+        <button id="nav-btn-dashboard" onclick="navigate('dashboard')" class="nav-link px-3.5 py-2 rounded-xl transition flex items-center gap-2 ${cur === 'dashboard' ? 'text-white bg-indigo-600/25 border border-indigo-500/40 shadow-lg shadow-indigo-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'}">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>الرئيسية</span>
+        </button>
+        <button id="nav-btn-quizzes" onclick="navigate('quizzes')" class="nav-link px-3.5 py-2 rounded-xl transition flex items-center gap-2 ${cur === 'quizzes' ? 'text-white bg-indigo-600/25 border border-indigo-500/40 shadow-lg shadow-indigo-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'}">
+          <i data-lucide="check-square" class="w-4 h-4"></i>
+          <span>كويزات المواد الـ 6</span>
+        </button>
+        <button id="nav-btn-viva" onclick="navigate('viva')" class="nav-link px-3.5 py-2 rounded-xl transition flex items-center gap-2 ${cur === 'viva' ? 'text-white bg-indigo-600/25 border border-indigo-500/40 shadow-lg shadow-indigo-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'}">
+          <i data-lucide="code-2" class="w-4 h-4"></i>
+          <span>مختبر الكود والشفوي</span>
+        </button>
+        <button id="nav-btn-prep-sheet" onclick="navigate('prep-sheet')" class="nav-link px-3.5 py-2 rounded-xl transition flex items-center gap-2 ${cur === 'prep-sheet' ? 'text-white bg-indigo-600/25 border border-indigo-500/40 shadow-lg shadow-indigo-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'}">
+          <i data-lucide="file-check-2" class="w-4 h-4"></i>
+          <span>ورقة التحضير</span>
+        </button>
+        <button id="nav-btn-error-notebook" onclick="navigate('error-notebook')" class="nav-link px-3.5 py-2 rounded-xl transition flex items-center gap-2 ${cur === 'error-notebook' ? 'text-white bg-indigo-600/25 border border-indigo-500/40 shadow-lg shadow-indigo-500/10 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'}">
+          <i data-lucide="book-x" class="w-4 h-4"></i>
+          <span>دفتر الأخطاء</span>
+        </button>
+      `;
+    } else {
+      mainDesktopNav.innerHTML = `
+        <button id="nav-btn-landing" onclick="navigate('landing')" class="nav-link px-3.5 py-2 rounded-xl transition flex items-center gap-2 text-white bg-indigo-600/25 border border-indigo-500/40 shadow-lg shadow-indigo-500/10 font-bold">
+          <i data-lucide="compass" class="w-4 h-4"></i>
+          <span>نظرة عامة</span>
+        </button>
+        <button id="nav-btn-features" onclick="document.getElementById('landing-features')?.scrollIntoView({behavior:'smooth'})" class="nav-link px-3.5 py-2 rounded-xl transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>المميزات</span>
+        </button>
+        <button id="nav-btn-subjects" onclick="document.getElementById('landing-subjects')?.scrollIntoView({behavior:'smooth'})" class="nav-link px-3.5 py-2 rounded-xl transition flex items-center gap-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+          <span>المواد الـ 6</span>
+        </button>
+        <button id="nav-btn-login" onclick="window.location.href='/login.html'" class="nav-link px-3.5 py-2 rounded-xl transition flex items-center gap-2 text-cyan-400 hover:text-white hover:bg-slate-800/50 font-bold">
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          <span>تسجيل الدخول</span>
+        </button>
+      `;
+    }
+  }
+
+  if (mobAuth) {
+    if (isLoggedIn) {
+      mobAuth.classList.remove('hidden');
+    } else {
+      mobAuth.classList.add('hidden');
+    }
+  }
+
+  if (mobVisitor) {
+    if (isLoggedIn) {
+      mobVisitor.classList.add('hidden');
+    } else {
+      mobVisitor.classList.remove('hidden');
+    }
+  }
+
+  if (window.lucide) lucide.createIcons();
 }
+
+window.handleFeatureCardClick = function(viewName) {
+  if (state.user && state.user.isLoggedIn) {
+    navigate(viewName);
+  } else {
+    window.location.href = '/login.html';
+  }
+};
+
+window.handleSubjectCardClick = function(subKey) {
+  if (state.user && state.user.isLoggedIn) {
+    startQuizForSubject(subKey);
+  } else {
+    window.location.href = '/login.html';
+  }
+};
 async function checkAuthSession() {
   // 1. Check local session storage first
   const stored = localStorage.getItem('jooprep_user_session');
