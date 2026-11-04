@@ -482,13 +482,16 @@ const state = {
   activeView: 'dashboard',
   audioEnabled: false,
   user: {
+    id: null,
+    email: '',
     name: 'طالب حاسبات وهندسة',
     college: 'كلية الحاسبات والمعلومات',
     academic_year: 'الفرقة الأولى',
     quota_used_today_viva: 1,
     daily_quota_viva: 3,
     quota_used_today_prep: 1,
-    daily_quota_prep: 5
+    daily_quota_prep: 5,
+    isLoggedIn: false
   },
   
   // Active MCQ Quiz State
@@ -527,6 +530,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   if (window.lucide) lucide.createIcons();
 
+  initSupabaseClient();
+  checkAuthSession();
+
   renderSubjectsGrid();
   loadUserProfile();
   loadReadinessData();
@@ -543,7 +549,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ----------------- Navigation -----------------
 function navigate(viewName) {
   state.activeView = viewName;
-  const views = ['dashboard', 'quizzes', 'viva', 'prep-sheet', 'error-notebook', 'profile'];
+  const views = ['dashboard', 'quizzes', 'viva', 'prep-sheet', 'error-notebook', 'profile', 'auth'];
   
   views.forEach(v => {
     const el = document.getElementById(`view-${v}`);
@@ -820,13 +826,39 @@ function finishMCQQuiz() {
   document.getElementById('quiz-problem-card').classList.add('hidden');
   document.getElementById('quiz-success-card').classList.remove('hidden');
 
-  // Calculate score
+  // Calculate score and collect mistake patterns
   let correctCount = 0;
   const questions = state.quizQuestions;
+  const wrongQuestions = [];
   questions.forEach(q => {
     if (state.userAnswers[q.id] === q.correctKey) {
       correctCount++;
+    } else {
+      wrongQuestions.push(q);
     }
+  });
+
+  // Record mistakes into error notebook & sync
+  wrongQuestions.forEach(q => {
+    const errorItem = {
+      id: q.id,
+      subject: state.activeSubjectKey || 'linear_algebra',
+      question: q.question,
+      yourAnswer: state.userAnswers[q.id] || "لم تجب (No Answer)",
+      correctAnswer: q.correctKey,
+      explanation: q.explanation,
+      timestamp: new Date().toISOString()
+    };
+    recordMistakeInNotebook(errorItem);
+  });
+
+  // Sync attempt to Supabase database
+  syncQuizAttemptToSupabase({
+    subject: state.activeSubjectKey || 'linear_algebra',
+    correctCount,
+    totalQuestions: questions.length,
+    percent: Math.round((correctCount / questions.length) * 100),
+    answers: state.userAnswers
   });
 
   const percent = Math.round((correctCount / questions.length) * 100);
@@ -1333,6 +1365,14 @@ function finishVivaSession() {
   if (window.confetti && rep.overallScore >= 70) {
     confetti({ particleCount: 90, spread: 80, origin: { y: 0.5 } });
   }
+
+  // Sync viva session to Supabase database
+  syncVivaSessionToSupabase({
+    persona: state.vivaPersona,
+    codeSnippet: document.getElementById('viva-code-input') ? document.getElementById('viva-code-input').value : '',
+    finalScore: rep.overallScore,
+    feedback: rep.verdictMessage
+  });
 }
 
 function finishVivaSessionEarly() {
@@ -1419,19 +1459,578 @@ function generatePrepSheetForCode() {
 }
 
 // ----------------- Error Notebook -----------------
+function getStoredErrors() {
+  try {
+    const raw = localStorage.getItem('jooprep_error_notebook');
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) {
+    return [];
+  }
+}
+
+function recordMistakeInNotebook(errItem) {
+  try {
+    const errors = getStoredErrors();
+    const existingIndex = errors.findIndex(e => e.id === errItem.id);
+    if (existingIndex >= 0) {
+      errors[existingIndex] = errItem;
+    } else {
+      errors.unshift(errItem);
+    }
+    localStorage.setItem('jooprep_error_notebook', JSON.stringify(errors.slice(0, 100)));
+    syncErrorToSupabase(errItem);
+  } catch(e) {
+    console.warn('Error recording mistake:', e);
+  }
+}
+
+function clearAllErrors() {
+  if (confirm("هل تريد تفريغ ومسح جميع سجلات دفتر الأخطاء؟")) {
+    localStorage.removeItem('jooprep_error_notebook');
+    loadErrorNotebook();
+  }
+}
+
 function loadErrorNotebook() {
   const container = document.getElementById('error-notebook-items-container');
   if (!container) return;
-  container.innerHTML = `
-    <div class="rounded-3xl bg-slate-900/80 border border-slate-800 p-8 text-center space-y-2 backdrop-blur-xl">
-      <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/25">
-        <i data-lucide="check" class="w-6 h-6"></i>
+
+  const errors = getStoredErrors();
+  if (!errors || errors.length === 0) {
+    container.innerHTML = `
+      <div class="glass-card p-8 sm:p-12 text-center space-y-3">
+        <div class="w-14 h-14 rounded-2xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/30">
+          <i data-lucide="check-circle-2" class="w-7 h-7"></i>
+        </div>
+        <h4 class="font-black text-white text-base sm:text-lg">دفتر الأخطاء نظيف تماماً! 👏</h4>
+        <p class="text-xs sm:text-sm text-slate-400 max-w-md mx-auto leading-relaxed">
+          أي أسئلة تخطئ فيها في الكويزات أو مناقشات الشفوي ستُسجل هنا تلقائياً وتتزامن مع قاعدة بيانات Supabase لتعيد مراجعتها وحلها قبل دخول الامتحان.
+        </p>
       </div>
-      <h4 class="font-black text-white text-base">دفتر الأخطاء نظيف تماماً! 👏</h4>
-      <p class="text-xs text-slate-400 max-w-sm mx-auto">
-        أي أسئلة تخطئ فيها في الكويزات أو الشفوي ستُسجل هنا تلقائياً لتعيد حلها قبل الامتحان.
-      </p>
+    `;
+    if (window.lucide) lucide.createIcons();
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+      <div class="text-xs font-bold text-slate-300">
+        تم رصد <span class="text-rose-400 font-mono font-bold">${errors.length}</span> سؤال يحتاج مراجعة:
+      </div>
+      <button onclick="clearAllErrors()" class="text-xs text-rose-400 hover:text-rose-300 font-bold flex items-center gap-1 transition">
+        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+        <span>تفريغ السجل</span>
+      </button>
     </div>
   `;
+
+  errors.forEach((err, idx) => {
+    const subj = SUBJECTS_DATA[err.subject] || { nameEn: err.subject || 'General', nameAr: 'عام' };
+    const card = document.createElement('div');
+    card.className = "glass-card p-5 space-y-3 border-rose-500/30 bg-rose-950/10";
+    card.innerHTML = `
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">
+            خطأ #${idx + 1}
+          </span>
+          <span class="text-xs font-bold text-slate-300 font-mono">
+            ${subj.nameEn} (${subj.nameAr})
+          </span>
+        </div>
+        <span class="text-[10px] text-slate-500 font-mono">
+          ${new Date(err.timestamp || Date.now()).toLocaleDateString('ar-EG')}
+        </span>
+      </div>
+      <div class="font-bold text-slate-100 text-left font-sans text-sm sm:text-base leading-relaxed" dir="ltr">
+        ${formatMathText(err.question)}
+      </div>
+      <div class="flex flex-wrap items-center gap-4 text-xs font-sans text-left" dir="ltr">
+        <span>إجابتك المسجلة: <strong class="text-rose-400 font-bold">${err.yourAnswer}</strong></span>
+        <span>الإجابة الصحيحة: <strong class="text-emerald-400 font-bold">${err.correctAnswer}</strong></span>
+      </div>
+      <div class="p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-xs text-slate-300 leading-relaxed text-right space-y-1" dir="rtl">
+        <span class="text-indigo-300 font-bold flex items-center gap-1.5">
+          <i data-lucide="help-circle" class="w-3.5 h-3.5 text-indigo-400"></i>
+          سبب الخطأ والشرح الأكاديمي:
+        </span>
+        <div class="leading-relaxed text-slate-200 font-sans">${formatMathText(err.explanation)}</div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
   if (window.lucide) lucide.createIcons();
+}
+
+
+// ============================================================================
+// Supabase Database & Authentication Engine (صابابا بيز)
+// ============================================================================
+
+let supabaseClient = null;
+
+function initSupabaseClient() {
+  const url = localStorage.getItem('jooprep_supabase_url') || '';
+  const key = localStorage.getItem('jooprep_supabase_key') || '';
+  const statusBadge = document.getElementById('supabase-status-badge');
+  const dot = document.getElementById('supabase-indicator-dot');
+
+  if (url && key && window.supabase && typeof window.supabase.createClient === 'function') {
+    try {
+      supabaseClient = window.supabase.createClient(url, key, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      });
+      if (statusBadge) {
+        statusBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+        statusBadge.innerText = 'متصل سحابياً (Supabase Connected)';
+      }
+      if (dot) {
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+      }
+      console.log('Supabase client initialized successfully with project URL:', url);
+    } catch(err) {
+      console.error('Error creating Supabase client:', err);
+      supabaseClient = null;
+    }
+  } else {
+    supabaseClient = null;
+    if (statusBadge) {
+      statusBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+      statusBadge.innerText = 'وضع محلي (أدخل مفاتيح Supabase للتزامن السحابي)';
+    }
+    if (dot) {
+      dot.className = 'w-2 h-2 rounded-full bg-amber-400';
+    }
+  }
+  return supabaseClient;
+}
+
+// ----------------- Auth UI Switching -----------------
+function switchAuthTab(tab) {
+  const loginForm = document.getElementById('auth-login-form');
+  const regForm = document.getElementById('auth-register-form');
+  const loginTabBtn = document.getElementById('auth-tab-btn-login');
+  const regTabBtn = document.getElementById('auth-tab-btn-register');
+  const title = document.getElementById('auth-main-title');
+  const alertEl = document.getElementById('auth-alert');
+
+  if (alertEl) alertEl.classList.add('hidden');
+
+  if (tab === 'login') {
+    if (loginForm) loginForm.classList.remove('hidden');
+    if (regForm) regForm.classList.add('hidden');
+    if (loginTabBtn) loginTabBtn.className = 'flex-1 py-2.5 rounded-xl transition font-black bg-blue-600 text-white shadow-md flex items-center justify-center gap-2';
+    if (regTabBtn) regTabBtn.className = 'flex-1 py-2.5 rounded-xl transition font-bold text-slate-400 hover:text-white flex items-center justify-center gap-2';
+    if (title) title.innerText = 'بوابة تسجيل الدخول والأكاديميا';
+  } else {
+    if (loginForm) loginForm.classList.add('hidden');
+    if (regForm) regForm.classList.remove('hidden');
+    if (regTabBtn) regTabBtn.className = 'flex-1 py-2.5 rounded-xl transition font-black bg-blue-600 text-white shadow-md flex items-center justify-center gap-2';
+    if (loginTabBtn) loginTabBtn.className = 'flex-1 py-2.5 rounded-xl transition font-bold text-slate-400 hover:text-white flex items-center justify-center gap-2';
+    if (title) title.innerText = 'إنشاء حساب طالب جديد';
+  }
+}
+
+function showAuthAlert(message, type = 'error') {
+  const alertEl = document.getElementById('auth-alert');
+  if (!alertEl) return;
+  alertEl.classList.remove('hidden');
+  if (type === 'error') {
+    alertEl.className = 'p-3.5 rounded-xl text-xs font-bold space-y-1 bg-rose-950/40 border border-rose-500/40 text-rose-300';
+    alertEl.innerHTML = `<div class="flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i><span>${message}</span></div>`;
+  } else {
+    alertEl.className = 'p-3.5 rounded-xl text-xs font-bold space-y-1 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300';
+    alertEl.innerHTML = `<div class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i><span>${message}</span></div>`;
+  }
+  if (window.lucide) lucide.createIcons();
+}
+
+function applyUserSession(userData) {
+  state.user = {
+    ...state.user,
+    ...userData,
+    isLoggedIn: true
+  };
+  localStorage.setItem('jooprep_user_session', JSON.stringify(state.user));
+  loadUserProfile();
+  updateHeaderAuthUI();
+}
+
+function updateHeaderAuthUI() {
+  const authBtn = document.getElementById('header-auth-btn');
+  const profileBtn = document.getElementById('header-profile-btn');
+  const nameEl = document.getElementById('header-user-name');
+  const avatarEl = document.getElementById('header-user-avatar');
+
+  if (state.user && state.user.isLoggedIn) {
+    if (authBtn) authBtn.classList.add('hidden');
+    if (profileBtn) profileBtn.classList.remove('hidden');
+    if (nameEl) nameEl.innerText = state.user.name || 'طالب الأكاديميا';
+    if (avatarEl) {
+      const initial = (state.user.name && state.user.name.trim().charAt(0)) || 'ط';
+      avatarEl.innerText = initial;
+    }
+  } else {
+    if (authBtn) authBtn.classList.remove('hidden');
+    if (profileBtn) profileBtn.classList.add('hidden');
+  }
+}
+
+async function checkAuthSession() {
+  // 1. Check local session storage first
+  const stored = localStorage.getItem('jooprep_user_session');
+  if (stored) {
+    try {
+      const u = JSON.parse(stored);
+      state.user = { ...state.user, ...u };
+    } catch(e) {}
+  }
+
+  // 2. If Supabase is connected, verify active auth session
+  if (supabaseClient) {
+    try {
+      const { data, error } = await supabaseClient.auth.getSession();
+      if (!error && data && data.session && data.session.user) {
+        const suUser = data.session.user;
+        // Fetch matching profile
+        const { data: prof } = await supabaseClient
+          .from('profiles')
+          .select('*')
+          .eq('id', suUser.id)
+          .single();
+
+        applyUserSession({
+          id: suUser.id,
+          email: suUser.email,
+          name: (prof && prof.full_name) || suUser.user_metadata?.full_name || suUser.email.split('@')[0],
+          college: (prof && prof.college) || suUser.user_metadata?.college || 'كلية الحاسبات والمعلومات',
+          academic_year: (prof && prof.academic_year) || suUser.user_metadata?.academic_year || 'الفرقة الأولى',
+          quota_used_today_viva: (prof && prof.quota_used_today_viva) || 0,
+          daily_quota_viva: (prof && prof.daily_quota_viva) || 5,
+          quota_used_today_prep: (prof && prof.quota_used_today_prep) || 0,
+          daily_quota_prep: (prof && prof.daily_quota_prep) || 10,
+          isLoggedIn: true
+        });
+        return;
+      }
+    } catch(e) {
+      console.warn('Supabase auth session check notice:', e);
+    }
+  }
+
+  updateHeaderAuthUI();
+}
+
+// ----------------- Login Handler -----------------
+async function handleAuthLogin(event) {
+  event.preventDefault();
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const submitBtn = document.getElementById('login-submit-btn');
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="animate-spin inline-block mr-2">⏳</span> جاري التحقق...';
+  }
+
+  try {
+    if (supabaseClient) {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+      if (error) {
+        showAuthAlert(`فشل الدخول: ${error.message}`, 'error');
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i><span>دخول إلى الحساب</span>';
+          if (window.lucide) lucide.createIcons();
+        }
+        return;
+      }
+
+      if (data && data.user) {
+        const { data: prof } = await supabaseClient.from('profiles').select('*').eq('id', data.user.id).single();
+        applyUserSession({
+          id: data.user.id,
+          email: data.user.email,
+          name: (prof && prof.full_name) || data.user.user_metadata?.full_name || data.user.email.split('@')[0],
+          college: (prof && prof.college) || data.user.user_metadata?.college || 'كلية الحاسبات والمعلومات',
+          academic_year: (prof && prof.academic_year) || data.user.user_metadata?.academic_year || 'الفرقة الأولى',
+          isLoggedIn: true
+        });
+        showAuthAlert('تم تسجيل الدخول بنجاح! مرحباً بعودتك.', 'success');
+        setTimeout(() => navigate('dashboard'), 800);
+      }
+    } else {
+      // Local demo mode
+      applyUserSession({
+        id: 'local_user_' + Date.now(),
+        email: email,
+        name: email.split('@')[0],
+        college: 'كلية الحاسبات والمعلومات',
+        academic_year: 'الفرقة الأولى',
+        isLoggedIn: true
+      });
+      showAuthAlert('تم تسجيل الدخول بالوضع المحلي (Local Session).', 'success');
+      setTimeout(() => navigate('dashboard'), 800);
+    }
+  } catch(err) {
+    showAuthAlert(`حدث خطأ أثناء الاتصال: ${err.message}`, 'error');
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i><span>دخول إلى الحساب</span>';
+      if (window.lucide) lucide.createIcons();
+    }
+  }
+}
+
+// ----------------- Registration Handler -----------------
+async function handleAuthRegister(event) {
+  event.preventDefault();
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const college = document.getElementById('reg-college').value.trim();
+  const year = document.getElementById('reg-year').value;
+  const password = document.getElementById('reg-password').value;
+  const submitBtn = document.getElementById('reg-submit-btn');
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="animate-spin inline-block mr-2">⏳</span> جاري إنشاء الحساب...';
+  }
+
+  try {
+    if (supabaseClient) {
+      const { data, error } = await supabaseClient.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+          data: {
+            full_name: name,
+            college: college,
+            academic_year: year
+          }
+        }
+      });
+
+      if (error) {
+        showAuthAlert(`فشل إنشاء الحساب: ${error.message}`, 'error');
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i data-lucide="user-check" class="w-4 h-4"></i><span>إنشاء الحساب ومزامنة البيانات</span>';
+          if (window.lucide) lucide.createIcons();
+        }
+        return;
+      }
+
+      const userObj = {
+        id: (data.user && data.user.id) || ('user_' + Date.now()),
+        email: email,
+        name: name,
+        college: college,
+        academic_year: year,
+        isLoggedIn: true
+      };
+
+      // Try inserting into profiles table if RLS allows
+      try {
+        await supabaseClient.from('profiles').upsert([{
+          id: userObj.id,
+          email: email,
+          full_name: name,
+          college: college,
+          academic_year: year
+        }]);
+      } catch(e) {}
+
+      applyUserSession(userObj);
+      showAuthAlert('تم إنشاء الحساب بنجاح وتجهيز بيئة الاختبارات الأكاديمية!', 'success');
+      setTimeout(() => navigate('dashboard'), 1000);
+    } else {
+      // Local registration
+      applyUserSession({
+        id: 'local_reg_' + Date.now(),
+        email: email,
+        name: name,
+        college: college,
+        academic_year: year,
+        isLoggedIn: true
+      });
+      showAuthAlert('تم إنشاء حساب محلي بنجاح!', 'success');
+      setTimeout(() => navigate('dashboard'), 1000);
+    }
+  } catch(err) {
+    showAuthAlert(`حدث خطأ غير متوقع: ${err.message}`, 'error');
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i data-lucide="user-check" class="w-4 h-4"></i><span>إنشاء الحساب ومزامنة البيانات</span>';
+      if (window.lucide) lucide.createIcons();
+    }
+  }
+}
+
+// ----------------- Guest Demo Mode Handler -----------------
+function handleGuestDemoLogin() {
+  applyUserSession({
+    id: 'demo_guest_student',
+    email: 'guest.student@jooprep.edu',
+    name: 'طالب تجريبي — ضيف الأكاديميا',
+    college: 'كلية الحاسبات والذكاء الاصطناعي',
+    academic_year: 'الفرقة الأولى',
+    quota_used_today_viva: 0,
+    daily_quota_viva: 10,
+    quota_used_today_prep: 0,
+    daily_quota_prep: 20,
+    isLoggedIn: true
+  });
+  showAuthAlert('مرحباً بك! تم تفعيل الوضع التجريبي السريع بكامل الصلاحيات.', 'success');
+  setTimeout(() => navigate('dashboard'), 600);
+}
+
+// ----------------- Logout Handler -----------------
+async function handleAuthLogout() {
+  if (confirm("هل أنت متأكد من رغبتك في تسجيل الخروج؟")) {
+    if (supabaseClient) {
+      try {
+        await supabaseClient.auth.signOut();
+      } catch(e) {}
+    }
+    localStorage.removeItem('jooprep_user_session');
+    state.user.isLoggedIn = false;
+    state.user.name = 'طالب حاسبات وهندسة';
+    updateHeaderAuthUI();
+    loadUserProfile();
+    navigate('auth');
+  }
+}
+
+// ----------------- Supabase Modal Controls -----------------
+function openSupabaseModal() {
+  const modal = document.getElementById('modal-supabase-config');
+  const urlInput = document.getElementById('cfg-supabase-url');
+  const keyInput = document.getElementById('cfg-supabase-key');
+
+  if (urlInput) urlInput.value = localStorage.getItem('jooprep_supabase_url') || '';
+  if (keyInput) keyInput.value = localStorage.getItem('jooprep_supabase_key') || '';
+
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closeSupabaseModal() {
+  const modal = document.getElementById('modal-supabase-config');
+  if (modal) modal.classList.add('hidden');
+}
+
+function handleSaveSupabaseConfig(event) {
+  event.preventDefault();
+  const url = document.getElementById('cfg-supabase-url').value.trim();
+  const key = document.getElementById('cfg-supabase-key').value.trim();
+
+  if (url) localStorage.setItem('jooprep_supabase_url', url);
+  else localStorage.removeItem('jooprep_supabase_url');
+
+  if (key) localStorage.setItem('jooprep_supabase_key', key);
+  else localStorage.removeItem('jooprep_supabase_key');
+
+  initSupabaseClient();
+  closeSupabaseModal();
+  alert('تم حفظ إعدادات Supabase وتحديث حالة الاتصال بنجاح!');
+}
+
+async function testSupabaseConnection() {
+  const url = document.getElementById('cfg-supabase-url').value.trim();
+  const key = document.getElementById('cfg-supabase-key').value.trim();
+
+  if (!url || !key) {
+    alert('يرجى كتابة كل من رابط المشروع Project URL والمفتاح العام Anon Key أولاً للاختبار.');
+    return;
+  }
+
+  try {
+    const testClient = window.supabase ? window.supabase.createClient(url, key) : null;
+    if (!testClient) {
+      alert('مكتبة Supabase JS غير محملة بالمتصفح.');
+      return;
+    }
+
+    const { data, error } = await testClient.from('profiles').select('count', { count: 'exact', head: true });
+    if (error && error.code !== 'PGRST116' && !error.message.includes('permission')) {
+      alert('تم الاتصال بالسيرفر، الرد: ' + (error.message || 'جاهز للاستخدام'));
+    } else {
+      alert('نجح الاتصال بمشروع Supabase بنجاح! 🚀 الجداول جاهزة للمزامنة السحابية.');
+    }
+  } catch(e) {
+    alert('فشل الاتصال: ' + e.message);
+  }
+}
+
+// ----------------- Supabase Data Sync Handlers -----------------
+async function syncQuizAttemptToSupabase(attempt) {
+  const attempts = JSON.parse(localStorage.getItem('jooprep_quiz_attempts') || '[]');
+  attempts.unshift({ ...attempt, created_at: new Date().toISOString() });
+  localStorage.setItem('jooprep_quiz_attempts', JSON.stringify(attempts.slice(0, 50)));
+
+  if (supabaseClient && state.user && state.user.isLoggedIn && state.user.id) {
+    try {
+      const { error } = await supabaseClient.from('quiz_attempts').insert([{
+        user_id: state.user.id,
+        subject: attempt.subject,
+        score: attempt.correctCount,
+        total_questions: attempt.totalQuestions,
+        percentage: attempt.percent,
+        answers: attempt.answers || {}
+      }]);
+      if (error) console.warn('Supabase sync quiz attempt notice:', error);
+      else console.log('Quiz attempt successfully synced to Supabase database.');
+    } catch(e) {
+      console.warn('Supabase sync exception:', e);
+    }
+  }
+}
+
+async function syncVivaSessionToSupabase(session) {
+  const history = JSON.parse(localStorage.getItem('jooprep_viva_history') || '[]');
+  history.unshift({ ...session, created_at: new Date().toISOString() });
+  localStorage.setItem('jooprep_viva_history', JSON.stringify(history.slice(0, 30)));
+
+  if (supabaseClient && state.user && state.user.isLoggedIn && state.user.id) {
+    try {
+      const { error } = await supabaseClient.from('viva_history').insert([{
+        user_id: state.user.id,
+        persona: session.persona,
+        code_snippet: session.codeSnippet || '',
+        final_score: session.finalScore || 0,
+        feedback: session.feedback || ''
+      }]);
+      if (error) console.warn('Supabase sync viva notice:', error);
+      else console.log('Viva session successfully synced to Supabase database.');
+    } catch(e) {
+      console.warn('Supabase sync viva exception:', e);
+    }
+  }
+}
+
+async function syncErrorToSupabase(errorItem) {
+  if (supabaseClient && state.user && state.user.isLoggedIn && state.user.id) {
+    try {
+      await supabaseClient.from('error_notebook').insert([{
+        user_id: state.user.id,
+        subject: errorItem.subject || '',
+        question_text: errorItem.question || '',
+        student_answer: errorItem.yourAnswer || '',
+        correct_answer: errorItem.correctAnswer || '',
+        explanation: errorItem.explanation || ''
+      }]);
+    } catch(e) {
+      console.warn('Supabase sync error notebook exception:', e);
+    }
+  }
 }
