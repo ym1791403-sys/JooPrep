@@ -1,20 +1,3 @@
-// ----------------- Synchronous Session Restore -----------------
-function restoreLocalUserSessionSync() {
-  try {
-    const stored = localStorage.getItem('jooprep_user_session');
-    if (stored) {
-      const u = JSON.parse(stored);
-      if (u && u.isLoggedIn) {
-        state.user = { ...state.user, ...u, isLoggedIn: true };
-        return true;
-      }
-    }
-  } catch(e) {}
-  return false;
-}
-// Immediate synchronous invoke before any view renders
-restoreLocalUserSessionSync();
-
 /**
  * JooPrep v2 Client Engine
  * 6 Academic Subjects: Linear Algebra, Calculus, Basic Electric, Physics, English, Arabic Introduction
@@ -497,33 +480,45 @@ const state = {
   allErrors: []
 };
 
+// ----------------- Synchronous Session Restore (Initialized after state) -----------------
+function restoreLocalUserSessionSync() {
+  try {
+    const stored = localStorage.getItem('jooprep_user_session');
+    if (stored) {
+      const u = JSON.parse(stored);
+      if (u && u.isLoggedIn) {
+        state.user = { ...state.user, ...u, isLoggedIn: true };
+        return true;
+      }
+    }
+  } catch(e) {}
+  return false;
+}
+// Synchronous immediate restore
+restoreLocalUserSessionSync();
+
 // ----------------- Dark Mode Engine (Midnight Navy / Academic Light) -----------------
 function applyTheme(theme) {
   const btn = document.getElementById('theme-toggle-btn');
-  const icon = document.getElementById('theme-toggle-icon');
 
   if (theme === 'light') {
     document.documentElement.setAttribute('data-theme', 'light');
     document.documentElement.classList.remove('dark');
     document.documentElement.classList.add('light');
-    if (icon) {
-      icon.setAttribute('data-lucide', 'moon');
-      icon.className = 'w-4 h-4 text-indigo-400';
+    if (btn) {
+      btn.innerHTML = `<svg class="w-4 h-4 text-indigo-400 stroke-current stroke-2 fill-none" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`;
+      btn.title = 'الوضع الفاتح مفعّل (انقر للتبديل للوضع الكحلي الداكن)';
     }
-    if (btn) btn.title = 'الوضع الفاتح مفعّل (انقر للتبديل للوضع الكحلي الداكن)';
   } else {
     // Default Flagship: Midnight Navy
     document.documentElement.setAttribute('data-theme', 'dark');
     document.documentElement.classList.add('dark');
     document.documentElement.classList.remove('light');
-    if (icon) {
-      icon.setAttribute('data-lucide', 'sun');
-      icon.className = 'w-4 h-4 text-amber-400';
+    if (btn) {
+      btn.innerHTML = `<svg class="w-4 h-4 text-amber-400 stroke-current stroke-2 fill-none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>`;
+      btn.title = 'الوضع الكحلي الداكن مفعّل (انقر للتبديل للوضع الفاتح)';
     }
-    if (btn) btn.title = 'الوضع الكحلي الداكن مفعّل (انقر للتبديل للوضع الفاتح)';
   }
-
-  if (window.lucide) lucide.createIcons();
 }
 
 function initTheme() {
@@ -2049,10 +2044,7 @@ function updateHeaderAuthUI() {
           <i data-lucide="book-open" class="w-4 h-4"></i>
           <span>المواد الـ 6</span>
         </button>
-        <button id="nav-btn-login" onclick="window.location.href='/login.html'" class="nav-link px-3.5 py-2 rounded-xl transition flex items-center gap-2 text-cyan-400 hover:text-white hover:bg-slate-800/50 font-bold">
-          <i data-lucide="log-in" class="w-4 h-4"></i>
-          <span>تسجيل الدخول</span>
-        </button>
+
       `;
     }
   }
@@ -2092,7 +2084,7 @@ window.handleSubjectCardClick = function(subKey) {
   }
 };
 async function checkAuthSession() {
-  // 1. Check local session storage first
+  // 1. Immediately check local session storage
   const stored = localStorage.getItem('jooprep_user_session');
   let hasValidSession = false;
   if (stored) {
@@ -2105,33 +2097,11 @@ async function checkAuthSession() {
     } catch(e) {}
   }
 
-  // 2. If Supabase is connected, verify active auth session
-  if (supabaseClient) {
-    try {
-      const { data, error } = await supabaseClient.auth.getSession();
-      if (!error && data && data.session && data.session.user) {
-        const suUser = data.session.user;
-        applyUserSession({
-          id: suUser.id,
-          email: suUser.email,
-          name: suUser.user_metadata?.full_name || suUser.email.split('@')[0],
-          college: suUser.user_metadata?.college || 'كلية الحاسبات والمعلومات والهندسة',
-          academic_year: suUser.user_metadata?.academic_year || 'الفرقة الأولى',
-          isLoggedIn: true
-        });
-        hasValidSession = true;
-      }
-    } catch(e) {
-      console.warn('Supabase auth session check notice:', e);
-    }
-  }
-
-  updateHeaderAuthUI();
-
+  // 2. If valid session exists, immediately render authenticated UI with zero delay
   if (hasValidSession) {
+    updateHeaderAuthUI();
     loadUserProfile();
     loadReadinessData();
-    // Prioritize URL hash if user navigated directly to #quizzes, #viva, etc.
     const hash = (window.location.hash || '').replace('#', '');
     if (hash && ['dashboard', 'quizzes', 'viva', 'prep-sheet', 'error-notebook', 'profile'].includes(hash)) {
       navigate(hash);
@@ -2139,8 +2109,28 @@ async function checkAuthSession() {
       navigate('dashboard');
     }
   } else {
+    updateHeaderAuthUI();
     state.user.isLoggedIn = false;
     navigate('landing');
+  }
+
+  // 3. Background Supabase session verification without blocking UI
+  if (supabaseClient) {
+    try {
+      supabaseClient.auth.getSession().then(({ data, error }) => {
+        if (!error && data && data.session && data.session.user) {
+          const suUser = data.session.user;
+          applyUserSession({
+            id: suUser.id,
+            email: suUser.email,
+            name: suUser.user_metadata?.full_name || suUser.email.split('@')[0],
+            college: suUser.user_metadata?.college || 'كلية الحاسبات والمعلومات والهندسة',
+            academic_year: suUser.user_metadata?.academic_year || 'الفرقة الأولى',
+            isLoggedIn: true
+          });
+        }
+      }).catch(e => console.warn('Supabase auth notice:', e));
+    } catch(e) {}
   }
 }
 
