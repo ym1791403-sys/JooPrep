@@ -515,14 +515,47 @@ const state = {
   allErrors: []
 };
 
-// ----------------- Permanent Dark Theme Engine -----------------
-function initTheme() {
-  document.documentElement.setAttribute('data-theme', 'dark');
-  document.documentElement.classList.add('dark');
-  document.documentElement.classList.remove('light');
+// ----------------- Dark Mode Engine (Midnight Navy / Academic Light) -----------------
+function applyTheme(theme) {
+  const btn = document.getElementById('theme-toggle-btn');
+  const icon = document.getElementById('theme-toggle-icon');
+
+  if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+    if (icon) {
+      icon.setAttribute('data-lucide', 'moon');
+      icon.className = 'w-4 h-4 text-indigo-400';
+    }
+    if (btn) btn.title = 'الوضع الفاتح مفعّل (انقر للتبديل للوضع الكحلي الداكن)';
+  } else {
+    // Default Flagship: Midnight Navy
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('light');
+    if (icon) {
+      icon.setAttribute('data-lucide', 'sun');
+      icon.className = 'w-4 h-4 text-amber-400';
+    }
+    if (btn) btn.title = 'الوضع الكحلي الداكن مفعّل (انقر للتبديل للوضع الفاتح)';
+  }
+
+  if (window.lucide) lucide.createIcons();
 }
 
-window.toggleTheme = function() {};
+function initTheme() {
+  const savedTheme = localStorage.getItem('jooprep_theme') || 'dark';
+  applyTheme(savedTheme);
+}
+
+window.toggleTheme = function() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const nextTheme = current === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('jooprep_theme', nextTheme);
+  applyTheme(nextTheme);
+};
+
 window.toggleAudio = function() {};
 
 // ----------------- Initialization -----------------
@@ -554,6 +587,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ----------------- Navigation -----------------
 function navigate(viewName) {
+  if (viewName === 'auth') {
+    window.location.href = '/login.html';
+    return;
+  }
   state.activeView = viewName;
   const views = ['dashboard', 'quizzes', 'viva', 'prep-sheet', 'error-notebook', 'profile', 'auth'];
   

@@ -450,9 +450,16 @@ def serve_static(filename):
 
 @app.route("/<path:path>")
 def catch_all(path):
+    # 1. Direct file in ROOT_DIR or public or API_DIR (e.g., login.html)
+    for base in [ROOT_DIR, os.path.join(ROOT_DIR, "public"), API_DIR]:
+        candidate = os.path.join(base, path)
+        if os.path.isfile(candidate):
+            return send_from_directory(base, path)
+    # 2. Static asset fallback
     for s_dir in [os.path.join(API_DIR, "static"), os.path.join(ROOT_DIR, "static")]:
         if os.path.exists(os.path.join(s_dir, path)):
             return send_from_directory(s_dir, path)
+    # 3. SPA Fallback
     return get_html_content(), 200, {"Content-Type": "text/html; charset=utf-8"}
 
 if __name__ == "__main__":
