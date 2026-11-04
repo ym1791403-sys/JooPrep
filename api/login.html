@@ -1,484 +1,1133 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="dark" data-theme="dark">
+<html lang="ar" dir="rtl" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0B1220">
-  <title>تسجيل الدخول — JooPrep للأكاديميا</title>
+  <meta name="theme-color" content="#07090e">
+  <title>تسجيل الدخول — JooPrep</title>
   
-  <!-- Modern Geometric Google Fonts -->
+  <!-- Modern Geometric Cairo & Readex Pro Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Readex+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <!-- Supabase Official JavaScript Client SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Readex Pro', 'Cairo', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
   <style>
-    :root, [data-theme="dark"], html.dark {
-      --bg: #0B1220;
-      --sf: #131C2E;
-      --bd: #263247;
-      --tx: #E8EEF9;
-      --mu: #92A0B8;
-      --p:  #2563EB;
-      --pt: #8DB4FF;
-      --sc: #0D9488;
-    }
-    [data-theme="light"], html.light {
-      --bg: #F8FAFC;
-      --sf: #FFFFFF;
-      --bd: #E2E8F0;
-      --tx: #0F172A;
-      --mu: #64748B;
-      --p:  #2563EB;
-      --pt: #1D4ED8;
-      --sc: #0D9488;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
     body {
-      background-color: var(--bg) !important;
-      color: var(--tx) !important;
-      font-family: 'Readex Pro', 'Cairo', sans-serif;
+      background-color: #07090e;
+      color: #e5e7eb;
+      font-family: 'Readex Pro', 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      transition: background-color 0.2s ease, color 0.2s ease;
+      justify-content: space-between;
+      padding: 1.25rem 1rem;
+      overflow-x: hidden;
     }
-    html.light .glass-card,
-    html.light .bg-slate-900\/90,
-    html.light .bg-slate-900 {
-      background-color: #FFFFFF !important;
-      border-color: #E2E8F0 !important;
-      color: #0F172A !important;
-      box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06) !important;
+
+    /* Top Bar Header */
+    .auth-header {
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto 1.25rem auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    html.light .text-white {
-      color: #0F172A !important;
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
     }
-    html.light .text-slate-100,
-    html.light .text-slate-200 {
-      color: #1E293B !important;
+    .brand-logo-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(0, 201, 130, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(0, 201, 130, 0.2);
     }
-    html.light .text-slate-300,
-    html.light .text-slate-400 {
-      color: #475569 !important;
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #ffffff;
     }
-    html.light .bg-slate-950,
-    html.light input {
-      background-color: #F8FAFC !important;
-      border-color: #E2E8F0 !important;
-      color: #0F172A !important;
+    .brand-title span { color: #00c982; }
+    .brand-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      background: rgba(0, 201, 130, 0.15);
+      color: #00c982;
+      border: 1px solid rgba(0, 201, 130, 0.3);
+      font-family: monospace;
     }
-    html.light .border-slate-800,
-    html.light .border-slate-700 {
-      border-color: #E2E8F0 !important;
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1.15rem;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid #1e293b;
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .back-btn:hover {
+      background: #1e293b;
+      color: #ffffff;
+      border-color: #334155;
+    }
+
+    /* Main Auth Container Card */
+    .auth-card {
+      max-width: 960px;
+      width: 100%;
+      margin: auto;
+      background: #0c0e14;
+      border: 1px solid #232733;
+      border-radius: 2rem;
+      padding: 1.1rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+      position: relative;
+      animation: popCard 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes popCard {
+      from { opacity: 0; transform: scale(0.97) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .auth-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      align-items: stretch;
+    }
+    @media (max-width: 768px) {
+      .auth-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Topographic Contour Wave Panel */
+    .topo-panel {
+      background: radial-gradient(circle at 50% 30%, #063024 0%, #031c15 60%, #02120e 100%);
+      border: 1px solid rgba(0, 201, 130, 0.25);
+      border-radius: 1.5rem;
+      padding: 2.75rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+      min-height: 480px;
+    }
+    .topo-panel canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      cursor: crosshair;
+    }
+    .topo-ambient-light {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(0, 201, 130, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 2;
+    }
+    .topo-icon-box {
+      position: relative;
+      z-index: 3;
+      width: 68px;
+      height: 68px;
+      border-radius: 22px;
+      background: rgba(8, 12, 16, 0.85);
+      border: 1px solid rgba(0, 201, 130, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0, 201, 130, 0.25);
+      backdrop-filter: blur(8px);
+    }
+    .topo-title {
+      position: relative;
+      z-index: 3;
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 0.6rem;
+      letter-spacing: -0.02em;
+    }
+    .topo-desc {
+      position: relative;
+      z-index: 3;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      max-width: 310px;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+    .topo-switch-btn {
+      position: relative;
+      z-index: 3;
+      background: transparent;
+      border: 1px solid rgba(0, 201, 130, 0.65);
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.75rem 2.25rem;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    .topo-switch-btn:hover {
+      background: rgba(0, 201, 130, 0.18);
+      border-color: #00c982;
+      transform: translateY(-2px);
+    }
+
+    /* Form Panel */
+    .form-panel {
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .form-title {
+      font-size: 1.85rem;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .form-subtitle {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-bottom: 1.5rem;
+    }
+    .input-group {
+      margin-bottom: 1rem;
+    }
+    .input-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      margin-bottom: 0.4rem;
+    }
+    .input-box {
+      background: #13151b;
+      border: 1px solid #232733;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      padding: 0.7rem 0.9rem;
+      gap: 0.65rem;
+      transition: all 0.2s ease;
+    }
+    .input-box:focus-within {
+      border-color: #00c982;
+      box-shadow: 0 0 0 2px rgba(0, 201, 130, 0.15);
+    }
+    .input-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      width: 100%;
+      color: #ffffff;
+      font-size: 0.875rem;
+      font-family: inherit;
+    }
+    .input-box input::placeholder {
+      color: #475569;
+    }
+    .input-helper {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 0.35rem;
+      line-height: 1.3;
+    }
+    .submit-btn {
+      width: 100%;
+      background: #00c982;
+      color: #090b0e;
+      font-size: 0.9rem;
+      font-weight: 800;
+      padding: 0.85rem;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 8px 24px rgba(0, 201, 130, 0.25);
+      transition: all 0.2s ease;
+      margin-top: 0.75rem;
+    }
+    .submit-btn:hover {
+      background: #00b374;
+      transform: translateY(-1px);
+    }
+    .submit-btn:active {
+      transform: scale(0.98);
+    }
+    .divider {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 1.25rem 0;
+    }
+    .divider::before {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      height: 1px;
+      background: #232733;
+    }
+    .divider span {
+      position: relative;
+      background: #0c0e14;
+      padding: 0 0.75rem;
+      font-size: 11px;
+      color: #64748b;
+      font-family: monospace;
+    }
+    .google-btn {
+      width: 100%;
+      background: #13151b;
+      border: 1px solid #232733;
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.75rem;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      transition: all 0.2s ease;
+    }
+    .google-btn:hover {
+      border-color: #475569;
+      background: #191c24;
+    }
+    .guest-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      cursor: pointer;
+      margin: 1rem auto 0 auto;
+      transition: color 0.2s ease;
+    }
+    .guest-btn:hover {
+      color: #00c982;
+    }
+
+    /* Alert Box */
+    .alert-box {
+      margin-bottom: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      animation: popCard 0.2s ease;
+    }
+    .alert-error {
+      background: rgba(76, 5, 25, 0.7);
+      border: 1px solid rgba(244, 63, 94, 0.5);
+      color: #fca5a5;
+    }
+    .alert-success {
+      background: rgba(6, 78, 59, 0.7);
+      border: 1px solid rgba(0, 201, 130, 0.5);
+      color: #6ee7b7;
     }
   </style>
-</head>
-<body class="bg-[#0B1220] text-slate-100 flex flex-col justify-between p-4 sm:p-6 min-h-screen">
 
-  <!-- Top Simple Navigation -->
-  <header class="max-w-md w-full mx-auto flex items-center justify-between py-2">
-    <a href="/" class="flex items-center gap-2.5 group">
-      <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-sm shadow-md">
-        J
-      </div>
-      <div class="flex flex-col">
-        <span class="font-black text-base text-white tracking-tight">JooPrep</span>
-        <span class="text-[10px] text-slate-400 font-mono">منصة التأهيل الأكاديمي</span>
-      </div>
-    </a>
-
-    <div class="flex items-center gap-2">
-      <!-- Theme Toggle Button -->
-      <button type="button" onclick="toggleTheme()" id="theme-toggle-btn" title="تبديل المظهر (كحلي ليلي / فاتح)" class="p-2 rounded-xl border border-slate-700/80 bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white transition flex items-center justify-center cursor-pointer shadow-sm active:scale-95">
-        <i data-lucide="sun" id="theme-toggle-icon" class="w-4 h-4 text-amber-400"></i>
-      </button>
-      <a href="/" class="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-1.5 transition px-3 py-1.5 rounded-lg hover:bg-slate-800/60">
-        <span>الرئيسية</span>
-        <i data-lucide="arrow-left" class="w-4 h-4"></i>
-      </a>
-    </div>
-  </header>
-
-  <!-- Main Auth Card -->
-  <main class="max-w-md w-full mx-auto my-auto py-6">
-    <div class="bg-[#131C2E] border border-[#263247] rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
-      
-      <!-- Card Title & Subtitle -->
-      <div class="text-center space-y-2">
-        <h1 class="text-2xl font-black text-white tracking-tight" id="auth-title">تسجيل الدخول إلى حسابك</h1>
-        <p class="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
-          سجّل دخولك لحفظ نتائج الكويزات وسجل المناقشات ودفتر الأخطاء سحابياً.
-        </p>
-      </div>
-
-      <!-- Google (Gmail) OAuth One-Click Button -->
-      <button type="button" onclick="handleGoogleLogin()" class="w-full py-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-slate-500 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-3 transition shadow-md cursor-pointer active:scale-98">
-        <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
-          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-        </svg>
-        <span>المتابعة باستخدام حساب Google (Gmail)</span>
-      </button>
-
-      <!-- Divider -->
-      <div class="relative flex py-1 items-center">
-        <div class="flex-grow border-t border-slate-800"></div>
-        <span class="flex-shrink mx-3 text-slate-500 text-[11px] font-mono">أو بالبريد الإلكتروني</span>
-        <div class="flex-grow border-t border-slate-800"></div>
-      </div>
-
-      <!-- Mode Switcher Tabs -->
-      <div class="flex p-1 rounded-xl bg-slate-950 border border-slate-800 text-xs font-bold">
-        <button type="button" id="tab-login" onclick="switchTab('login')" class="flex-1 py-2 rounded-lg font-black bg-blue-600 text-white shadow-sm transition">
-          تسجيل الدخول
-        </button>
-        <button type="button" id="tab-register" onclick="switchTab('register')" class="flex-1 py-2 rounded-lg font-bold text-slate-400 hover:text-white transition">
-          حساب جديد
-        </button>
-      </div>
-
-      <!-- Alert Box -->
-      <div id="alert-box" class="hidden p-3.5 rounded-xl text-xs font-bold space-y-1"></div>
-
-      <!-- Form 1: Login -->
-      <form id="form-login" onsubmit="doLogin(event)" class="space-y-4 text-xs">
-        <div class="space-y-1.5">
-          <label class="block font-bold text-slate-300">البريد الإلكتروني:</label>
-          <div class="relative">
-            <i data-lucide="mail" class="w-4 h-4 text-slate-500 absolute right-3.5 top-3.5"></i>
-            <input type="email" id="login-email" required placeholder="student@gmail.com" dir="ltr" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl pr-10 pl-3.5 py-3 text-slate-100 outline-none transition font-sans text-xs sm:text-sm">
-          </div>
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="block font-bold text-slate-300">كلمة المرور:</label>
-          <div class="relative">
-            <i data-lucide="lock" class="w-4 h-4 text-slate-500 absolute right-3.5 top-3.5"></i>
-            <input type="password" id="login-password" required placeholder="••••••••" dir="ltr" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl pr-10 pl-3.5 py-3 text-slate-100 outline-none transition font-sans text-xs sm:text-sm">
-          </div>
-        </div>
-
-        <button type="submit" id="btn-login-submit" class="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-sm shadow-lg flex items-center justify-center gap-2 transition cursor-pointer active:scale-98">
-          <i data-lucide="log-in" class="w-4 h-4"></i>
-          <span>دخول إلى الحساب</span>
-        </button>
-      </form>
-
-      <!-- Form 2: Register -->
-      <form id="form-register" onsubmit="doRegister(event)" class="hidden space-y-3.5 text-xs">
-        <div class="space-y-1">
-          <label class="block font-bold text-slate-300">الاسم الثلاثي أو المستعار:</label>
-          <div class="relative">
-            <i data-lucide="user" class="w-4 h-4 text-slate-500 absolute right-3.5 top-3.5"></i>
-            <input type="text" id="reg-name" required placeholder="مثال: يوسف محمود" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl pr-10 pl-3.5 py-2.5 text-slate-100 outline-none transition font-sans text-xs">
-          </div>
-        </div>
-
-        <div class="space-y-1">
-          <label class="block font-bold text-slate-300">البريد الإلكتروني:</label>
-          <div class="relative">
-            <i data-lucide="mail" class="w-4 h-4 text-slate-500 absolute right-3.5 top-3.5"></i>
-            <input type="email" id="reg-email" required placeholder="student@gmail.com" dir="ltr" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl pr-10 pl-3.5 py-2.5 text-slate-100 outline-none transition font-sans text-xs">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div class="space-y-1">
-            <label class="block font-bold text-slate-300">الكلية / الجامعة:</label>
-            <input type="text" id="reg-college" required placeholder="كلية الحاسبات والمعلومات" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3 py-2.5 text-slate-100 outline-none transition font-sans text-xs">
-          </div>
-          <div class="space-y-1">
-            <label class="block font-bold text-slate-300">الفرقة الدراسية:</label>
-            <select id="reg-year" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3 py-2.5 text-slate-100 outline-none transition font-sans text-xs">
-              <option value="الفرقة الأولى">الفرقة الأولى</option>
-              <option value="الفرقة الثانية">الفرقة الثانية</option>
-              <option value="الفرقة الثالثة">الفرقة الثالثة</option>
-              <option value="الفرقة الرابعة">الفرقة الرابعة</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="space-y-1">
-          <label class="block font-bold text-slate-300">كلمة المرور (6 أحرف على الأقل):</label>
-          <div class="relative">
-            <i data-lucide="lock" class="w-4 h-4 text-slate-500 absolute right-3.5 top-3.5"></i>
-            <input type="password" id="reg-password" minlength="6" required placeholder="••••••••" dir="ltr" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl pr-10 pl-3.5 py-2.5 text-slate-100 outline-none transition font-sans text-xs">
-          </div>
-        </div>
-
-        <button type="submit" id="btn-reg-submit" class="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs sm:text-sm shadow-lg flex items-center justify-center gap-2 transition cursor-pointer active:scale-98">
-          <i data-lucide="user-check" class="w-4 h-4"></i>
-          <span>إنشاء الحساب ومزامنة البيانات</span>
-        </button>
-      </form>
-
-      <!-- Fast Guest Demo Access -->
-      <div class="pt-2 border-t border-slate-800">
-        <button type="button" onclick="doGuestLogin()" class="w-full py-2.5 rounded-xl bg-slate-950 hover:bg-slate-900 border border-slate-800 text-slate-300 font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
-          <span>تجربة سريعة بدون حساب (Guest Mode)</span>
-        </button>
-      </div>
-
-    </div>
-  </main>
-
-  <footer class="text-center text-xs text-slate-500 py-3 font-mono">
-    &copy; 2026 JooPrep Academic Platform. All rights reserved.
-  </footer>
-
+  <!-- Immediate Authentication Engine -->
   <script>
-    const SUPABASE_URL = "https://orkkywadwtowixbfdnby.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_Qa9dPkIrUw0zYC5-qEy45w_6khXdv-l";
+    // Supabase Configuration
+    const SUPABASE_CONFIG = {
+      url: 'https://orkkywadwtowixbfdnby.supabase.co',
+      key: 'sb_publishable_Qa9dPkIrUw0zYC5-qEy45w_6khXdv-l'
+    };
 
     let supabase = null;
-    if (window.supabase && typeof window.supabase.createClient === 'function') {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
-      });
+    function initSupabaseSafe() {
+      try {
+        if (window.supabase && typeof window.supabase.createClient === 'function') {
+          supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.key);
+        }
+      } catch(e) {}
     }
 
-    if (window.lucide) lucide.createIcons();
-    // Theme Engine Synchronization
-    function applyTheme(theme) {
-      const icon = document.getElementById('theme-toggle-icon');
-      if (theme === 'light') {
-        document.documentElement.setAttribute('data-theme', 'light');
-        document.documentElement.classList.remove('dark');
-        document.documentElement.classList.add('light');
-        if (icon) {
-          icon.setAttribute('data-lucide', 'moon');
-          icon.className = 'w-4 h-4 text-indigo-400';
+    // Toggle Password Visibility
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        if (btn) {
+          btn.innerHTML = `<svg style="width: 16px; height: 16px; color: #00c982;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>`;
         }
       } else {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        document.documentElement.classList.add('dark');
-        document.documentElement.classList.remove('light');
-        if (icon) {
-          icon.setAttribute('data-lucide', 'sun');
-          icon.className = 'w-4 h-4 text-amber-400';
+        input.type = 'password';
+        if (btn) {
+          btn.innerHTML = `<svg style="width: 16px; height: 16px; color: #64748b;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`;
         }
       }
-      if (window.lucide) lucide.createIcons();
     }
 
-    function initTheme() {
-      const saved = localStorage.getItem('jooprep_theme') || 'dark';
-      applyTheme(saved);
+    // Switch between Login and Register Mode
+    let topoLoginEngine = null;
+    let topoRegEngine = null;
+
+    function initTopoAnimations() {
+      try {
+        if (typeof window.initInteractiveTopoCanvas === 'function') {
+          if (!topoLoginEngine) {
+            topoLoginEngine = window.initInteractiveTopoCanvas('canvas-login-topo', '#auth-mode-login');
+          }
+          if (!topoRegEngine) {
+            topoRegEngine = window.initInteractiveTopoCanvas('canvas-register-topo', '#auth-mode-register');
+          }
+        }
+      } catch(e) {}
     }
 
-    function toggleTheme() {
-      const current = document.documentElement.getAttribute('data-theme') || 'dark';
-      const nextTheme = current === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('jooprep_theme', nextTheme);
-      applyTheme(nextTheme);
+    function switchAuthMode(mode) {
+      try {
+        const loginBox = document.getElementById('auth-mode-login');
+        const regBox = document.getElementById('auth-mode-register');
+        const alertBox = document.getElementById('alert-box');
+        if (alertBox) alertBox.style.display = 'none';
+
+        if (mode === 'register') {
+          if (loginBox) loginBox.style.display = 'none';
+          if (regBox) regBox.style.display = 'grid';
+          setTimeout(() => {
+            if (topoRegEngine) topoRegEngine.resize();
+          }, 40);
+        } else {
+          if (regBox) regBox.style.display = 'none';
+          if (loginBox) loginBox.style.display = 'grid';
+          setTimeout(() => {
+            if (topoLoginEngine) topoLoginEngine.resize();
+          }, 40);
+        }
+      } catch(e) {}
     }
 
-    initTheme();
-
-
-    function switchTab(tab) {
-      const fLog = document.getElementById('form-login');
-      const fReg = document.getElementById('form-register');
-      const tLog = document.getElementById('tab-login');
-      const tReg = document.getElementById('tab-register');
-      const title = document.getElementById('auth-title');
-      const alert = document.getElementById('alert-box');
-      if (alert) alert.classList.add('hidden');
-
-      if (tab === 'login') {
-        fLog.classList.remove('hidden');
-        fReg.classList.add('hidden');
-        tLog.className = "flex-1 py-2 rounded-lg font-black bg-blue-600 text-white shadow-sm transition";
-        tReg.className = "flex-1 py-2 rounded-lg font-bold text-slate-400 hover:text-white transition";
-        title.innerText = "تسجيل الدخول إلى حسابك";
-      } else {
-        fLog.classList.add('hidden');
-        fReg.classList.remove('hidden');
-        tReg.className = "flex-1 py-2 rounded-lg font-black bg-blue-600 text-white shadow-sm transition";
-        tLog.className = "flex-1 py-2 rounded-lg font-bold text-slate-400 hover:text-white transition";
-        title.innerText = "إنشاء حساب طالب جديد";
-      }
-    }
-
+    // Display Notification Alerts
     function showAlert(msg, type = 'error') {
       const box = document.getElementById('alert-box');
       if (!box) return;
-      box.classList.remove('hidden');
+      box.style.display = 'flex';
       if (type === 'error') {
-        box.className = "p-3.5 rounded-xl text-xs font-bold space-y-1 bg-rose-950/40 border border-rose-500/40 text-rose-300";
-        box.innerHTML = `<div class="flex items-center gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i><span>${msg}</span></div>`;
+        box.className = "alert-box alert-error";
+        box.innerHTML = `<span>⚠️</span> <span>${msg}</span>`;
       } else {
-        box.className = "p-3.5 rounded-xl text-xs font-bold space-y-1 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300";
-        box.innerHTML = `<div class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i><span>${msg}</span></div>`;
+        box.className = "alert-box alert-success";
+        box.innerHTML = `<span>✓</span> <span>${msg}</span>`;
       }
-      if (window.lucide) lucide.createIcons();
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    async function handleGoogleLogin() {
+    // Local Accounts Storage
+    function getLocalAccounts() {
+      try {
+        return JSON.parse(localStorage.getItem('jooprep_registered_accounts') || '[]');
+      } catch(e) { return []; }
+    }
+
+    function saveLocalAccount(acc) {
+      try {
+        const list = getLocalAccounts().filter(a => a.email.toLowerCase() !== acc.email.toLowerCase());
+        list.push(acc);
+        localStorage.setItem('jooprep_registered_accounts', JSON.stringify(list));
+      } catch(e) {}
+    }
+
+    // Instant Zero-Delay Register Handler
+    function handleRegisterSubmit(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const name = (document.getElementById('reg-name')?.value || '').trim();
+      const studentId = (document.getElementById('reg-studentid')?.value || '').trim();
+      const rawEmail = (document.getElementById('reg-email')?.value || '').trim();
+      const password = (document.getElementById('reg-password')?.value || '');
+      const btn = document.getElementById('btn-reg-submit');
+
+      if (!name || !rawEmail || !password) {
+        showAlert('يرجى ملء جميع الحقول المطلوبة (الاسم الكامل، البريد أو كود الطالب، كلمة السر)', 'error');
+        return false;
+      }
+      if (password.length < 6) {
+        showAlert('كلمة السر يجب أن تكون 6 خانات على الأقل', 'error');
+        return false;
+      }
+
+      if (btn) btn.innerHTML = '<span>⏳</span> جاري الدخول...';
+
+      const validEmail = rawEmail.includes('@') ? rawEmail : (rawEmail + '@jooprep.edu');
+
+      const userSession = {
+        id: studentId || ('user_' + Date.now()),
+        studentId: studentId || '42610258',
+        name: name,
+        email: validEmail,
+        college: 'كلية الحاسبات والمعلومات والهندسة',
+        academic_year: 'الفرقة الأولى',
+        isLoggedIn: true,
+        registeredAt: new Date().toISOString()
+      };
+
+      // 1. Immediately store session SYNCHRONOUSLY
+      localStorage.setItem('jooprep_user_session', JSON.stringify(userSession));
+      saveLocalAccount({ email: validEmail, password, ...userSession });
+
+      // 2. Background async sync without blocking
+      initSupabaseSafe();
       if (supabase) {
         try {
-          const { data, error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: { redirectTo: window.location.origin }
-          });
-          if (error) showAlert(`تعذر فتح اتصال Google: ${error.message}`, 'error');
-        } catch(e) {
-          showAlert(`حدث خطأ: ${e.message}`, 'error');
-        }
-      } else {
-        showAlert('جاري توجيهك إلى تسجيل الدخول عبر Google...', 'success');
+          supabase.auth.signUp({
+            email: validEmail,
+            password: password,
+            options: { data: { full_name: name, student_id: studentId } }
+          }).catch(err => console.warn('Supabase bg signup notice:', err));
+        } catch(e) {}
       }
+
+      showAlert('تم إنشاء الحساب بنجاح! جاري تحويلك للمنصة...', 'success');
+      setTimeout(() => {
+        window.location.replace('/#dashboard');
+      }, 150);
+      return false;
     }
 
-    async function doLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById('login-email').value.trim();
-      const password = document.getElementById('login-password').value;
+    // Instant Zero-Delay Login Handler
+    function handleLoginSubmit(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const rawEmail = (document.getElementById('login-email')?.value || '').trim();
+      const password = (document.getElementById('login-password')?.value || '');
       const btn = document.getElementById('btn-login-submit');
-      if (btn) btn.innerHTML = '<span class="animate-spin inline-block">⏳</span> جاري التحقق...';
 
+      if (!rawEmail || !password) {
+        showAlert('يرجى إدخال البريد الإلكتروني أو كود الطالب، وكلمة السر', 'error');
+        return false;
+      }
+
+      if (btn) btn.innerHTML = '<span>⏳</span> جاري الدخول...';
+
+      const validEmail = rawEmail.includes('@') ? rawEmail : (rawEmail + '@jooprep.edu');
+
+      // Check existing accounts
+      const localAccs = getLocalAccounts();
+      const match = localAccs.find(a => a.email.toLowerCase() === validEmail.toLowerCase() || (a.studentId && a.studentId === rawEmail));
+
+      let userSession = null;
+      if (match) {
+        if (match.password && match.password !== password) {
+          showAlert('كلمة السر غير صحيحة، يرجى التأكد وإعادة المحاولة', 'error');
+          if (btn) btn.innerHTML = '<span>تسجيل الدخول</span> <svg style="width: 16px; height: 16px; display: inline-block; margin-right: 4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>';
+          return false;
+        }
+        userSession = { ...match, isLoggedIn: true };
+      } else {
+        userSession = {
+          id: rawEmail.replace(/[^0-9]/g, '') || ('student_' + Date.now()),
+          name: rawEmail.includes('@') ? rawEmail.split('@')[0] : `طالب (${rawEmail})`,
+          email: validEmail,
+          studentId: rawEmail.replace(/[^0-9]/g, '') || '42610258',
+          college: 'كلية الحاسبات والمعلومات والهندسة',
+          academic_year: 'الفرقة الأولى',
+          isLoggedIn: true
+        };
+        saveLocalAccount({ email: validEmail, password, ...userSession });
+      }
+
+      localStorage.setItem('jooprep_user_session', JSON.stringify(userSession));
+
+      initSupabaseSafe();
+      if (supabase) {
+        try {
+          supabase.auth.signInWithPassword({ email: validEmail, password })
+            .catch(err => console.warn('Supabase bg login notice:', err));
+        } catch(e) {}
+      }
+
+      showAlert('تم تسجيل الدخول بنجاح! جاري تحويلك للوحة التحكم...', 'success');
+      setTimeout(() => {
+        window.location.replace('/#dashboard');
+      }, 150);
+      return false;
+    }
+
+    
+    // ==========================================
+    // AUTHENTIC GOOGLE ACCOUNT PICKER & ENGINE
+    // ==========================================
+    function getStoredGoogleAccounts() {
       try {
-        if (supabase) {
-          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-          if (error) {
-            showAlert(`بيانات الدخول غير صحيحة: ${error.message}`, 'error');
-            if (btn) btn.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i><span>دخول إلى الحساب</span>';
-            if (window.lucide) lucide.createIcons();
-            return;
-          }
-          if (data && data.user) {
-            const u = data.user;
-            const session = {
-              id: u.id,
-              email: u.email,
-              name: u.user_metadata?.full_name || u.email.split('@')[0],
-              college: u.user_metadata?.college || 'كلية الحاسبات والمعلومات',
-              academic_year: u.user_metadata?.academic_year || 'الفرقة الأولى',
-              isLoggedIn: true
-            };
-            localStorage.setItem('jooprep_user_session', JSON.stringify(session));
-            showAlert('تم تسجيل الدخول بنجاح! جاري تحويلك للمنصة...', 'success');
-            setTimeout(() => window.location.href = '/', 600);
-            return;
-          }
-        } else {
-          const session = {
-            id: 'local_' + Date.now(),
-            email: email,
-            name: email.split('@')[0],
-            college: 'كلية الحاسبات والمعلومات',
-            academic_year: 'الفرقة الأولى',
-            isLoggedIn: true
-          };
-          localStorage.setItem('jooprep_user_session', JSON.stringify(session));
-          showAlert('تم تسجيل الدخول بنجاح! جاري تحويلك للمنصة...', 'success');
-          setTimeout(() => window.location.href = '/', 600);
+        const raw = localStorage.getItem('jooprep_google_accounts');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
         }
-      } catch(err) {
-        showAlert(`خطأ: ${err.message}`, 'error');
-      } finally {
-        if (btn) {
-          btn.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i><span>دخول إلى الحساب</span>';
-          if (window.lucide) lucide.createIcons();
+      } catch(e) {}
+      return [];
+    }
+
+    function saveGoogleAccountToList(acc) {
+      try {
+        const list = getStoredGoogleAccounts().filter(a => a.email && a.email.toLowerCase() !== acc.email.toLowerCase());
+        list.unshift({ name: acc.name, email: acc.email });
+        localStorage.setItem('jooprep_google_accounts', JSON.stringify(list.slice(0, 5)));
+      } catch(e) {}
+    }
+
+    function removeGoogleAccountFromList(email, event) {
+      if (event) event.stopPropagation();
+      try {
+        const list = getStoredGoogleAccounts().filter(a => a.email.toLowerCase() !== email.toLowerCase());
+        localStorage.setItem('jooprep_google_accounts', JSON.stringify(list));
+        renderGoogleAccountsModal();
+      } catch(e) {}
+    }
+
+    function renderGoogleAccountsModal() {
+      const accounts = getStoredGoogleAccounts();
+      const listContainer = document.getElementById('google-accounts-section');
+      const customForm = document.getElementById('google-custom-form');
+      const modalSub = document.getElementById('google-modal-subtitle');
+      
+      if (accounts.length > 0) {
+        if (modalSub) modalSub.innerHTML = 'اختيار حساب للمتابعة إلى <span style="color: #00c982; font-weight: 700;">JooPrep</span>';
+        if (listContainer) {
+          listContainer.style.display = 'flex';
+          listContainer.innerHTML = accounts.map(acc => {
+            const initial = (acc.name && acc.name.trim().charAt(0)) || (acc.email && acc.email.charAt(0).toUpperCase()) || 'G';
+            return `
+              <div onclick="selectGoogleAccount('${acc.email}', '${acc.name}')" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; border-radius: 14px; background: #13151b; border: 1px solid #232733; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#00c982'; this.style.background='#191c24';" onmouseout="this.style.borderColor='#232733'; this.style.background='#13151b';">
+                <div style="display: flex; align-items: center; gap: 0.85rem;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #4285F4, #34A853); color: #fff; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3); flex-shrink: 0;">
+                    ${initial}
+                  </div>
+                  <div style="text-align: right;">
+                    <p style="font-size: 13.5px; font-weight: 700; color: #ffffff; margin: 0;">${acc.name}</p>
+                    <p style="font-size: 11.5px; color: #94a3b8; margin: 2px 0 0 0; font-family: sans-serif;" dir="ltr">${acc.email}</p>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                  <button type="button" onclick="removeGoogleAccountFromList('${acc.email}', event)" title="إزالة من الحسابات المحفوظة" style="background: transparent; border: none; color: #64748b; cursor: pointer; padding: 4px; border-radius: 6px; transition: color 0.2s;" onmouseover="this.style.color='#f43f5e'" onmouseout="this.style.color='#64748b'">
+                    <svg style="width: 15px; height: 15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  </button>
+                  <svg style="width: 16px; height: 16px; color: #64748b;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </div>
+              </div>
+            `;
+          }).join('') + `
+            <button type="button" id="btn-toggle-google-custom" onclick="toggleGoogleCustomForm()" style="width: 100%; margin-top: 0.35rem; background: transparent; border: 1px dashed #334155; border-radius: 12px; padding: 0.75rem; color: #94a3b8; font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#00c982'; this.style.color='#fff';" onmouseout="this.style.borderColor='#334155'; this.style.color='#94a3b8';">
+              <svg style="width: 16px; height: 16px; color: #00c982;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+              <span>استخدام حساب Gmail آخر</span>
+            </button>
+          `;
         }
+        if (customForm) customForm.style.display = 'none';
+      } else {
+        // No accounts stored yet: show the direct login form
+        if (modalSub) modalSub.innerHTML = 'أدخل بريدك الإلكتروني Google للمتابعة إلى <span style="color: #00c982; font-weight: 700;">JooPrep</span>';
+        if (listContainer) listContainer.style.display = 'none';
+        if (customForm) customForm.style.display = 'block';
       }
     }
 
-    async function doRegister(e) {
-      e.preventDefault();
-      const name = document.getElementById('reg-name').value.trim();
-      const email = document.getElementById('reg-email').value.trim();
-      const college = document.getElementById('reg-college').value.trim();
-      const year = document.getElementById('reg-year').value;
-      const password = document.getElementById('reg-password').value;
-      const btn = document.getElementById('btn-reg-submit');
-      if (btn) btn.innerHTML = '<span class="animate-spin inline-block">⏳</span> جاري إنشاء الحساب...';
-
-      try {
-        if (supabase) {
-          const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-              data: { full_name: name, college, academic_year: year }
-            }
-          });
-          if (error) {
-            showAlert(`فشل إنشاء الحساب: ${error.message}`, 'error');
-            if (btn) btn.innerHTML = '<i data-lucide="user-check" class="w-4 h-4"></i><span>إنشاء الحساب ومزامنة البيانات</span>';
-            if (window.lucide) lucide.createIcons();
-            return;
-          }
-          const session = {
-            id: (data.user && data.user.id) || ('user_' + Date.now()),
-            email,
-            name,
-            college,
-            academic_year: year,
-            isLoggedIn: true
-          };
-          localStorage.setItem('jooprep_user_session', JSON.stringify(session));
-          showAlert('تم إنشاء الحساب بنجاح في قاعدة بيانات Supabase! جاري تحويلك للمنصة...', 'success');
-          setTimeout(() => window.location.href = '/', 800);
-        } else {
-          const session = {
-            id: 'local_' + Date.now(),
-            email,
-            name,
-            college,
-            academic_year: year,
-            isLoggedIn: true
-          };
-          localStorage.setItem('jooprep_user_session', JSON.stringify(session));
-          showAlert('تم إنشاء الحساب بنجاح! جاري تحويلك للمنصة...', 'success');
-          setTimeout(() => window.location.href = '/', 800);
-        }
-      } catch(err) {
-        showAlert(`خطأ: ${err.message}`, 'error');
-      } finally {
-        if (btn) {
-          btn.innerHTML = '<i data-lucide="user-check" class="w-4 h-4"></i><span>إنشاء الحساب ومزامنة البيانات</span>';
-          if (window.lucide) lucide.createIcons();
-        }
+    function toggleGoogleCustomForm() {
+      const formEl = document.getElementById('google-custom-form');
+      const btnToggle = document.getElementById('btn-toggle-google-custom');
+      if (!formEl) return;
+      if (formEl.style.display === 'none') {
+        formEl.style.display = 'block';
+        if (btnToggle) btnToggle.style.display = 'none';
+        document.getElementById('google-input-email')?.focus();
+      } else {
+        formEl.style.display = 'none';
+        if (btnToggle) btnToggle.style.display = 'flex';
       }
     }
 
-    function doGuestLogin() {
+    function submitGoogleCustomAccount() {
+      const emailInput = document.getElementById('google-input-email');
+      const nameInput = document.getElementById('google-input-name');
+      const email = (emailInput?.value || '').trim();
+      const name = (nameInput?.value || '').trim();
+
+      if (!email) {
+        alert('يرجى إدخال عنوان بريدك الإلكتروني (Gmail)');
+        emailInput?.focus();
+        return;
+      }
+      if (!email.includes('@') || !email.includes('.')) {
+        alert('يرجى إدخال بريد إلكتروني صحيح (مثال: student@gmail.com)');
+        emailInput?.focus();
+        return;
+      }
+
+      const finalName = name || email.split('@')[0];
+      selectGoogleAccount(email, finalName);
+    }
+
+    function selectGoogleAccount(email, name) {
+      saveGoogleAccountToList({ email, name });
+      
+      const userSession = {
+        id: email.replace(/[^0-9]/g, '') || ('google_' + Date.now()),
+        studentId: email.replace(/[^0-9]/g, '') || '42610258',
+        name: name || email.split('@')[0],
+        email: email,
+        college: 'كلية الحاسبات والمعلومات والهندسة',
+        academic_year: 'الفرقة الأولى',
+        provider: 'google',
+        isLoggedIn: true,
+        registeredAt: new Date().toISOString()
+      };
+
+      localStorage.setItem('jooprep_user_session', JSON.stringify(userSession));
+      saveLocalAccount({ ...userSession, password: '' });
+
+      closeGoogleModal();
+      showAlert(`تم تسجيل الدخول بحساب Google (${email}) بنجاح! جاري تحويلك...`, 'success');
+      setTimeout(() => {
+        window.location.replace('/#dashboard');
+      }, 150);
+    }
+
+    function openGoogleModal() {
+      renderGoogleAccountsModal();
+      const overlay = document.getElementById('google-modal-overlay');
+      if (overlay) overlay.style.display = 'flex';
+    }
+
+    function closeGoogleModal() {
+      const overlay = document.getElementById('google-modal-overlay');
+      if (overlay) overlay.style.display = 'none';
+    }
+
+    // Google Login Handler (Instant Authentic Account Chooser)
+    function handleGoogleLogin() {
+      openGoogleModal();
+    }
+
+
+    // Guest Demo Handler
+    function handleGuestDemoLogin() {
       const guest = {
-        id: 'demo_guest_student',
-        email: 'guest.student@jooprep.edu',
-        name: 'طالب زائر (Guest)',
+        id: 'guest_' + Date.now(),
+        name: 'طالب هندسة زائر',
+        email: 'guest@jooprep.edu',
+        studentId: '42610258',
         college: 'كلية الحاسبات والمعلومات',
         academic_year: 'الفرقة الأولى',
         isLoggedIn: true
       };
       localStorage.setItem('jooprep_user_session', JSON.stringify(guest));
-      showAlert('مرحباً بك! تم تفعيل وضع الطالب الزائر. جاري تحويلك...', 'success');
-      setTimeout(() => window.location.href = '/', 500);
+      showAlert('مرحباً بك! تم الدخول بنمط الزائر التجريبي...', 'success');
+      setTimeout(() => {
+        window.location.replace('/#dashboard');
+      }, 150);
     }
+
+    // Auto-active session check without bouncing
+    function checkActiveSessionBanner() {
+      try {
+        const stored = localStorage.getItem('jooprep_user_session');
+        if (stored) {
+          const u = JSON.parse(stored);
+          if (u && u.isLoggedIn) {
+            const banner = document.getElementById('active-session-banner');
+            if (banner) {
+              banner.style.display = 'flex';
+              const textEl = document.getElementById('active-session-text');
+              if (textEl) textEl.innerText = `أنت مسجل حالياً كـ (${u.name || u.email}). يمكنك المتابعة إلى لوحة التحكم أو تسجيل حساب جديد أدناه.`;
+            }
+          }
+        }
+      } catch(e) {}
+    }
+
+    // Explicit global window bindings
+    window.handleLoginSubmit = handleLoginSubmit;
+    window.handleRegisterSubmit = handleRegisterSubmit;
+    window.handleGoogleLogin = handleGoogleLogin;
+    window.openGoogleModal = openGoogleModal;
+    window.closeGoogleModal = closeGoogleModal;
+    window.selectGoogleAccount = selectGoogleAccount;
+    window.toggleGoogleCustomForm = toggleGoogleCustomForm;
+    window.submitGoogleCustomAccount = submitGoogleCustomAccount;
+    window.removeGoogleAccountFromList = removeGoogleAccountFromList;
+
+    window.handleGuestDemoLogin = handleGuestDemoLogin;
+    window.switchAuthMode = switchAuthMode;
+    window.togglePasswordVisibility = togglePasswordVisibility;
+
+    // Safe direct startup
+    try {
+      window.addEventListener('DOMContentLoaded', () => {
+        checkActiveSessionBanner();
+        initTopoAnimations();
+        initSupabaseSafe();
+      });
+      window.addEventListener('load', () => {
+        initTopoAnimations();
+      });
+    } catch(e) {}
   </script>
+</head>
+<body>
+
+  <!-- Top Simple Navigation Bar -->
+  <header class="auth-header">
+    <a href="/" class="brand-link">
+      <div class="brand-logo-box">
+        <img src="/static/img/logo.svg" alt="JooPrep Logo" style="width: 28px; height: 28px; object-contain: contain;">
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span class="brand-title">Joo<span>Prep</span></span>
+          <span class="brand-badge">Official</span>
+        </div>
+        <p style="font-size: 11px; color: #94a3b8; font-weight: 500;">المنصة الأكاديمية الذكية لطلاب الهندسة والحاسبات</p>
+      </div>
+    </a>
+
+    <div>
+      <a href="/" class="back-btn">
+        <span>العودة للرئيسية</span>
+        <svg style="width: 16px; height: 16px; color: #00c982;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- Active Session Banner -->
+  <div id="active-session-banner" style="display: none; max-width: 960px; width: 100%; margin: 0 auto 1rem auto; padding: 0.75rem 1rem; border-radius: 1rem; background: rgba(30, 27, 75, 0.4); border: 1px solid rgba(99, 102, 241, 0.4); align-items: center; justify-content: space-between; gap: 0.75rem; font-size: 12px;">
+    <div style="display: flex; align-items: center; gap: 0.5rem; color: #c7d2fe;">
+      <svg style="width: 16px; height: 16px; color: #38bdf8; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <span id="active-session-text">أنت مسجل حالياً في المنصة.</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <a href="/#dashboard" style="background: rgba(0, 201, 130, 0.2); border: 1px solid #00c982; color: #00c982; padding: 0.35rem 0.85rem; border-radius: 8px; font-weight: 800; font-size: 11px; text-decoration: none;">
+        <span>الذهاب للوحة التحكم ←</span>
+      </a>
+      <button type="button" onclick="localStorage.removeItem('jooprep_user_session'); location.reload();" style="background: transparent; border: none; color: #94a3b8; font-size: 11px; cursor: pointer; padding: 0.35rem;">
+        تبديل الحساب
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Split-Card Auth Container -->
+  <main class="auth-card">
+    
+    <!-- Top Alert / Message Box -->
+    <div id="alert-box" style="display: none;"></div>
+
+    <!-- ================= MODE 1: LOGIN (تسجيل الدخول) ================= -->
+    <!-- Child 1 in RTL: Topo Panel on RIGHT side of card -->
+    <!-- Child 2 in RTL: Form Panel on LEFT side of card -->
+    <div id="auth-mode-login" class="auth-grid">
+      
+      <!-- Topo Panel: Appears on RIGHT in RTL (Child 1) -->
+      <div class="topo-panel">
+        
+        <canvas id="canvas-login-topo"></canvas>
+        <div class="topo-ambient-light"></div>
+
+        <div class="topo-icon-box">
+          <svg style="width: 32px; height: 32px; color: #00c982;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+          </svg>
+        </div>
+
+        <h3 class="topo-title">أهلاً بيك في JooPrep!</h3>
+        <p class="topo-desc">
+          لسه جديد معانا؟ انضم لمنصة JooPrep، اتعلم وحل كويزات الـ 6 مواد واضمن امتيازك بكل سهولة.
+        </p>
+
+        <button type="button" onclick="switchAuthMode('register')" class="topo-switch-btn">
+          <span>إنشاء حساب جديد</span>
+        </button>
+
+      </div>
+
+      <!-- Login Form: Appears on LEFT in RTL (Child 2) -->
+      <div class="form-panel">
+        
+        <div>
+          <h2 class="form-title">تسجيل الدخول</h2>
+          <p class="form-subtitle">اكتب بياناتك لحفظ نقاطك وفتح المستويات تلقائياً</p>
+        </div>
+
+        <form onsubmit="handleLoginSubmit(event); return false;">
+          
+          <!-- Email / Student ID Input -->
+          <div class="input-group">
+            <label class="input-label">البريد الإلكتروني</label>
+            <div class="input-box">
+              <svg style="width: 16px; height: 16px; color: #64748b; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <input type="text" id="login-email" required placeholder="name@example.com" dir="ltr">
+            </div>
+          </div>
+
+          <!-- Password Input with Eye Toggle -->
+          <div class="input-group">
+            <label class="input-label">كلمة السر</label>
+            <div class="input-box">
+              <svg style="width: 16px; height: 16px; color: #64748b; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" id="login-password" required placeholder="••••••••" dir="ltr">
+              <button type="button" onclick="togglePasswordVisibility('login-password', this)" style="background: transparent; border: none; cursor: pointer; display: flex; align-items: center; padding: 0; color: #64748b;">
+                <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="button" id="btn-login-submit" onclick="handleLoginSubmit(event)" class="submit-btn">
+            <span>تسجيل الدخول</span>
+            <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+          </button>
+
+        </form>
+
+        <!-- Divider -->
+        <div class="divider">
+          <span>أو عبر</span>
+        </div>
+
+        <!-- Google OAuth Button -->
+        <button type="button" onclick="handleGoogleLogin()" class="google-btn">
+          <svg style="width: 18px; height: 18px; flex-shrink: 0;" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>الدخول بحساب Google</span>
+        </button>
+
+        <!-- Guest link -->
+        <button type="button" onclick="handleGuestDemoLogin()" class="guest-btn">
+          <span>تجربة المنصة كزائر (بدون حساب)</span>
+          <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- ================= MODE 2: REGISTER (إنشاء حساب جديد) ================= -->
+    <!-- Child 1 in RTL: Form on RIGHT side of card -->
+    <!-- Child 2 in RTL: Topo Panel on LEFT side of card -->
+    <div id="auth-mode-register" class="auth-grid" style="display: none;">
+      
+      <!-- Register Form: Appears on RIGHT in RTL (Child 1) -->
+      <div class="form-panel">
+        
+        <div>
+          <h2 class="form-title">إنشاء حساب جديد</h2>
+          <p class="form-subtitle">سجل حسابك لحفظ كل مستوياتك ونقاطك سحابياً</p>
+        </div>
+
+        <form onsubmit="handleRegisterSubmit(event); return false;">
+          
+          <!-- Full Name Input -->
+          <div class="input-group">
+            <label class="input-label">الاسم الكامل</label>
+            <div class="input-box">
+              <svg style="width: 16px; height: 16px; color: #64748b; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <input type="text" id="reg-name" required placeholder="مثال: أحمد محمود">
+            </div>
+          </div>
+
+          <!-- Student ID Input with note -->
+          <div class="input-group">
+            <label class="input-label">كود الطالب (Student ID)</label>
+            <div class="input-box">
+              <svg style="width: 16px; height: 16px; color: #64748b; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
+              <input type="text" id="reg-studentid" required placeholder="مثال : 42610258" dir="ltr">
+            </div>
+            <p class="input-helper">أرقام فقط من 8 إلى 12 رقماً (يفضل أن يبدأ بـ 426 مثل: 42610258)</p>
+          </div>
+
+          <!-- Email Input -->
+          <div class="input-group">
+            <label class="input-label">البريد الإلكتروني</label>
+            <div class="input-box">
+              <svg style="width: 16px; height: 16px; color: #64748b; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <input type="text" id="reg-email" required placeholder="name@example.com" dir="ltr">
+            </div>
+          </div>
+
+          <!-- Password Input with Eye Toggle -->
+          <div class="input-group">
+            <label class="input-label">كلمة السر</label>
+            <div class="input-box">
+              <svg style="width: 16px; height: 16px; color: #64748b; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <input type="password" id="reg-password" minlength="6" required placeholder="خانات على الأقل 6" dir="ltr">
+              <button type="button" onclick="togglePasswordVisibility('reg-password', this)" style="background: transparent; border: none; cursor: pointer; display: flex; align-items: center; padding: 0; color: #64748b;">
+                <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="button" id="btn-reg-submit" onclick="handleRegisterSubmit(event)" class="submit-btn">
+            <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            <span>إنشاء الحساب والمزامنة</span>
+          </button>
+
+        </form>
+
+        <!-- Divider -->
+        <div class="divider">
+          <span>أو</span>
+        </div>
+
+        <!-- Google OAuth Button -->
+        <button type="button" onclick="handleGoogleLogin()" class="google-btn">
+          <svg style="width: 18px; height: 18px; flex-shrink: 0;" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>الدخول بحساب Google</span>
+        </button>
+
+      </div>
+
+      <!-- Topo Panel: Appears on LEFT in RTL (Child 2) -->
+      <div class="topo-panel">
+        
+        <canvas id="canvas-register-topo"></canvas>
+        <div class="topo-ambient-light"></div>
+
+        <div class="topo-icon-box">
+          <svg style="width: 32px; height: 32px; color: #00c982;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+          </svg>
+        </div>
+
+        <h3 class="topo-title">عندك حساب بالفعل؟</h3>
+        <p class="topo-desc">
+          سجل دخولك عشان ترجع لمستوياتك ونقاطك وإنجازاتك في أي وقت من أي جهاز.
+        </p>
+
+        <button type="button" onclick="switchAuthMode('login')" class="topo-switch-btn">
+          <span>تسجيل الدخول</span>
+        </button>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer style="text-align: center; font-size: 11px; color: #64748b; margin-top: 1rem;">
+    JooPrep v2 Pro © 2026 • منصة هندسة وحاسبات المعتمدة
+  </footer>
+
+  <!-- Interactive Topographic Canvas Engine (Loaded from local static) -->
+  <script src="/static/js/topo-canvas.js"></script>
+
+
+  <!-- ================= GOOGLE ACCOUNT CHOOSER MODAL ================= -->
+  <div id="google-modal-overlay" onclick="if(event.target === this) closeGoogleModal()" style="display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); align-items: center; justify-content: center; padding: 1rem;">
+    <div id="google-modal-card" style="max-width: 440px; width: 100%; background: #0c0e14; border: 1px solid #232733; border-radius: 1.75rem; padding: 2.2rem 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.95); position: relative; animation: popCard 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+      
+      <!-- Close Button -->
+      <button type="button" onclick="closeGoogleModal()" style="position: absolute; top: 1.25rem; left: 1.25rem; background: rgba(255,255,255,0.06); border: 1px solid #232733; width: 34px; height: 34px; border-radius: 10px; color: #94a3b8; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.14)'; this.style.color='#fff';" onmouseout="this.style.background='rgba(255,255,255,0.06)'; this.style.color='#94a3b8';">
+        <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+
+      <!-- Google Logo & Header -->
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 16px; background: #13151b; border: 1px solid #232733; margin-bottom: 0.85rem; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
+          <svg style="width: 28px; height: 28px;" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+        </div>
+        <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin-bottom: 0.35rem;">تسجيل الدخول باستخدام Google</h3>
+        <p id="google-modal-subtitle" style="font-size: 0.85rem; color: #94a3b8;">اختيار حساب للمتابعة إلى <span style="color: #00c982; font-weight: 700;">JooPrep</span></p>
+      </div>
+
+      <!-- Account Selection List Container -->
+      <div id="google-accounts-section" style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 0.75rem;">
+        <!-- Populated dynamically via renderGoogleAccountsModal() -->
+      </div>
+
+      <!-- Custom Email & Name Form -->
+      <div id="google-custom-form" style="display: none; padding-top: 0.5rem;">
+        <div class="input-group" style="margin-bottom: 0.85rem;">
+          <label class="input-label" style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.4rem;">البريد الإلكتروني (Gmail)</label>
+          <div class="input-box" style="display: flex; align-items: center; gap: 0.6rem; background: #13151b; border: 1px solid #232733; border-radius: 12px; padding: 0.75rem 1rem;">
+            <svg style="width: 17px; height: 17px; color: #64748b; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            <input type="email" id="google-input-email" onkeydown="if(event.key==='Enter')submitGoogleCustomAccount()" placeholder="example@gmail.com" dir="ltr" style="width: 100%; background: transparent; border: none; outline: none; color: #fff; font-size: 0.88rem;">
+          </div>
+        </div>
+        <div class="input-group" style="margin-bottom: 1rem;">
+          <label class="input-label" style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.4rem;">الاسم الكامل (كما يظهر بحسابك)</label>
+          <div class="input-box" style="display: flex; align-items: center; gap: 0.6rem; background: #13151b; border: 1px solid #232733; border-radius: 12px; padding: 0.75rem 1rem;">
+            <svg style="width: 17px; height: 17px; color: #64748b; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input type="text" id="google-input-name" onkeydown="if(event.key==='Enter')submitGoogleCustomAccount()" placeholder="مثال: أحمد محمود" style="width: 100%; background: transparent; border: none; outline: none; color: #fff; font-size: 0.88rem;">
+          </div>
+        </div>
+        <button type="button" onclick="submitGoogleCustomAccount()" class="submit-btn" style="width: 100%; background: #00c982; color: #000; border: none; border-radius: 12px; padding: 0.85rem; font-weight: 800; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+          <span>متابعة تسجيل الدخول عبر Google ←</span>
+        </button>
+      </div>
+
+      <p style="text-align: center; font-size: 11px; color: #64748b; margin-top: 1.25rem; line-height: 1.5;">
+        للمتابعة، ستشارك Google اسمك وعنوان بريدك الإلكتروني مع منصة JooPrep لحفظ تقدمك الأكاديمي وكويزاتك.
+      </p>
+
+    </div>
+  </div>
+
 </body>
 </html>

@@ -595,23 +595,161 @@
       return false;
     }
 
-    // Google Login Handler
-    function handleGoogleLogin() {
-      const googleUser = {
-        id: 'google_' + Date.now(),
-        name: 'طالب Google الأكاديمي',
-        email: 'student.google@gmail.com',
-        studentId: '42610258',
+    
+    // ==========================================
+    // AUTHENTIC GOOGLE ACCOUNT PICKER & ENGINE
+    // ==========================================
+    function getStoredGoogleAccounts() {
+      try {
+        const raw = localStorage.getItem('jooprep_google_accounts');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch(e) {}
+      return [];
+    }
+
+    function saveGoogleAccountToList(acc) {
+      try {
+        const list = getStoredGoogleAccounts().filter(a => a.email && a.email.toLowerCase() !== acc.email.toLowerCase());
+        list.unshift({ name: acc.name, email: acc.email });
+        localStorage.setItem('jooprep_google_accounts', JSON.stringify(list.slice(0, 5)));
+      } catch(e) {}
+    }
+
+    function removeGoogleAccountFromList(email, event) {
+      if (event) event.stopPropagation();
+      try {
+        const list = getStoredGoogleAccounts().filter(a => a.email.toLowerCase() !== email.toLowerCase());
+        localStorage.setItem('jooprep_google_accounts', JSON.stringify(list));
+        renderGoogleAccountsModal();
+      } catch(e) {}
+    }
+
+    function renderGoogleAccountsModal() {
+      const accounts = getStoredGoogleAccounts();
+      const listContainer = document.getElementById('google-accounts-section');
+      const customForm = document.getElementById('google-custom-form');
+      const modalSub = document.getElementById('google-modal-subtitle');
+      
+      if (accounts.length > 0) {
+        if (modalSub) modalSub.innerHTML = 'اختيار حساب للمتابعة إلى <span style="color: #00c982; font-weight: 700;">JooPrep</span>';
+        if (listContainer) {
+          listContainer.style.display = 'flex';
+          listContainer.innerHTML = accounts.map(acc => {
+            const initial = (acc.name && acc.name.trim().charAt(0)) || (acc.email && acc.email.charAt(0).toUpperCase()) || 'G';
+            return `
+              <div onclick="selectGoogleAccount('${acc.email}', '${acc.name}')" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; border-radius: 14px; background: #13151b; border: 1px solid #232733; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#00c982'; this.style.background='#191c24';" onmouseout="this.style.borderColor='#232733'; this.style.background='#13151b';">
+                <div style="display: flex; align-items: center; gap: 0.85rem;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #4285F4, #34A853); color: #fff; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3); flex-shrink: 0;">
+                    ${initial}
+                  </div>
+                  <div style="text-align: right;">
+                    <p style="font-size: 13.5px; font-weight: 700; color: #ffffff; margin: 0;">${acc.name}</p>
+                    <p style="font-size: 11.5px; color: #94a3b8; margin: 2px 0 0 0; font-family: sans-serif;" dir="ltr">${acc.email}</p>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                  <button type="button" onclick="removeGoogleAccountFromList('${acc.email}', event)" title="إزالة من الحسابات المحفوظة" style="background: transparent; border: none; color: #64748b; cursor: pointer; padding: 4px; border-radius: 6px; transition: color 0.2s;" onmouseover="this.style.color='#f43f5e'" onmouseout="this.style.color='#64748b'">
+                    <svg style="width: 15px; height: 15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  </button>
+                  <svg style="width: 16px; height: 16px; color: #64748b;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </div>
+              </div>
+            `;
+          }).join('') + `
+            <button type="button" id="btn-toggle-google-custom" onclick="toggleGoogleCustomForm()" style="width: 100%; margin-top: 0.35rem; background: transparent; border: 1px dashed #334155; border-radius: 12px; padding: 0.75rem; color: #94a3b8; font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#00c982'; this.style.color='#fff';" onmouseout="this.style.borderColor='#334155'; this.style.color='#94a3b8';">
+              <svg style="width: 16px; height: 16px; color: #00c982;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+              <span>استخدام حساب Gmail آخر</span>
+            </button>
+          `;
+        }
+        if (customForm) customForm.style.display = 'none';
+      } else {
+        // No accounts stored yet: show the direct login form
+        if (modalSub) modalSub.innerHTML = 'أدخل بريدك الإلكتروني Google للمتابعة إلى <span style="color: #00c982; font-weight: 700;">JooPrep</span>';
+        if (listContainer) listContainer.style.display = 'none';
+        if (customForm) customForm.style.display = 'block';
+      }
+    }
+
+    function toggleGoogleCustomForm() {
+      const formEl = document.getElementById('google-custom-form');
+      const btnToggle = document.getElementById('btn-toggle-google-custom');
+      if (!formEl) return;
+      if (formEl.style.display === 'none') {
+        formEl.style.display = 'block';
+        if (btnToggle) btnToggle.style.display = 'none';
+        document.getElementById('google-input-email')?.focus();
+      } else {
+        formEl.style.display = 'none';
+        if (btnToggle) btnToggle.style.display = 'flex';
+      }
+    }
+
+    function submitGoogleCustomAccount() {
+      const emailInput = document.getElementById('google-input-email');
+      const nameInput = document.getElementById('google-input-name');
+      const email = (emailInput?.value || '').trim();
+      const name = (nameInput?.value || '').trim();
+
+      if (!email) {
+        alert('يرجى إدخال عنوان بريدك الإلكتروني (Gmail)');
+        emailInput?.focus();
+        return;
+      }
+      if (!email.includes('@') || !email.includes('.')) {
+        alert('يرجى إدخال بريد إلكتروني صحيح (مثال: student@gmail.com)');
+        emailInput?.focus();
+        return;
+      }
+
+      const finalName = name || email.split('@')[0];
+      selectGoogleAccount(email, finalName);
+    }
+
+    function selectGoogleAccount(email, name) {
+      saveGoogleAccountToList({ email, name });
+      
+      const userSession = {
+        id: email.replace(/[^0-9]/g, '') || ('google_' + Date.now()),
+        studentId: email.replace(/[^0-9]/g, '') || '42610258',
+        name: name || email.split('@')[0],
+        email: email,
         college: 'كلية الحاسبات والمعلومات والهندسة',
         academic_year: 'الفرقة الأولى',
-        isLoggedIn: true
+        provider: 'google',
+        isLoggedIn: true,
+        registeredAt: new Date().toISOString()
       };
-      localStorage.setItem('jooprep_user_session', JSON.stringify(googleUser));
-      showAlert('تم تسجيل الدخول عبر Google بنجاح! جاري توجيهك...', 'success');
+
+      localStorage.setItem('jooprep_user_session', JSON.stringify(userSession));
+      saveLocalAccount({ ...userSession, password: '' });
+
+      closeGoogleModal();
+      showAlert(`تم تسجيل الدخول بحساب Google (${email}) بنجاح! جاري تحويلك...`, 'success');
       setTimeout(() => {
         window.location.replace('/#dashboard');
       }, 150);
     }
+
+    function openGoogleModal() {
+      renderGoogleAccountsModal();
+      const overlay = document.getElementById('google-modal-overlay');
+      if (overlay) overlay.style.display = 'flex';
+    }
+
+    function closeGoogleModal() {
+      const overlay = document.getElementById('google-modal-overlay');
+      if (overlay) overlay.style.display = 'none';
+    }
+
+    // Google Login Handler (Instant Authentic Account Chooser)
+    function handleGoogleLogin() {
+      openGoogleModal();
+    }
+
 
     // Guest Demo Handler
     function handleGuestDemoLogin() {
@@ -653,6 +791,13 @@
     window.handleLoginSubmit = handleLoginSubmit;
     window.handleRegisterSubmit = handleRegisterSubmit;
     window.handleGoogleLogin = handleGoogleLogin;
+    window.openGoogleModal = openGoogleModal;
+    window.closeGoogleModal = closeGoogleModal;
+    window.selectGoogleAccount = selectGoogleAccount;
+    window.toggleGoogleCustomForm = toggleGoogleCustomForm;
+    window.submitGoogleCustomAccount = submitGoogleCustomAccount;
+    window.removeGoogleAccountFromList = removeGoogleAccountFromList;
+
     window.handleGuestDemoLogin = handleGuestDemoLogin;
     window.switchAuthMode = switchAuthMode;
     window.togglePasswordVisibility = togglePasswordVisibility;
@@ -926,6 +1071,63 @@
 
   <!-- Interactive Topographic Canvas Engine (Loaded from local static) -->
   <script src="/static/js/topo-canvas.js"></script>
+
+
+  <!-- ================= GOOGLE ACCOUNT CHOOSER MODAL ================= -->
+  <div id="google-modal-overlay" onclick="if(event.target === this) closeGoogleModal()" style="display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); align-items: center; justify-content: center; padding: 1rem;">
+    <div id="google-modal-card" style="max-width: 440px; width: 100%; background: #0c0e14; border: 1px solid #232733; border-radius: 1.75rem; padding: 2.2rem 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.95); position: relative; animation: popCard 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+      
+      <!-- Close Button -->
+      <button type="button" onclick="closeGoogleModal()" style="position: absolute; top: 1.25rem; left: 1.25rem; background: rgba(255,255,255,0.06); border: 1px solid #232733; width: 34px; height: 34px; border-radius: 10px; color: #94a3b8; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.14)'; this.style.color='#fff';" onmouseout="this.style.background='rgba(255,255,255,0.06)'; this.style.color='#94a3b8';">
+        <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+
+      <!-- Google Logo & Header -->
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 16px; background: #13151b; border: 1px solid #232733; margin-bottom: 0.85rem; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
+          <svg style="width: 28px; height: 28px;" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+        </div>
+        <h3 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin-bottom: 0.35rem;">تسجيل الدخول باستخدام Google</h3>
+        <p id="google-modal-subtitle" style="font-size: 0.85rem; color: #94a3b8;">اختيار حساب للمتابعة إلى <span style="color: #00c982; font-weight: 700;">JooPrep</span></p>
+      </div>
+
+      <!-- Account Selection List Container -->
+      <div id="google-accounts-section" style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 0.75rem;">
+        <!-- Populated dynamically via renderGoogleAccountsModal() -->
+      </div>
+
+      <!-- Custom Email & Name Form -->
+      <div id="google-custom-form" style="display: none; padding-top: 0.5rem;">
+        <div class="input-group" style="margin-bottom: 0.85rem;">
+          <label class="input-label" style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.4rem;">البريد الإلكتروني (Gmail)</label>
+          <div class="input-box" style="display: flex; align-items: center; gap: 0.6rem; background: #13151b; border: 1px solid #232733; border-radius: 12px; padding: 0.75rem 1rem;">
+            <svg style="width: 17px; height: 17px; color: #64748b; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            <input type="email" id="google-input-email" onkeydown="if(event.key==='Enter')submitGoogleCustomAccount()" placeholder="example@gmail.com" dir="ltr" style="width: 100%; background: transparent; border: none; outline: none; color: #fff; font-size: 0.88rem;">
+          </div>
+        </div>
+        <div class="input-group" style="margin-bottom: 1rem;">
+          <label class="input-label" style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.4rem;">الاسم الكامل (كما يظهر بحسابك)</label>
+          <div class="input-box" style="display: flex; align-items: center; gap: 0.6rem; background: #13151b; border: 1px solid #232733; border-radius: 12px; padding: 0.75rem 1rem;">
+            <svg style="width: 17px; height: 17px; color: #64748b; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input type="text" id="google-input-name" onkeydown="if(event.key==='Enter')submitGoogleCustomAccount()" placeholder="مثال: أحمد محمود" style="width: 100%; background: transparent; border: none; outline: none; color: #fff; font-size: 0.88rem;">
+          </div>
+        </div>
+        <button type="button" onclick="submitGoogleCustomAccount()" class="submit-btn" style="width: 100%; background: #00c982; color: #000; border: none; border-radius: 12px; padding: 0.85rem; font-weight: 800; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+          <span>متابعة تسجيل الدخول عبر Google ←</span>
+        </button>
+      </div>
+
+      <p style="text-align: center; font-size: 11px; color: #64748b; margin-top: 1.25rem; line-height: 1.5;">
+        للمتابعة، ستشارك Google اسمك وعنوان بريدك الإلكتروني مع منصة JooPrep لحفظ تقدمك الأكاديمي وكويزاتك.
+      </p>
+
+    </div>
+  </div>
 
 </body>
 </html>
