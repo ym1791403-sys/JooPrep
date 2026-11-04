@@ -1454,11 +1454,20 @@ function startVivaSession() {
   document.getElementById('viva-active-screen').classList.remove('hidden');
   document.getElementById('viva-report-screen').classList.add('hidden');
 
-  document.getElementById('viva-active-avatar').innerText = p.avatar;
-  document.getElementById('viva-active-name').innerText = p.name;
-  document.getElementById('viva-active-tone').innerText = p.tone;
-  document.getElementById('viva-turn-counter').innerText = `دور 1 من ${state.vivaMaxTurns}`;
-  document.getElementById('viva-current-score').innerText = `--/10`;
+  const avatarEl = document.getElementById('active-persona-avatar') || document.getElementById('viva-active-avatar');
+  if (avatarEl) avatarEl.innerText = p.avatar;
+
+  const nameEl = document.getElementById('active-persona-name') || document.getElementById('viva-active-name');
+  if (nameEl) nameEl.innerText = p.name;
+
+  const toneEl = document.getElementById('active-persona-tone') || document.getElementById('viva-active-tone');
+  if (toneEl) toneEl.innerText = p.tone;
+
+  const turnEl = document.getElementById('viva-turn-counter');
+  if (turnEl) turnEl.innerText = `دور 1 من ${state.vivaMaxTurns}`;
+
+  const scoreEl = document.getElementById('viva-current-score');
+  if (scoreEl) scoreEl.innerText = `--/10`;
 
   const stream = document.getElementById('viva-dialogue-stream');
   stream.innerHTML = '';
