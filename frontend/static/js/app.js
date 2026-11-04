@@ -444,7 +444,7 @@ window.handleBatchImportSubmit = function() {
 
 // ----------------- Global Application State -----------------
 const state = {
-  activeView: 'dashboard',
+  activeView: null,
   audioEnabled: false,
   user: {
     id: null,
@@ -2095,15 +2095,11 @@ async function checkAuthSession() {
           id: suUser.id,
           email: suUser.email,
           name: suUser.user_metadata?.full_name || suUser.email.split('@')[0],
-          college: suUser.user_metadata?.college || 'كلية الحاسبات والمعلومات',
+          college: suUser.user_metadata?.college || 'كلية الحاسبات والمعلومات والهندسة',
           academic_year: suUser.user_metadata?.academic_year || 'الفرقة الأولى',
           isLoggedIn: true
         });
         hasValidSession = true;
-        if (state.activeView === 'landing' || !state.activeView) {
-          navigate('dashboard');
-        }
-        return;
       }
     } catch(e) {
       console.warn('Supabase auth session check notice:', e);
@@ -2114,7 +2110,12 @@ async function checkAuthSession() {
 
   if (hasValidSession) {
     loadUserProfile();
-    if (state.activeView === 'landing' || !state.activeView) {
+    loadReadinessData();
+    // Prioritize URL hash if user navigated directly to #quizzes, #viva, etc.
+    const hash = (window.location.hash || '').replace('#', '');
+    if (hash && ['dashboard', 'quizzes', 'viva', 'prep-sheet', 'error-notebook', 'profile'].includes(hash)) {
+      navigate(hash);
+    } else {
       navigate('dashboard');
     }
   } else {
