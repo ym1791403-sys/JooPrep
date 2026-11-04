@@ -537,6 +537,12 @@ document.addEventListener('DOMContentLoaded', () => {
   loadUserProfile();
   loadReadinessData();
 
+  // Initial URL Hash page navigation
+  const initHash = (window.location.hash || '').replace('#', '');
+  if (initHash && ['dashboard', 'quizzes', 'viva', 'prep-sheet', 'error-notebook', 'profile', 'auth'].includes(initHash)) {
+    navigate(initHash);
+  }
+
   const codeInput = document.getElementById('viva-code-input');
   if (codeInput) {
     codeInput.addEventListener('input', () => {
@@ -559,8 +565,10 @@ function navigate(viewName) {
     if (el) {
       if (v === viewName) {
         el.classList.remove('hidden');
+        el.style.display = 'block';
       } else {
         el.classList.add('hidden');
+        el.style.display = 'none';
       }
     }
 
@@ -581,6 +589,28 @@ function navigate(viewName) {
     }
   });
 
+  // Mobile Auth / Profile active state
+  const mobAuth = document.getElementById('mob-nav-auth');
+  if (mobAuth) {
+    if (viewName === 'auth' || viewName === 'profile') {
+      mobAuth.className = "flex flex-col items-center gap-1 text-cyan-400 font-black";
+    } else {
+      mobAuth.className = "flex flex-col items-center gap-1 text-slate-400 hover:text-white";
+    }
+  }
+
+  // URL Hash Routing so navigation behaves like real distinct pages
+  try {
+    if (window.location.hash !== `#${viewName}`) {
+      history.pushState(null, null, `#${viewName}`);
+    }
+  } catch(e) {}
+
+  // Instant scroll to top to feel like a real distinct page
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+
   if (viewName === 'dashboard') {
     loadReadinessData();
   } else if (viewName === 'quizzes') {
@@ -594,9 +624,15 @@ function navigate(viewName) {
   }
 
   if (window.lucide) lucide.createIcons();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// Handle Browser Back & Forward buttons
+window.addEventListener('popstate', () => {
+  const hash = (window.location.hash || '').replace('#', '') || 'dashboard';
+  if (['dashboard', 'quizzes', 'viva', 'prep-sheet', 'error-notebook', 'profile', 'auth'].includes(hash)) {
+    navigate(hash);
+  }
+});
 // ----------------- Audio & Utilities -----------------
 function toggleAudio() {
   state.audioEnabled = !state.audioEnabled;
@@ -1812,15 +1848,18 @@ function loadErrorNotebook() {
 // Supabase Database & Authentication Engine (صابابا بيز)
 // ============================================================================
 
+const SUPABASE_CONFIG = {
+  url: "https://orkkywadwtowixbfdnby.supabase.co",
+  key: "sb_publishable_Qa9dPkIrUw0zYC5-qEy45w_6khXdv-l"
+};
+
 let supabaseClient = null;
 
 function initSupabaseClient() {
-  const url = localStorage.getItem('jooprep_supabase_url') || '';
-  const key = localStorage.getItem('jooprep_supabase_key') || '';
-  const statusBadge = document.getElementById('supabase-status-badge');
-  const dot = document.getElementById('supabase-indicator-dot');
+  const url = localStorage.getItem('jooprep_supabase_url') || SUPABASE_CONFIG.url;
+  const key = localStorage.getItem('jooprep_supabase_key') || SUPABASE_CONFIG.key;
 
-  if (url && key && window.supabase && typeof window.supabase.createClient === 'function') {
+  if (window.supabase && typeof window.supabase.createClient === 'function') {
     try {
       supabaseClient = window.supabase.createClient(url, key, {
         auth: {
@@ -1829,26 +1868,10 @@ function initSupabaseClient() {
           detectSessionInUrl: true
         }
       });
-      if (statusBadge) {
-        statusBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
-        statusBadge.innerText = 'متصل سحابياً (Supabase Connected)';
-      }
-      if (dot) {
-        dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
-      }
-      console.log('Supabase client initialized successfully with project URL:', url);
+      console.log('Supabase connected successfully to:', url);
     } catch(err) {
       console.error('Error creating Supabase client:', err);
       supabaseClient = null;
-    }
-  } else {
-    supabaseClient = null;
-    if (statusBadge) {
-      statusBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
-      statusBadge.innerText = 'وضع محلي (أدخل مفاتيح Supabase للتزامن السحابي)';
-    }
-    if (dot) {
-      dot.className = 'w-2 h-2 rounded-full bg-amber-400';
     }
   }
   return supabaseClient;
@@ -1910,6 +1933,7 @@ function updateHeaderAuthUI() {
   const profileBtn = document.getElementById('header-profile-btn');
   const nameEl = document.getElementById('header-user-name');
   const avatarEl = document.getElementById('header-user-avatar');
+  const mobAuthLabel = document.getElementById('mob-nav-auth-label');
 
   if (state.user && state.user.isLoggedIn) {
     if (authBtn) authBtn.classList.add('hidden');
@@ -1919,9 +1943,11 @@ function updateHeaderAuthUI() {
       const initial = (state.user.name && state.user.name.trim().charAt(0)) || 'ط';
       avatarEl.innerText = initial;
     }
+    if (mobAuthLabel) mobAuthLabel.innerText = 'حسابي';
   } else {
     if (authBtn) authBtn.classList.remove('hidden');
     if (profileBtn) profileBtn.classList.add('hidden');
+    if (mobAuthLabel) mobAuthLabel.innerText = 'تسجيل الدخول';
   }
 }
 
@@ -1941,23 +1967,12 @@ async function checkAuthSession() {
       const { data, error } = await supabaseClient.auth.getSession();
       if (!error && data && data.session && data.session.user) {
         const suUser = data.session.user;
-        // Fetch matching profile
-        const { data: prof } = await supabaseClient
-          .from('profiles')
-          .select('*')
-          .eq('id', suUser.id)
-          .single();
-
         applyUserSession({
           id: suUser.id,
           email: suUser.email,
-          name: (prof && prof.full_name) || suUser.user_metadata?.full_name || suUser.email.split('@')[0],
-          college: (prof && prof.college) || suUser.user_metadata?.college || 'كلية الحاسبات والمعلومات',
-          academic_year: (prof && prof.academic_year) || suUser.user_metadata?.academic_year || 'الفرقة الأولى',
-          quota_used_today_viva: (prof && prof.quota_used_today_viva) || 0,
-          daily_quota_viva: (prof && prof.daily_quota_viva) || 5,
-          quota_used_today_prep: (prof && prof.quota_used_today_prep) || 0,
-          daily_quota_prep: (prof && prof.daily_quota_prep) || 10,
+          name: suUser.user_metadata?.full_name || suUser.email.split('@')[0],
+          college: suUser.user_metadata?.college || 'كلية الحاسبات والمعلومات',
+          academic_year: suUser.user_metadata?.academic_year || 'الفرقة الأولى',
           isLoggedIn: true
         });
         return;
@@ -1979,7 +1994,7 @@ async function handleAuthLogin(event) {
 
   if (submitBtn) {
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="animate-spin inline-block mr-2">⏳</span> جاري التحقق...';
+    submitBtn.innerHTML = '<span class="animate-spin inline-block mr-2">⏳</span> جاري التحقق من الحساب...';
   }
 
   try {
@@ -1990,30 +2005,25 @@ async function handleAuthLogin(event) {
       });
 
       if (error) {
-        showAuthAlert(`فشل الدخول: ${error.message}`, 'error');
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i><span>دخول إلى الحساب</span>';
-          if (window.lucide) lucide.createIcons();
-        }
+        showAuthAlert(`بيانات الدخول غير صحيحة: ${error.message}`, 'error');
         return;
       }
 
       if (data && data.user) {
-        const { data: prof } = await supabaseClient.from('profiles').select('*').eq('id', data.user.id).single();
+        const suUser = data.user;
         applyUserSession({
-          id: data.user.id,
-          email: data.user.email,
-          name: (prof && prof.full_name) || data.user.user_metadata?.full_name || data.user.email.split('@')[0],
-          college: (prof && prof.college) || data.user.user_metadata?.college || 'كلية الحاسبات والمعلومات',
-          academic_year: (prof && prof.academic_year) || data.user.user_metadata?.academic_year || 'الفرقة الأولى',
+          id: suUser.id,
+          email: suUser.email,
+          name: suUser.user_metadata?.full_name || suUser.email.split('@')[0],
+          college: suUser.user_metadata?.college || 'كلية الحاسبات والمعلومات',
+          academic_year: suUser.user_metadata?.academic_year || 'الفرقة الأولى',
           isLoggedIn: true
         });
         showAuthAlert('تم تسجيل الدخول بنجاح! مرحباً بعودتك.', 'success');
-        setTimeout(() => navigate('dashboard'), 800);
+        setTimeout(() => navigate('dashboard'), 600);
       }
     } else {
-      // Local demo mode
+      // Local session
       applyUserSession({
         id: 'local_user_' + Date.now(),
         email: email,
@@ -2022,8 +2032,8 @@ async function handleAuthLogin(event) {
         academic_year: 'الفرقة الأولى',
         isLoggedIn: true
       });
-      showAuthAlert('تم تسجيل الدخول بالوضع المحلي (Local Session).', 'success');
-      setTimeout(() => navigate('dashboard'), 800);
+      showAuthAlert('تم تسجيل الدخول بنجاح!', 'success');
+      setTimeout(() => navigate('dashboard'), 600);
     }
   } catch(err) {
     showAuthAlert(`حدث خطأ أثناء الاتصال: ${err.message}`, 'error');
@@ -2067,11 +2077,6 @@ async function handleAuthRegister(event) {
 
       if (error) {
         showAuthAlert(`فشل إنشاء الحساب: ${error.message}`, 'error');
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = '<i data-lucide="user-check" class="w-4 h-4"></i><span>إنشاء الحساب ومزامنة البيانات</span>';
-          if (window.lucide) lucide.createIcons();
-        }
         return;
       }
 
@@ -2084,22 +2089,10 @@ async function handleAuthRegister(event) {
         isLoggedIn: true
       };
 
-      // Try inserting into profiles table if RLS allows
-      try {
-        await supabaseClient.from('profiles').upsert([{
-          id: userObj.id,
-          email: email,
-          full_name: name,
-          college: college,
-          academic_year: year
-        }]);
-      } catch(e) {}
-
       applyUserSession(userObj);
-      showAuthAlert('تم إنشاء الحساب بنجاح وتجهيز بيئة الاختبارات الأكاديمية!', 'success');
-      setTimeout(() => navigate('dashboard'), 1000);
+      showAuthAlert('تم إنشاء الحساب بنجاح في قاعدة بيانات Supabase! جاري تحويلك للرئيسية...', 'success');
+      setTimeout(() => navigate('dashboard'), 800);
     } else {
-      // Local registration
       applyUserSession({
         id: 'local_reg_' + Date.now(),
         email: email,
@@ -2108,8 +2101,8 @@ async function handleAuthRegister(event) {
         academic_year: year,
         isLoggedIn: true
       });
-      showAuthAlert('تم إنشاء حساب محلي بنجاح!', 'success');
-      setTimeout(() => navigate('dashboard'), 1000);
+      showAuthAlert('تم إنشاء الحساب بنجاح! جاري تحويلك...', 'success');
+      setTimeout(() => navigate('dashboard'), 800);
     }
   } catch(err) {
     showAuthAlert(`حدث خطأ غير متوقع: ${err.message}`, 'error');
@@ -2136,8 +2129,8 @@ function handleGuestDemoLogin() {
     daily_quota_prep: 20,
     isLoggedIn: true
   });
-  showAuthAlert('مرحباً بك! تم تفعيل الوضع التجريبي السريع بكامل الصلاحيات.', 'success');
-  setTimeout(() => navigate('dashboard'), 600);
+  showAuthAlert('مرحباً بك! تم تفعيل الوضع التجريبي السريع.', 'success');
+  setTimeout(() => navigate('dashboard'), 500);
 }
 
 // ----------------- Logout Handler -----------------
@@ -2157,66 +2150,6 @@ async function handleAuthLogout() {
   }
 }
 
-// ----------------- Supabase Modal Controls -----------------
-function openSupabaseModal() {
-  const modal = document.getElementById('modal-supabase-config');
-  const urlInput = document.getElementById('cfg-supabase-url');
-  const keyInput = document.getElementById('cfg-supabase-key');
-
-  if (urlInput) urlInput.value = localStorage.getItem('jooprep_supabase_url') || '';
-  if (keyInput) keyInput.value = localStorage.getItem('jooprep_supabase_key') || '';
-
-  if (modal) modal.classList.remove('hidden');
-}
-
-function closeSupabaseModal() {
-  const modal = document.getElementById('modal-supabase-config');
-  if (modal) modal.classList.add('hidden');
-}
-
-function handleSaveSupabaseConfig(event) {
-  event.preventDefault();
-  const url = document.getElementById('cfg-supabase-url').value.trim();
-  const key = document.getElementById('cfg-supabase-key').value.trim();
-
-  if (url) localStorage.setItem('jooprep_supabase_url', url);
-  else localStorage.removeItem('jooprep_supabase_url');
-
-  if (key) localStorage.setItem('jooprep_supabase_key', key);
-  else localStorage.removeItem('jooprep_supabase_key');
-
-  initSupabaseClient();
-  closeSupabaseModal();
-  alert('تم حفظ إعدادات Supabase وتحديث حالة الاتصال بنجاح!');
-}
-
-async function testSupabaseConnection() {
-  const url = document.getElementById('cfg-supabase-url').value.trim();
-  const key = document.getElementById('cfg-supabase-key').value.trim();
-
-  if (!url || !key) {
-    alert('يرجى كتابة كل من رابط المشروع Project URL والمفتاح العام Anon Key أولاً للاختبار.');
-    return;
-  }
-
-  try {
-    const testClient = window.supabase ? window.supabase.createClient(url, key) : null;
-    if (!testClient) {
-      alert('مكتبة Supabase JS غير محملة بالمتصفح.');
-      return;
-    }
-
-    const { data, error } = await testClient.from('profiles').select('count', { count: 'exact', head: true });
-    if (error && error.code !== 'PGRST116' && !error.message.includes('permission')) {
-      alert('تم الاتصال بالسيرفر، الرد: ' + (error.message || 'جاهز للاستخدام'));
-    } else {
-      alert('نجح الاتصال بمشروع Supabase بنجاح! 🚀 الجداول جاهزة للمزامنة السحابية.');
-    }
-  } catch(e) {
-    alert('فشل الاتصال: ' + e.message);
-  }
-}
-
 // ----------------- Supabase Data Sync Handlers -----------------
 async function syncQuizAttemptToSupabase(attempt) {
   const attempts = JSON.parse(localStorage.getItem('jooprep_quiz_attempts') || '[]');
@@ -2225,7 +2158,7 @@ async function syncQuizAttemptToSupabase(attempt) {
 
   if (supabaseClient && state.user && state.user.isLoggedIn && state.user.id) {
     try {
-      const { error } = await supabaseClient.from('quiz_attempts').insert([{
+      await supabaseClient.from('quiz_attempts').insert([{
         user_id: state.user.id,
         subject: attempt.subject,
         score: attempt.correctCount,
@@ -2233,11 +2166,7 @@ async function syncQuizAttemptToSupabase(attempt) {
         percentage: attempt.percent,
         answers: attempt.answers || {}
       }]);
-      if (error) console.warn('Supabase sync quiz attempt notice:', error);
-      else console.log('Quiz attempt successfully synced to Supabase database.');
-    } catch(e) {
-      console.warn('Supabase sync exception:', e);
-    }
+    } catch(e) {}
   }
 }
 
@@ -2248,18 +2177,14 @@ async function syncVivaSessionToSupabase(session) {
 
   if (supabaseClient && state.user && state.user.isLoggedIn && state.user.id) {
     try {
-      const { error } = await supabaseClient.from('viva_history').insert([{
+      await supabaseClient.from('viva_history').insert([{
         user_id: state.user.id,
         persona: session.persona,
         code_snippet: session.codeSnippet || '',
         final_score: session.finalScore || 0,
         feedback: session.feedback || ''
       }]);
-      if (error) console.warn('Supabase sync viva notice:', error);
-      else console.log('Viva session successfully synced to Supabase database.');
-    } catch(e) {
-      console.warn('Supabase sync viva exception:', e);
-    }
+    } catch(e) {}
   }
 }
 
@@ -2274,8 +2199,6 @@ async function syncErrorToSupabase(errorItem) {
         correct_answer: errorItem.correctAnswer || '',
         explanation: errorItem.explanation || ''
       }]);
-    } catch(e) {
-      console.warn('Supabase sync error notebook exception:', e);
-    }
+    } catch(e) {}
   }
 }

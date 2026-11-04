@@ -116,25 +116,18 @@
         </button>
       </nav>
 
-      <!-- Right Controls: Supabase Config & Auth / Profile -->
+      <!-- Right Controls: Auth / Profile Navigation -->
       <div class="flex items-center gap-2">
-        <!-- Supabase Database Status & Configuration Button -->
-        <button onclick="openSupabaseModal()" title="إعدادات ومزامنة قاعدة بيانات Supabase (صابابا بيز)" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-700/80 bg-slate-900/80 hover:border-emerald-500/80 transition text-xs font-bold text-slate-300 cursor-pointer select-none">
-          <span id="supabase-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="hidden sm:inline font-mono text-[11px] text-emerald-300">Supabase</span>
-          <i data-lucide="database" class="w-3.5 h-3.5 text-emerald-400"></i>
-        </button>
-
         <!-- Auth / Profile Control -->
         <div id="header-user-widget" class="flex items-center gap-2">
           <!-- Shown when not logged in -->
-          <button onclick="navigate('auth')" id="header-auth-btn" class="hidden btn-glass-primary px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md">
-            <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
-            <span>دخول / حساب جديد</span>
+          <button onclick="navigate('auth')" id="header-auth-btn" class="btn-glass-primary px-4 py-2 rounded-xl text-xs font-black flex items-center gap-2 shadow-lg transition active:scale-95">
+            <i data-lucide="log-in" class="w-4 h-4 text-cyan-300"></i>
+            <span>تسجيل الدخول</span>
           </button>
           
           <!-- Shown when logged in -->
-          <button onclick="navigate('profile')" id="header-profile-btn" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition">
+          <button onclick="navigate('profile')" id="header-profile-btn" class="hidden flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition">
             <div id="header-user-avatar" class="w-7 h-7 rounded-lg bg-gradient-to-tr from-blue-600 to-teal-400 text-white font-black flex items-center justify-center text-xs shadow-sm">
               ط
             </div>
@@ -882,19 +875,28 @@
     </div>
 
 
-    <!-- ================= VIEW 7: AUTHENTICATION (تسجيل الدخول وإنشاء حساب) ================= -->
-    <div id="view-auth" class="hidden max-w-lg mx-auto py-4 sm:py-8 space-y-6">
+    <!-- ================= VIEW 7: AUTHENTICATION (صفحة مستقلة لتسجيل الدخول وإنشاء حساب) ================= -->
+    <div id="view-auth" class="hidden max-w-lg mx-auto py-4 sm:py-8 space-y-4 animate-fade-in">
       
+      <!-- Back to Dashboard Navigation Link -->
+      <div class="flex items-center justify-between px-2">
+        <button type="button" onclick="navigate('dashboard')" class="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-1.5 transition">
+          <i data-lucide="arrow-right" class="w-4 h-4 text-cyan-400"></i>
+          <span>العودة إلى الصفحة الرئيسية</span>
+        </button>
+        <span class="text-[11px] font-mono text-slate-500">JooPrep Cloud Auth</span>
+      </div>
+
       <!-- Auth Card -->
-      <div class="glass-card p-6 sm:p-8 space-y-6 shadow-2xl">
+      <div class="glass-card p-6 sm:p-8 space-y-6 shadow-2xl border border-indigo-500/20">
         
         <div class="text-center space-y-2">
-          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 via-blue-500 to-teal-400 text-white flex items-center justify-center mx-auto shadow-xl shadow-blue-500/20 border border-white/20">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-teal-400 text-white flex items-center justify-center mx-auto shadow-xl shadow-blue-500/20 border border-white/20">
             <i data-lucide="shield-check" class="w-7 h-7"></i>
           </div>
           <h2 class="text-2xl font-black text-white" id="auth-main-title">بوابة تسجيل الدخول والأكاديميا</h2>
           <p class="text-xs text-slate-400 max-w-sm mx-auto leading-relaxed" id="auth-subtitle">
-            سجّل دخولك لحفظ نتائج الكويزات، تاريخ المناقشات الشفوية، ومزامنة دفتر الأخطاء سحابياً مع قاعدة بيانات Supabase.
+            سجّل دخولك لحفظ نتائج الكويزات، تاريخ المناقشات الشفوية، ومزامنة دفتر الأخطاء سحابياً.
           </p>
         </div>
 
@@ -919,7 +921,7 @@
             <label class="block text-xs font-bold text-slate-300">البريد الإلكتروني:</label>
             <div class="relative">
               <i data-lucide="mail" class="w-4 h-4 text-slate-500 absolute right-3.5 top-3.5"></i>
-              <input type="email" id="login-email" required placeholder="student@example.com" dir="ltr" class="w-full bg-slate-950/90 border border-slate-800 focus:border-blue-500 rounded-xl pr-10 pl-3.5 py-2.5 text-xs sm:text-sm text-slate-100 outline-none transition font-sans">
+              <input type="email" id="login-email" required placeholder="student@gmail.com" dir="ltr" class="w-full bg-slate-950/90 border border-slate-800 focus:border-blue-500 rounded-xl pr-10 pl-3.5 py-2.5 text-xs sm:text-sm text-slate-100 outline-none transition font-sans">
             </div>
           </div>
 
@@ -951,7 +953,7 @@
             <label class="block text-xs font-bold text-slate-300">البريد الإلكتروني:</label>
             <div class="relative">
               <i data-lucide="mail" class="w-4 h-4 text-slate-500 absolute right-3.5 top-3.5"></i>
-              <input type="email" id="reg-email" required placeholder="student@example.com" dir="ltr" class="w-full bg-slate-950/90 border border-slate-800 focus:border-blue-500 rounded-xl pr-10 pl-3.5 py-2.5 text-xs sm:text-sm text-slate-100 outline-none transition font-sans">
+              <input type="email" id="reg-email" required placeholder="student@gmail.com" dir="ltr" class="w-full bg-slate-950/90 border border-slate-800 focus:border-blue-500 rounded-xl pr-10 pl-3.5 py-2.5 text-xs sm:text-sm text-slate-100 outline-none transition font-sans">
             </div>
           </div>
 
@@ -999,73 +1001,6 @@
 
       </div>
 
-      <!-- Supabase Connection Config Card -->
-      <div class="glass-card p-4 sm:p-5 text-xs space-y-3">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2 font-bold text-slate-200">
-            <i data-lucide="database" class="w-4 h-4 text-emerald-400"></i>
-            <span>حالة الاتصال بقاعدة بيانات Supabase:</span>
-          </div>
-          <span id="supabase-status-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-            متصل وجاهز للمزامنة
-          </span>
-        </div>
-        <p class="text-slate-400 leading-relaxed text-[11px]">
-          تُحفظ كافة بيانات حسابك تلقائياً في جداول Supabase السحابية مع تشفير آمن وحماية كاملة للخصوصية.
-        </p>
-        <button onclick="openSupabaseModal()" class="text-xs text-cyan-400 hover:underline font-bold flex items-center gap-1.5 pt-1">
-          <i data-lucide="settings" class="w-3.5 h-3.5"></i>
-          <span>تعديل إعدادات مفاتيح Supabase API</span>
-        </button>
-      </div>
-
-    </div>
-
-    <!-- ================= MODAL: SUPABASE CONFIGURATION ================= -->
-    <div id="modal-supabase-config" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div class="glass-card max-w-lg w-full p-6 sm:p-7 space-y-5 shadow-2xl relative">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-          <div class="flex items-center gap-2.5">
-            <div class="p-2 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-              <i data-lucide="database" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <h3 class="text-base font-black text-white">إعدادات قاعدة بيانات Supabase</h3>
-              <p class="text-[11px] text-slate-400">ربط المنصة بمشروع Supabase الخاص بك</p>
-            </div>
-          </div>
-          <button onclick="closeSupabaseModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">
-            <i data-lucide="x" class="w-5 h-5"></i>
-          </button>
-        </div>
-
-        <form onsubmit="handleSaveSupabaseConfig(event)" class="space-y-4 text-xs">
-          <div class="space-y-1">
-            <label class="block font-bold text-slate-300">Project URL (رابط المشروع):</label>
-            <input type="url" id="cfg-supabase-url" placeholder="https://your-project.supabase.co" dir="ltr" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 font-mono text-xs outline-none focus:border-emerald-500">
-          </div>
-
-          <div class="space-y-1">
-            <label class="block font-bold text-slate-300">Anon Public Key (المفتاح العام):</label>
-            <input type="text" id="cfg-supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." dir="ltr" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-slate-100 font-mono text-xs outline-none focus:border-emerald-500">
-          </div>
-
-          <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] text-slate-400 leading-relaxed">
-            💡 يتم تخزين المفاتيح محلياً على متصفحك بأمان. عند إدخال مفاتيح مشروعك، ستتزامن الكويزات والمناقشات الشفوية ودفتر الأخطاء مع جداول مشروعك مباشرة.
-          </div>
-
-          <div class="flex items-center justify-between pt-2">
-            <button type="button" onclick="testSupabaseConnection()" class="btn-glass-secondary px-4 py-2.5 rounded-xl font-bold flex items-center gap-1.5">
-              <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i>
-              <span>اختبار الاتصال</span>
-            </button>
-            <button type="submit" class="btn-glass-primary px-5 py-2.5 rounded-xl font-black flex items-center gap-1.5 shadow-lg">
-              <i data-lucide="check" class="w-4 h-4"></i>
-              <span>حفظ المفاتيح</span>
-            </button>
-          </div>
-        </form>
-      </div>
     </div>
 
   </main>
@@ -1078,19 +1013,19 @@
     </button>
     <button onclick="navigate('quizzes')" id="mob-nav-quizzes" class="flex flex-col items-center gap-1 hover:text-slate-200">
       <i data-lucide="check-square" class="w-5 h-5"></i>
-      كويزات MCQ
+      كويزات
     </button>
     <button onclick="navigate('viva')" id="mob-nav-viva" class="flex flex-col items-center gap-1 hover:text-slate-200">
       <i data-lucide="code-2" class="w-5 h-5"></i>
-      كود وشفوي
-    </button>
-    <button onclick="navigate('prep-sheet')" id="mob-nav-prep-sheet" class="flex flex-col items-center gap-1 hover:text-slate-200">
-      <i data-lucide="file-check-2" class="w-5 h-5"></i>
-      الورقة
+      شفوي
     </button>
     <button onclick="navigate('error-notebook')" id="mob-nav-error-notebook" class="flex flex-col items-center gap-1 hover:text-slate-200">
       <i data-lucide="book-x" class="w-5 h-5"></i>
       الأخطاء
+    </button>
+    <button onclick="navigate(state.user && state.user.isLoggedIn ? 'profile' : 'auth')" id="mob-nav-auth" class="flex flex-col items-center gap-1 hover:text-slate-200">
+      <i data-lucide="user" class="w-5 h-5"></i>
+      <span id="mob-nav-auth-label">حسابي</span>
     </button>
   </nav>
 
