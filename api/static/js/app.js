@@ -512,8 +512,49 @@ const state = {
   allErrors: []
 };
 
+// ----------------- Theme Switcher Engine -----------------
+function initTheme() {
+  const saved = localStorage.getItem('jooprep_theme') || 'dark';
+  applyTheme(saved);
+}
+
+function applyTheme(theme) {
+  const root = document.documentElement;
+  const icon = document.getElementById('theme-icon');
+  
+  if (theme === 'dark') {
+    root.setAttribute('data-theme', 'dark');
+    root.classList.add('dark');
+    root.classList.remove('light');
+    if (icon) {
+      icon.setAttribute('data-lucide', 'sun');
+      icon.className = 'w-4 h-4 text-amber-300';
+    }
+  } else {
+    root.setAttribute('data-theme', 'light');
+    root.classList.add('light');
+    root.classList.remove('dark');
+    if (icon) {
+      icon.setAttribute('data-lucide', 'moon');
+      icon.className = 'w-4 h-4 text-blue-600';
+    }
+  }
+  localStorage.setItem('jooprep_theme', theme);
+  if (window.lucide) lucide.createIcons();
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+  const next = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+}
+
+window.toggleTheme = toggleTheme;
+window.initTheme = initTheme;
+
 // ----------------- Initialization -----------------
 document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
   if (window.lucide) lucide.createIcons();
 
   renderSubjectsGrid();

@@ -1,9 +1,24 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="dark">
+<html lang="ar" dir="rtl" class="dark" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>JooPrep — منصة التأهيل الأكاديمي والعملي لطلاب الحاسبات</title>
+
+  <!-- Instant Theme Initializer (prevents flicker) -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('jooprep_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', saved);
+      if (saved === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      } else {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
   
   <!-- Google Fonts: Cairo, Tajawal & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -63,9 +78,9 @@
 <body class="bg-[#080c14] text-slate-100 min-h-screen font-sans antialiased selection:bg-indigo-500/30 selection:text-white flex flex-col transition-colors duration-300 overflow-x-hidden relative">
 
   <!-- Ambient Glassmorphism Background Glow Orbs -->
-  <div class="fixed -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-b from-indigo-600/25 via-blue-600/15 to-transparent blur-[140px] pointer-events-none z-0"></div>
-  <div class="fixed top-[25%] -right-20 w-[500px] h-[500px] bg-cyan-500/15 blur-[160px] pointer-events-none z-0"></div>
-  <div class="fixed -bottom-20 -left-20 w-[600px] h-[400px] bg-violet-600/15 blur-[150px] pointer-events-none z-0"></div>
+  <div class="theme-ambient-orb fixed -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-b from-indigo-600/25 via-blue-600/15 to-transparent blur-[140px] pointer-events-none z-0"></div>
+  <div class="theme-ambient-orb fixed top-[25%] -right-20 w-[500px] h-[500px] bg-cyan-500/15 blur-[160px] pointer-events-none z-0"></div>
+  <div class="theme-ambient-orb fixed -bottom-20 -left-20 w-[600px] h-[400px] bg-violet-600/15 blur-[150px] pointer-events-none z-0"></div>
 
   <!-- Top Navigation Header -->
   <header class="sticky top-0 z-50 backdrop-blur-2xl bg-[#080c14]/85 border-b border-slate-800/80 transition-all shadow-xl shadow-black/30">
@@ -110,8 +125,13 @@
         </button>
       </nav>
 
-      <!-- Right Controls: Audio & Profile -->
+      <!-- Right Controls: Theme, Audio & Profile -->
       <div class="flex items-center gap-2.5">
+        <!-- Theme Mode Toggle Button -->
+        <button id="theme-toggle-btn" onclick="toggleTheme()" title="تبديل المظهر (فاتح / داكن)" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-amber-400 transition hover:border-slate-700">
+          <i data-lucide="moon" id="theme-icon" class="w-4 h-4 text-amber-300"></i>
+        </button>
+
         <!-- Audio Readout Toggle Button -->
         <button id="audio-toggle-btn" onclick="toggleAudio()" title="تشغيل/كتم الصوت التلقائي" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-cyan-400 transition hover:border-slate-700">
           <i data-lucide="volume-2" id="audio-icon" class="w-4 h-4 text-emerald-400"></i>
