@@ -480,7 +480,7 @@ const SUBJECTS_DATA = {
 // ----------------- Global Application State -----------------
 const state = {
   activeView: 'dashboard',
-  audioEnabled: true,
+  audioEnabled: false,
   user: {
     name: 'طالب حاسبات وهندسة',
     college: 'كلية الحاسبات والمعلومات',
@@ -512,59 +512,15 @@ const state = {
   allErrors: []
 };
 
-// ----------------- Theme Switcher Engine -----------------
+// ----------------- Permanent Dark Theme Engine -----------------
 function initTheme() {
-  const saved = localStorage.getItem('jooprep_theme') || 'light';
-  applyTheme(saved);
+  document.documentElement.setAttribute('data-theme', 'dark');
+  document.documentElement.classList.add('dark');
+  document.documentElement.classList.remove('light');
 }
 
-function applyTheme(theme) {
-  const root = document.documentElement;
-  const icon = document.getElementById('theme-icon');
-  const label = document.getElementById('theme-label');
-  const btn = document.getElementById('theme-toggle-btn');
-  
-  if (theme === 'dark') {
-    root.setAttribute('data-theme', 'dark');
-    root.classList.add('dark');
-    root.classList.remove('light');
-    if (icon) {
-      icon.setAttribute('data-lucide', 'sun');
-      icon.className = 'w-4 h-4 text-amber-300';
-    }
-    if (label) {
-      label.innerText = 'الوضع الفاتح ☀️';
-    }
-    if (btn) {
-      btn.title = 'التبديل إلى الوضع الأبيض (الفاتح)';
-    }
-  } else {
-    root.setAttribute('data-theme', 'light');
-    root.classList.add('light');
-    root.classList.remove('dark');
-    if (icon) {
-      icon.setAttribute('data-lucide', 'moon');
-      icon.className = 'w-4 h-4 text-blue-600';
-    }
-    if (label) {
-      label.innerText = 'الوضع الداكن 🌙';
-    }
-    if (btn) {
-      btn.title = 'التبديل إلى الوضع الأسود (الداكن)';
-    }
-  }
-  localStorage.setItem('jooprep_theme', theme);
-  if (window.lucide) lucide.createIcons();
-}
-
-function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme') || (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-  const next = current === 'dark' ? 'light' : 'dark';
-  applyTheme(next);
-}
-
-window.toggleTheme = toggleTheme;
-window.initTheme = initTheme;
+window.toggleTheme = function() {};
+window.toggleAudio = function() {};
 
 // ----------------- Initialization -----------------
 document.addEventListener('DOMContentLoaded', () => {
@@ -649,12 +605,8 @@ function toggleAudio() {
 }
 
 function speakText(text) {
-  if (!state.audioEnabled || !('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'ar-EG';
-  utterance.rate = 1.05;
-  window.speechSynthesis.speak(utterance);
+  // Voice readout disabled per user request
+  return;
 }
 
 // ----------------- Render 6 Subjects Grid on Dashboard -----------------

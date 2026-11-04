@@ -1,38 +1,22 @@
 /* ==========================================================================
-   JooPrep Educational Platform — Dynamic Dual-Theme Design System
+   JooPrep Educational Platform — Permanent Dark Theme Design System
    Exact Spec Palettes:
-   Light (White): #FFFFFF Canvas, #F7F9FC Surface, #E3E8F0 Border, #0F172A Text
-   Dark (Black):  #0B1220 Canvas, #131C2E Surface, #263247 Border, #E8EEF9 Text
+   Canvas:         #0B1220
+   Cards/Surface:  #131C2E
+   Borders:        #263247
+   Text:           #E8EEF9
+   Muted Text:     #92A0B8
+   Primary Blue:   #2563EB
+   Primary Tint:   #8DB4FF
+   Dark Blue Tint: #14234A
+   Secondary Teal: #2DD4BF
+   Secondary Tint: #0F2F31
    ========================================================================== */
 
 :root,
-[data-theme="light"],
-html.light {
-  --bg: #FFFFFF;   /* خلفية الصفحة البيضاء الناصعة */
-  --sf: #F7F9FC;   /* كروت السطح الفاتحة */
-  --bd: #E3E8F0;   /* الحدود الأنيقة */
-  --tx: #0F172A;   /* النص الأساسي عالي التباين */
-  --mu: #5B6B82;   /* النص الباهت الهادئ */
-  --p:  #2563EB;   /* الأزرق الأساسي (الأزرار) */
-  --pt: #1D4ED8;   /* الأزرق للنص والأيقونات */
-  --tn: #EEF4FF;   /* خلفية زرقاء فاتحة */
-  --sc: #0D9488;   /* التيل (التقدم والإنجاز) */
-  --st: #E6F7F5;   /* خلفية تيل فاتحة */
-
-  /* Surface & Shadow Tokens */
-  --shadow-card: 0 4px 18px -2px rgba(15, 23, 42, 0.06), 0 1px 4px rgba(15, 23, 42, 0.04);
-  --shadow-card-hover: 0 14px 28px -4px rgba(37, 99, 235, 0.12), 0 4px 10px rgba(15, 23, 42, 0.05);
-  --shadow-btn-primary: 0 4px 16px rgba(37, 99, 235, 0.3);
-  --shadow-btn-hover: 0 8px 24px rgba(37, 99, 235, 0.45);
-  --header-bg: rgba(255, 255, 255, 0.94);
-  --header-border: #E3E8F0;
-  --code-bg: #0F172A;
-  --code-tx: #F8FAFC;
-  --glow-opacity: 0.1;
-}
-
-[data-theme="dark"],
-html.dark {
+html,
+body,
+[data-theme="dark"] {
   --bg: #0B1220;   /* خلفية الصفحة الداكنة الفخمة */
   --sf: #131C2E;   /* الكروت الداكنة */
   --bd: #263247;   /* الحدود المتناسقة */
@@ -49,7 +33,7 @@ html.dark {
   --shadow-card-hover: 0 22px 48px -10px rgba(0, 0, 0, 0.8), 0 0 30px -5px rgba(37, 99, 235, 0.28);
   --shadow-btn-primary: 0 6px 22px rgba(37, 99, 235, 0.4);
   --shadow-btn-hover: 0 10px 30px rgba(37, 99, 235, 0.55);
-  --header-bg: rgba(11, 18, 32, 0.9);
+  --header-bg: rgba(11, 18, 32, 0.92);
   --header-border: #263247;
   --code-bg: #060B14;
   --code-tx: #E8EEF9;
@@ -61,7 +45,6 @@ body {
   background-color: var(--bg) !important;
   color: var(--tx) !important;
   overflow-x: hidden;
-  transition: background-color 0.25s ease, color 0.25s ease;
   background-image: 
     radial-gradient(circle at 50% -10%, rgba(37, 99, 235, var(--glow-opacity)) 0%, transparent 60%),
     radial-gradient(circle at 100% 30%, rgba(13, 148, 136, var(--glow-opacity)) 0%, transparent 50%),
@@ -107,19 +90,13 @@ body {
   overflow-y: hidden;
 }
 
-/* Ambient Orbs */
+/* Ambient Glow Orbs */
 .theme-ambient-orb {
-  transition: opacity 0.3s ease;
-}
-[data-theme="light"] .theme-ambient-orb {
-  opacity: 0.2;
-}
-[data-theme="dark"] .theme-ambient-orb {
   opacity: 0.85;
 }
 
 /* ==========================================================================
-   Typography & Strict Contrast Protection (Light & Dark)
+   Typography & Strict Contrast Protection (Dark)
    ========================================================================== */
 
 h1, h2, h3, h4, h5, h6 {
@@ -205,8 +182,7 @@ header {
   backdrop-filter: blur(24px) saturate(200%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
   border-bottom: 1px solid var(--header-border) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
-  transition: background-color 0.25s ease, border-color 0.25s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
 }
 
 /* Mobile Nav Glass Bar */
@@ -382,7 +358,7 @@ select:focus {
   background: var(--tn) !important;
   border: 1.5px solid var(--p) !important;
   color: var(--tx) !important;
-  border-radius: 1.25rem 1.25rem 1.25rem 0.25rem !important;
+  border-radius: 1.25rem 1.25rem 0.25rem 1.25rem !important;
   box-shadow: 0 3px 12px rgba(37, 99, 235, 0.1) !important;
 }
 
@@ -472,7 +448,7 @@ circle.text-slate-800\/80 {
 
 /* Print Stylesheet */
 @media print {
-  header, nav, #audio-toggle-btn, #theme-toggle-btn, .btn-primary, #viva-input-card, #quiz-problem-card, button, .no-print {
+  header, nav, .btn-primary, #viva-input-card, #quiz-problem-card, button, .no-print {
     display: none !important;
   }
   body {

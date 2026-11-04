@@ -4,21 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>JooPrep — منصة التأهيل الأكاديمي والعملي لطلاب الحاسبات</title>
-
-  <!-- Instant Theme Initializer (prevents flicker) -->
-  <script>
-    (function() {
-      const saved = localStorage.getItem('jooprep_theme') || 'light';
-      document.documentElement.setAttribute('data-theme', saved);
-      if (saved === 'dark') {
-        document.documentElement.classList.add('dark');
-        document.documentElement.classList.remove('light');
-      } else {
-        document.documentElement.classList.add('light');
-        document.documentElement.classList.remove('dark');
-      }
-    })();
-  </script>
   
   <!-- Google Fonts: Cairo, Tajawal & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -125,21 +110,10 @@
         </button>
       </nav>
 
-      <!-- Right Controls: Theme, Audio & Profile -->
+      <!-- Right Controls: Profile -->
       <div class="flex items-center gap-2.5">
-        <!-- Theme Mode Toggle Button (White & Black Switch) -->
-        <button id="theme-toggle-btn" onclick="toggleTheme()" title="تبديل المظهر بين الأبيض والأسود" class="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-700/80 bg-slate-900/80 hover:border-blue-500 transition shadow-sm cursor-pointer select-none">
-          <i data-lucide="sun" id="theme-icon" class="w-4 h-4 text-amber-400"></i>
-          <span id="theme-label" class="text-xs font-bold text-slate-200 hidden sm:inline">الوضع الفاتح</span>
-        </button>
-
-        <!-- Audio Readout Toggle Button -->
-        <button id="audio-toggle-btn" onclick="toggleAudio()" title="تشغيل/كتم الصوت التلقائي" class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-cyan-400 transition hover:border-slate-700">
-          <i data-lucide="volume-2" id="audio-icon" class="w-4 h-4 text-emerald-400"></i>
-        </button>
-
         <!-- Profile / Info Pill -->
-        <button onclick="navigate('profile')" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition">
+        <button onclick="navigate('profile')" class="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition">
           <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-500 to-cyan-500 text-white font-black flex items-center justify-center text-xs shadow-sm">
             أ
           </div>
