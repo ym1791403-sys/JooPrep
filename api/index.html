@@ -327,6 +327,16 @@
             <option value="cs_intro">مقدمة علوم الحاسب (Introduction to Computer Science - CS 101)</option>
           </select>
 
+          <!-- Add & Manage Questions Buttons -->
+          <button type="button" onclick="openAddQuestionModal()" class="btn-glass-primary px-3.5 py-2 rounded-xl text-xs font-black shadow-md flex items-center gap-1.5 transition active:scale-95 cursor-pointer">
+            <i data-lucide="plus-circle" class="w-4 h-4 text-cyan-300"></i>
+            <span>+ أضف سؤال</span>
+          </button>
+          <button type="button" onclick="openManageQuestionsModal()" class="btn-glass-secondary px-3.5 py-2 rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition active:scale-95 cursor-pointer">
+            <i data-lucide="layers" class="w-4 h-4 text-slate-400"></i>
+            <span id="quiz-bank-count-btn">بنك الأسئلة (0)</span>
+          </button>
+
           <!-- Mode Toggle: Practice vs Exam -->
           <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-bold">
             <button id="mode-btn-practice" onclick="setQuizMode('practice')" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-black shadow-md transition">
@@ -336,6 +346,34 @@
               امتحان (مؤقت ومراجعة)
             </button>
           </div>
+        </div>
+      </div>
+
+      <!-- Empty State Card (When subject has 0 questions) -->
+      <div id="quiz-empty-card" class="glass-card p-8 sm:p-12 text-center space-y-6 shadow-2xl animate-slide-up">
+        <div class="w-20 h-20 rounded-3xl bg-blue-600/15 border border-blue-500/30 text-blue-400 flex items-center justify-center mx-auto shadow-xl shadow-blue-500/10">
+          <i data-lucide="clipboard-list" class="w-10 h-10"></i>
+        </div>
+
+        <div class="space-y-2 max-w-lg mx-auto">
+          <span class="text-xs font-black px-3.5 py-1 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/30 inline-block">
+            مادة: <span id="quiz-empty-subject-name">الجبر الخطي (Linear Algebra)</span>
+          </span>
+          <h3 class="text-2xl font-black text-white pt-2">لا توجد أسئلة مضافة في هذه المادة بعد</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            تم تفريغ كافة الأسئلة الافتراضية بنجاح! أنت المتحكم الكامل في بنك الأسئلة: يمكنك إضافة أسئلتك المخصصة الآن لبدء التدريب والامتحانات فوراً بدون أي بيانات مسبقة.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <button type="button" onclick="openAddQuestionModal()" class="btn-glass-primary px-6 py-3 rounded-2xl text-xs sm:text-sm font-black shadow-xl flex items-center gap-2 active:scale-95 transition cursor-pointer">
+            <i data-lucide="plus-circle" class="w-4 h-4 text-cyan-300"></i>
+            <span>+ إضافة أول سؤال لهذه المادة</span>
+          </button>
+          <button type="button" onclick="openImportModal()" class="btn-glass-secondary px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold shadow-lg flex items-center gap-2 active:scale-95 transition cursor-pointer">
+            <i data-lucide="file-code" class="w-4 h-4 text-cyan-400"></i>
+            <span>استيراد كويز سريع (JSON)</span>
+          </button>
         </div>
       </div>
 
@@ -1043,6 +1081,220 @@
       <span id="mob-nav-auth-label">حسابي</span>
     </button>
   </nav>
+
+  <!-- ================= MODAL 1: ADD QUESTION ================= -->
+  <div id="modal-add-question" class="hidden fixed inset-0 z-50 modal-overlay items-center justify-center p-4 overflow-y-auto">
+    <div class="glass-card max-w-xl w-full p-6 sm:p-7 space-y-5 rounded-3xl shadow-2xl border border-blue-500/30 animate-modal-pop my-auto">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center border border-blue-500/30">
+            <i data-lucide="plus-circle" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-white text-base">إضافة سؤال جديد إلى الكويز</h3>
+            <p class="text-[11px] text-slate-400 font-mono">Question Creator • 4 Choices & Hints</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAddQuestionModal()" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Form Fields -->
+      <div class="space-y-4 text-xs sm:text-sm">
+        
+        <!-- Subject Selector -->
+        <div class="space-y-1.5">
+          <label class="block font-bold text-slate-300">المادة الدراسية:</label>
+          <select id="add-q-subject" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3.5 py-2.5 text-slate-100 font-sans outline-none transition cursor-pointer font-bold">
+            <option value="linear_algebra">الجبر الخطي (Linear Algebra)</option>
+            <option value="calculus">التفاضل والتكامل (Calculus)</option>
+            <option value="basic_electric">الدوائر الكهربية (Basic Electric)</option>
+            <option value="physics">الفيزياء الهندسية (Physics)</option>
+            <option value="english">اللغة الإنجليزية (English)</option>
+            <option value="cs_intro">مقدمة علوم الحاسب (Introduction to Computer Science)</option>
+          </select>
+        </div>
+
+        <!-- Question Prompt Textarea -->
+        <div class="space-y-1.5">
+          <label class="block font-bold text-slate-300">نص السؤال (يدعم الإنجليزية أو العربية و KaTeX Math):</label>
+          <textarea id="add-q-prompt" rows="3" placeholder="مثال: What is the time complexity of Merge Sort in the worst case?" dir="auto" class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl p-3 text-slate-100 font-sans outline-none transition"></textarea>
+        </div>
+
+        <!-- 4 Options (A, B, C, D) -->
+        <div class="space-y-2">
+          <label class="block font-bold text-slate-300">الخيارات الأربعة (Options A, B, C, D):</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div class="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 focus-within:border-blue-500">
+              <span class="font-mono font-bold text-indigo-400 text-xs">A:</span>
+              <input type="text" id="add-q-opt-a" placeholder="الخيار A" dir="auto" class="w-full bg-transparent text-slate-100 outline-none text-xs">
+            </div>
+            <div class="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 focus-within:border-blue-500">
+              <span class="font-mono font-bold text-indigo-400 text-xs">B:</span>
+              <input type="text" id="add-q-opt-b" placeholder="الخيار B" dir="auto" class="w-full bg-transparent text-slate-100 outline-none text-xs">
+            </div>
+            <div class="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 focus-within:border-blue-500">
+              <span class="font-mono font-bold text-indigo-400 text-xs">C:</span>
+              <input type="text" id="add-q-opt-c" placeholder="الخيار C" dir="auto" class="w-full bg-transparent text-slate-100 outline-none text-xs">
+            </div>
+            <div class="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 focus-within:border-blue-500">
+              <span class="font-mono font-bold text-indigo-400 text-xs">D:</span>
+              <input type="text" id="add-q-opt-d" placeholder="الخيار D" dir="auto" class="w-full bg-transparent text-slate-100 outline-none text-xs">
+            </div>
+          </div>
+        </div>
+
+        <!-- Correct Option & Explanation -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-1 space-y-1.5">
+            <label class="block font-bold text-emerald-400">الإجابة الصحيحة:</label>
+            <select id="add-q-correct" class="w-full bg-slate-950 border border-emerald-500/50 rounded-xl px-3 py-2 text-emerald-300 font-mono font-bold outline-none cursor-pointer">
+              <option value="A">الخيار A</option>
+              <option value="B">الخيار B</option>
+              <option value="C">الخيار C</option>
+              <option value="D">الخيار D</option>
+            </select>
+          </div>
+          <div class="sm:col-span-2 space-y-1.5">
+            <label class="block font-bold text-slate-300">التلميح والشرح (يظهر بعد الحل بالعربي):</label>
+            <input type="text" id="add-q-explanation" placeholder="تلميح أو قانون توضيحي للحل..." class="w-full bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl px-3 py-2 text-slate-100 text-xs outline-none">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap items-center justify-end gap-2.5 pt-3 border-t border-slate-800">
+        <button type="button" onclick="closeAddQuestionModal()" class="px-4 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 text-xs font-bold transition">
+          إلغاء
+        </button>
+        <button type="button" onclick="handleAddQuestionSubmit('continue')" class="btn-glass-secondary px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition active:scale-95">
+          حفظ وإضافة سؤال آخر
+        </button>
+        <button type="button" onclick="handleAddQuestionSubmit('start')" class="btn-glass-primary px-5 py-2.5 rounded-xl text-xs font-black shadow-lg transition active:scale-95 flex items-center gap-2">
+          <i data-lucide="play" class="w-3.5 h-3.5"></i>
+          <span>حفظ وبدء الكويز فوراً</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= MODAL 2: MANAGE QUESTIONS ================= -->
+  <div id="modal-manage-questions" class="hidden fixed inset-0 z-50 modal-overlay items-center justify-center p-4 overflow-y-auto">
+    <div class="glass-card max-w-2xl w-full p-6 sm:p-7 space-y-5 rounded-3xl shadow-2xl border border-slate-700/80 animate-modal-pop my-auto">
+      
+      <!-- Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
+            <i data-lucide="layers" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-white text-base">إدارة بنك الأسئلة المضافة</h3>
+            <p class="text-[11px] text-slate-400 font-mono" id="manage-q-count-badge">0 أسئلة مضافة</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeManageQuestionsModal()" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Filter by Subject & Add button -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-950/60 p-3 rounded-2xl border border-slate-800">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold text-slate-400">تصفية حسب المادة:</span>
+          <select id="manage-q-subject-filter" onchange="renderManageQuestionsList()" class="bg-slate-900 border border-slate-700 text-xs font-bold rounded-xl px-3 py-1.5 text-slate-100 outline-none cursor-pointer">
+            <option value="linear_algebra">الجبر الخطي</option>
+            <option value="calculus">التفاضل والتكامل</option>
+            <option value="basic_electric">الدوائر الكهربية</option>
+            <option value="physics">الفيزياء الهندسية</option>
+            <option value="english">اللغة الإنجليزية</option>
+            <option value="cs_intro">مقدمة علوم الحاسب</option>
+          </select>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="closeManageQuestionsModal(); openAddQuestionModal();" class="btn-glass-primary px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>إضافة سؤال</span>
+          </button>
+          <button type="button" onclick="handleClearSubjectQuestions()" class="text-rose-400 hover:text-white hover:bg-rose-950/60 px-2.5 py-1.5 rounded-xl text-xs font-bold transition">
+            إفراغ المادة
+          </button>
+        </div>
+      </div>
+
+      <!-- Question List Container -->
+      <div id="manage-q-list" class="space-y-3 max-h-[50vh] overflow-y-auto pr-1">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- Footer -->
+      <div class="flex justify-end pt-3 border-t border-slate-800">
+        <button type="button" onclick="closeManageQuestionsModal()" class="btn-glass-secondary px-5 py-2.5 rounded-xl text-xs font-bold">
+          إغلاق النافذة
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= MODAL 3: BATCH IMPORT ================= -->
+  <div id="modal-import-questions" class="hidden fixed inset-0 z-50 modal-overlay items-center justify-center p-4 overflow-y-auto">
+    <div class="glass-card max-w-xl w-full p-6 sm:p-7 space-y-4 rounded-3xl shadow-2xl border border-cyan-500/30 animate-modal-pop my-auto">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-cyan-600/20 text-cyan-400 flex items-center justify-center border border-cyan-500/30">
+            <i data-lucide="file-code" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-white text-base">استيراد كويز سريع (Batch Import)</h3>
+            <p class="text-[11px] text-slate-400 font-mono">JSON Question Array Importer</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeImportModal()" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-bold text-slate-300">اختر المادة المراد استيراد الأسئلة إليها:</label>
+          <select id="import-q-subject" class="bg-slate-950 border border-slate-800 text-xs font-bold rounded-xl px-3 py-1.5 text-slate-100 outline-none cursor-pointer">
+            <option value="linear_algebra">الجبر الخطي</option>
+            <option value="calculus">التفاضل والتكامل</option>
+            <option value="basic_electric">الدوائر الكهربية</option>
+            <option value="physics">الفيزياء الهندسية</option>
+            <option value="english">اللغة الإنجليزية</option>
+            <option value="cs_intro">مقدمة علوم الحاسب</option>
+          </select>
+        </div>
+
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-400">الصق مصفوفة الأسئلة بصيغة JSON:</span>
+          <button type="button" onclick="loadSampleImportTemplate()" class="text-cyan-400 hover:underline font-bold text-[11px]">
+            تحميل نموذج تجريبي جاهز
+          </button>
+        </div>
+
+        <textarea id="import-json-input" rows="7" placeholder='[&#10;  {&#10;    "question": "What is ...?",&#10;    "options": [&#10;      {"key": "A", "text": "Option 1"},&#10;      {"key": "B", "text": "Option 2"},&#10;      {"key": "C", "text": "Option 3"},&#10;      {"key": "D", "text": "Option 4"}&#10;    ],&#10;    "correctKey": "A",&#10;    "explanation": "شرح الإجابة..."&#10;  }&#10;]' dir="ltr" class="w-full bg-slate-950 font-mono text-xs border border-slate-800 focus:border-cyan-500 rounded-xl p-3 text-slate-200 outline-none"></textarea>
+      </div>
+
+      <div class="flex justify-end gap-2.5 pt-3 border-t border-slate-800">
+        <button type="button" onclick="closeImportModal()" class="px-4 py-2.5 rounded-xl text-slate-400 hover:text-white text-xs font-bold">
+          إلغاء
+        </button>
+        <button type="button" onclick="handleBatchImportSubmit()" class="btn-glass-primary px-5 py-2.5 rounded-xl text-xs font-black shadow-lg">
+          بدء استيراد الأسئلة
+        </button>
+      </div>
+
+    </div>
+  </div>
 
   <!-- Scripts -->
   <script src="/static/js/app.js"></script>

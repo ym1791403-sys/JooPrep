@@ -42,369 +42,59 @@ const SUBJECTS_DATA = {
     badgeBg: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30",
     icon: "grid-3x3",
     description: "المحددات، معكوس المصفوفات، العمليات الأولية، فضاء المتجهات، وحل المعادلات الخطية.",
-    questions: [
-      {
-        id: "la_1",
-        question: "What is the determinant of the 2x2 matrix $A = \begin{pmatrix} 3 & 2 \\ 1 & 4 \end{pmatrix}$?",
-        options: [
-          { key: "A", text: "10" },
-          { key: "B", text: "14" },
-          { key: "C", text: "12" },
-          { key: "D", text: "8" }
-        ],
-        correctKey: "A",
-        explanation: "قانون محدد مصفوفة 2x2 هو حاصل ضرب عناصر القطر الرئيسي ناقص حاصل ضرب عناصر القطر الثانوي: $\det(A) = (3 \times 4) - (2 \times 1) = 12 - 2 = 10$."
-      },
-      {
-        id: "la_2",
-        question: "A square matrix $A$ is invertible (non-singular) if and only if:",
-        options: [
-          { key: "A", text: "$\det(A) = 0$" },
-          { key: "B", text: "$\det(A) \neq 0$" },
-          { key: "C", text: "All main diagonal entries are equal to 1" },
-          { key: "D", text: "The matrix is strictly symmetric" }
-        ],
-        correctKey: "B",
-        explanation: "الشرط الأساسي والضروري لوجود معكوس مصفوفة مربعة $A^{-1}$ هو أن يكون محددها غير صفري $\det(A) \neq 0$ حتى لا نقسم على صفر في صيغة المعكوس $\frac{1}{\det(A)} \operatorname{adj}(A)$."
-      },
-      {
-        id: "la_3",
-        question: "If matrix $A$ has dimension $3 \times 2$ and matrix $B$ has dimension $2 \times 4$, what is the dimension of the product matrix $AB$?",
-        options: [
-          { key: "A", text: "$2 \times 2$" },
-          { key: "B", text: "$3 \times 4$" },
-          { key: "C", text: "$4 \times 3$" },
-          { key: "D", text: "Matrix multiplication is undefined" }
-        ],
-        correctKey: "B",
-        explanation: "لإمكانية ضرب مصفوفتين يجب أن يتساوى عدد أعمدة الأولى مع عدد صفوف الثانية ($2 = 2$). وتكون رتبة المصفوفة الناتجة هي (صفوف الأولى $\times$ أعمدة الثانية) أي $3 \times 4$."
-      },
-      {
-        id: "la_4",
-        question: "For any matrix $A$, the double transpose $(A^T)^T$ is always equal to:",
-        options: [
-          { key: "A", text: "$-A$" },
-          { key: "B", text: "$A^{-1}$" },
-          { key: "C", text: "$A$" },
-          { key: "D", text: "$I$ (Identity Matrix)" }
-        ],
-        correctKey: "C",
-        explanation: "تدوير المصفوفة مرتين يعيد الصفوف والأعمدة إلى وضعها الأصلي تماماً، وبالتالي فإن $(A^T)^T = A$."
-      },
-      {
-        id: "la_5",
-        question: "In a system of linear equations $Ax = b$ with a square coefficient matrix $A$, if $\det(A) \neq 0$, the system has:",
-        options: [
-          { key: "A", text: "A unique solution" },
-          { key: "B", text: "Infinitely many solutions" },
-          { key: "C", text: "No solution (inconsistent)" },
-          { key: "D", text: "Exactly two distinct solutions" }
-        ],
-        correctKey: "A",
-        explanation: "عندما يكون محدد مصفوفة المعاملات غير صفري، تكون المصفوفة قابلة للعكس ويمتلك النظام حلاً وحيداً فقط يُحسب من $x = A^{-1}b$ (قاعدة كرامر Cramer's Rule)."
-      }
-    ]
+    questions: []
   },
-
   calculus: {
     id: "calculus",
     nameAr: "التفاضل والتكامل",
     nameEn: "Calculus",
     code: "MATH 102",
-    theme: "from-cyan-500 via-sky-500 to-blue-600",
-    borderGlow: "hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.25)]",
-    badgeBg: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
-    icon: "trending-up",
-    description: "النهايات، قواعد الاشتقاق، تطبيقات المشتقة، والتكامل غير المحدود وتطبيقات المساحات.",
-    questions: [
-      {
-        id: "calc_1",
-        question: "Evaluate the fundamental trigonometric limit: $\lim_{x \to 0} \frac{\sin(x)}{x}$",
-        options: [
-          { key: "A", text: "0" },
-          { key: "B", text: "1" },
-          { key: "C", text: "$\infty$" },
-          { key: "D", text: "Undefined" }
-        ],
-        correctKey: "B",
-        explanation: "هذه نهاية قياسية شهيرة في حساب التفاضل $\lim_{x \to 0} \frac{\sin(x)}{x} = 1$، ويمكن إثباتها بنظرية الشطيرة (Squeeze Theorem) أو باستخدام قاعدة لوبيتال $\frac{\cos(0)}{1} = 1$."
-      },
-      {
-        id: "calc_2",
-        question: "What is the first derivative of the polynomial function $f(x) = x^4 - 3x^2 + 7$?",
-        options: [
-          { key: "A", text: "$4x^3 - 6x$" },
-          { key: "B", text: "$4x^3 - 6x + 7$" },
-          { key: "C", text: "$x^3 - 6x$" },
-          { key: "D", text: "$4x^3 - 3x$" }
-        ],
-        correctKey: "A",
-        explanation: "باستخدام قاعدة القوة $\frac{d}{dx} x^n = n x^{n-1}$: مشتقة $x^4$ هي $4x^3$، ومشتقة $-3x^2$ هي $-6x$، ومشتقة الحد الثابت 7 هي 0."
-      },
-      {
-        id: "calc_3",
-        question: "Evaluate the indefinite integral: $\int (3x^2 + 2x) \, dx$",
-        options: [
-          { key: "A", text: "$x^3 + x^2 + C$" },
-          { key: "B", text: "$6x + 2 + C$" },
-          { key: "C", text: "$3x^3 + 2x^2 + C$" },
-          { key: "D", text: "$x^3 + 2x + C$" }
-        ],
-        correctKey: "A",
-        explanation: "قاعدة تكامل كثيرات الحدود: $\int 3x^2 dx = \frac{3x^3}{3} = x^3$ و $\int 2x dx = \frac{2x^2}{2} = x^2$، وبإضافة ثابت التكامل ينتج $x^3 + x^2 + C$."
-      },
-      {
-        id: "calc_4",
-        question: "What is the derivative of the exponential function $f(x) = e^{3x}$ with respect to $x$?",
-        options: [
-          { key: "A", text: "$e^{3x}$" },
-          { key: "B", text: "$3e^{3x}$" },
-          { key: "C", text: "$\frac{1}{3}e^{3x}$" },
-          { key: "D", text: "$3x e^{3x-1}$" }
-        ],
-        correctKey: "B",
-        explanation: "وفقاً لقاعدة السلسلة (Chain Rule)، مشتقة $e^{u(x)}$ هي $u'(x) \cdot e^{u(x)}$؛ ومشتقة الأس $3x$ هي 3، لذا الناتج $3e^{3x}$."
-      },
-      {
-        id: "calc_5",
-        question: "In differential calculus, a function $f(x)$ has a critical point at $x = c$ if:",
-        options: [
-          { key: "A", text: "$f'(c) = 0$ or $f'(c)$ is undefined" },
-          { key: "B", text: "$f(c) = 0$" },
-          { key: "C", text: "$f''(c) > 0$ strictly" },
-          { key: "D", text: "The function is strictly linear" }
-        ],
-        correctKey: "A",
-        explanation: "تعريف النقطة الحرجة (Critical Point) هو أي نقطة داخل مجال الدالة تجعل المشتقة الأولى مساوية للصفر $f'(c) = 0$ أو تجعل المشتقة غير موجودة أو غير معرّفة."
-      }
-    ]
+    theme: "from-blue-600 via-indigo-600 to-violet-600",
+    borderGlow: "hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(37,99,235,0.25)]",
+    badgeBg: "bg-blue-500/15 text-blue-300 border-blue-500/30",
+    icon: "sigma",
+    description: "النهايات، قواعد الاشتقاق، تطبيقات التفاضل، التكامل المحدود وغير المحدود، والمساحات.",
+    questions: []
   },
-
   basic_electric: {
     id: "basic_electric",
     nameAr: "الدوائر الكهربية",
     nameEn: "Basic Electric",
     code: "ELEC 101",
-    theme: "from-amber-500 via-amber-600 to-orange-600",
+    theme: "from-amber-500 via-orange-600 to-yellow-500",
     borderGlow: "hover:border-amber-500/50 hover:shadow-[0_0_30px_rgba(245,158,11,0.25)]",
     badgeBg: "bg-amber-500/15 text-amber-300 border-amber-500/30",
     icon: "zap",
-    description: "قانون أوم، قوانين كيرشوف (KCL و KVL)، حسابات القدرة الممتصة والموردة، ومجزئ الجهد والتيار.",
-    questions: [
-      {
-        id: "be_1",
-        question: "According to Kirchhoff's Current Law (KCL), the algebraic sum of currents entering and leaving any node is:",
-        options: [
-          { key: "A", text: "The total circuit source voltage" },
-          { key: "B", text: "Zero ($0$)" },
-          { key: "C", text: "The total branch resistance" },
-          { key: "D", text: "Infinity" }
-        ],
-        correctKey: "B",
-        explanation: "قانون كيرشوف للتيار KCL مبني على مبدأ حفظ الشحنة الكهربائية: مجموع التيارات الداخلة إلى أي عقدة يساوي مجموع التيارات الخارجة منها، فالمجموع الجبري $\sum I = 0$."
-      },
-      {
-        id: "be_2",
-        question: "Two resistors $R_1 = 6\,\Omega$ and $R_2 = 3\,\Omega$ are connected in parallel. What is the equivalent resistance $R_{eq}$?",
-        options: [
-          { key: "A", text: "$9\,\Omega$" },
-          { key: "B", text: "$2\,\Omega$" },
-          { key: "C", text: "$3\,\Omega$" },
-          { key: "D", text: "$18\,\Omega$" }
-        ],
-        correctKey: "B",
-        explanation: "قانون مقاومتين متصلتين على التوازي: $R_{eq} = \frac{R_1 \times R_2}{R_1 + R_2} = \frac{6 \times 3}{6 + 3} = \frac{18}{9} = 2\,\Omega$."
-      },
-      {
-        id: "be_3",
-        question: "Under the Passive Sign Convention, an electrical circuit element absorbs positive power if:",
-        options: [
-          { key: "A", text: "Current enters the positive (+) voltage terminal ($P > 0$)" },
-          { key: "B", text: "Current exits the positive (+) terminal" },
-          { key: "C", text: "The voltage across the element equals zero" },
-          { key: "D", text: "The element resistance is infinite" }
-        ],
-        correctKey: "A",
-        explanation: "في اتفاقية الإشارات السلبية (Passive Sign Convention)، عندما يدخل التيار من الطرف الموجب للجهد يكون حاصل الضرب $P = V \times I > 0$ موجباً، مما يعني أن العنصر يمتص طاقة من الدائرة."
-      },
-      {
-        id: "be_4",
-        question: "Which formula calculates the Joule heating power dissipated in a resistor of resistance $R$ carrying current $I$?",
-        options: [
-          { key: "A", text: "$P = I^2 R$" },
-          { key: "B", text: "$P = I / R$" },
-          { key: "C", text: "$P = V / I$" },
-          { key: "D", text: "$P = I R^2$" }
-        ],
-        correctKey: "A",
-        explanation: "القدرة الحرارية المبددة في مقاومة تُحسب من قانون جول: $P = V \times I = (I \cdot R) \times I = I^2 R$ أو $P = \frac{V^2}{R}$."
-      },
-      {
-        id: "be_5",
-        question: "In a direct current (DC) steady-state circuit, an ideal capacitor acts as:",
-        options: [
-          { key: "A", text: "A short circuit ($0\,\Omega$)" },
-          { key: "B", text: "An open circuit (infinite resistance)" },
-          { key: "C", text: "An independent voltage source" },
-          { key: "D", text: "An ideal amplifier" }
-        ],
-        correctKey: "B",
-        explanation: "في دوائر التيار المستمر (DC) عند الاستقرار، التيار عبر المكثف يُعطى بالعلاقة $i = C \frac{dv}{dt} = 0$ لأن الجهد ثابت ومشقته صفرية، وبالتالي يتصرف المكثف كدائرة مفتوحة (Open Circuit)."
-      }
-    ]
+    description: "قانون أوم، قوانين كيرشوف (KCL & KVL)، تحليل العقد والمش، ونظريات ثيفنن ونورتون.",
+    questions: []
   },
-
   physics: {
     id: "physics",
     nameAr: "الفيزياء الهندسية",
     nameEn: "Physics",
     code: "PHYS 101",
-    theme: "from-emerald-500 via-teal-500 to-cyan-600",
-    borderGlow: "hover:border-emerald-500/50 hover:shadow-[0_0_30px_rgba(16,185,129,0.25)]",
-    badgeBg: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+    theme: "from-violet-600 via-purple-600 to-indigo-600",
+    borderGlow: "hover:border-violet-500/50 hover:shadow-[0_0_30px_rgba(139,92,246,0.25)]",
+    badgeBg: "bg-violet-500/15 text-violet-300 border-violet-500/30",
     icon: "atom",
-    description: "قوانين نيوتن للحركة، الشغل والطاقة، قانون كولوم، المجال الكهربي، والموجات الكهرومغناطيسية.",
-    questions: [
-      {
-        id: "phys_1",
-        question: "According to Coulomb's Law, the electrostatic force between two stationary point charges is inversely proportional to:",
-        options: [
-          { key: "A", text: "The distance between them ($r$)" },
-          { key: "B", text: "The square of the distance between them ($r^2$)" },
-          { key: "C", text: "The product of their charges" },
-          { key: "D", text: "The square root of distance" }
-        ],
-        correctKey: "B",
-        explanation: "قانون كولوم ينص على أن $F = k \frac{|q_1 q_2|}{r^2}$؛ القوة تتناسب طردياً مع حاصل ضرب الشحنتين وعكسياً مع مربع المسافة الفاصلة بينهما ($1/r^2$)."
-      },
-      {
-        id: "phys_2",
-        question: "An object with mass $m = 4\text{ kg}$ travels at a constant velocity of $v = 3\text{ m/s}$. What is its kinetic energy?",
-        options: [
-          { key: "A", text: "$12\text{ Joules}$" },
-          { key: "B", text: "$18\text{ Joules}$" },
-          { key: "C", text: "$36\text{ Joules}$" },
-          { key: "D", text: "$24\text{ Joules}$" }
-        ],
-        correctKey: "B",
-        explanation: "قانون طاقة الحركة الميكانيكية هو $KE = \frac{1}{2} m v^2 = \frac{1}{2} \times 4 \times (3)^2 = 2 \times 9 = 18\text{ Joules}$."
-      },
-      {
-        id: "phys_3",
-        question: "What is the standard SI unit for Electric Field intensity ($E$)?",
-        options: [
-          { key: "A", text: "$\text{Newton / Coulomb (N/C)}$ or $\text{Volt / meter (V/m)}$" },
-          { key: "B", text: "$\text{Joule / Coulomb}$" },
-          { key: "C", text: "$\text{Tesla}$" },
-          { key: "D", text: "$\text{Watt / meter}$" }
-        ],
-        correctKey: "A",
-        explanation: "شدة المجال الكهربائي هي القوة الكهربائية المؤثرة على وحدة الشحنات الموجبة $E = F / q$، لذا وحدتها في النظام الدولي هي $\text{N/C}$ وتكافئ تماماً $\text{V/m}$."
-      },
-      {
-        id: "phys_4",
-        question: "The First Law of Thermodynamics is fundamentally a statement of:",
-        options: [
-          { key: "A", text: "Conservation of electric charge" },
-          { key: "B", text: "Conservation of energy" },
-          { key: "C", text: "Entropy continuously increasing" },
-          { key: "D", text: "Thermal equilibrium without heat transfer" }
-        ],
-        correctKey: "B",
-        explanation: "القانون الأول للديناميكا الحرارية يمثل مبدأ حفظ الطاقة: التغير في الطاقة الداخلية للنظام يساوي كمية الحرارة المضافة مطروحاً منها الشغل المنجز $\Delta U = Q - W$."
-      },
-      {
-        id: "phys_5",
-        question: "If the speed of light in vacuum is $c$, what is its propagation speed in an optical medium with refractive index $n = 1.5$?",
-        options: [
-          { key: "A", text: "$1.5\,c$" },
-          { key: "B", text: "$c / 1.5$" },
-          { key: "C", text: "$c$" },
-          { key: "D", text: "$2.25\,c$" }
-        ],
-        correctKey: "B",
-        explanation: "معامل الانكسار البصري يُعرّف بأنه نسبة سرعة الضوء في الفراغ إلى سرعته في الوسط $n = c / v$، وبالتالي فإن سرعة الضوء في الوسط هي $v = c / n = c / 1.5$."
-      }
-    ]
+    description: "الميكانيكا الكلاسيكية، قوانين نيوتن، الشغل والطاقة، الكهرومغناطيسية، والموجات.",
+    questions: []
   },
-
   english: {
     id: "english",
-    nameAr: "اللغة الإنجليزية الأكاديمية",
+    nameAr: "اللغة الإنجليزية",
     nameEn: "English",
     code: "ENG 101",
-    theme: "from-violet-600 via-purple-600 to-fuchsia-600",
-    borderGlow: "hover:border-purple-500/50 hover:shadow-[0_0_30px_rgba(168,85,247,0.25)]",
-    badgeBg: "bg-purple-500/15 text-purple-300 border-purple-500/30",
-    icon: "languages",
-    description: "المصطلحات التقنية في الحاسبات، قواعد الكتابة الأكاديمية، تراكيب الجمل، وصياغة التقارير الفنية.",
-    questions: [
-      {
-        id: "eng_1",
-        question: "In technical documentation, which sentence represents the correct Passive Voice for: 'The engineer debugged the program.'?",
-        options: [
-          { key: "A", text: "The program was debugged by the engineer." },
-          { key: "B", text: "The program has being debugged by the engineer." },
-          { key: "C", text: "The engineer was debugged by the program." },
-          { key: "D", text: "The program is debugging by the engineer." }
-        ],
-        correctKey: "A",
-        explanation: "في زمن الماضي البسيط (Past Simple)، يتحول المبني للمجهول إلى: المفعول به + was/were + التصريف الثالث: 'The program was debugged'."
-      },
-      {
-        id: "eng_2",
-        question: "What is the precise definition of the computing term 'Concurrent execution'?",
-        options: [
-          { key: "A", text: "Running tasks strictly sequentially one after another" },
-          { key: "B", text: "Multiple tasks progressing during overlapping time periods" },
-          { key: "C", text: "Deleting outdated processes from primary memory" },
-          { key: "D", text: "Compiling source code directly into machine instructions" }
-        ],
-        correctKey: "B",
-        explanation: "المصطلح 'Concurrency' في هندسة الحاسوب ونظم التشغيل يعني معالجة وإدارة مهام متعددة في فترات زمنية متداخلة دون انتظار اكتمال كل مهمة على حدة."
-      },
-      {
-        id: "eng_3",
-        question: "Choose the grammatically correct technical conditional sentence:",
-        options: [
-          { key: "A", text: "If the algorithm is optimized, execution time will decrease." },
-          { key: "B", text: "If the algorithm will be optimized, execution time decreases." },
-          { key: "C", text: "If the algorithm was optimize, execution time would decreased." },
-          { key: "D", text: "If the algorithm optimize, time will decreased." }
-        ],
-        correctKey: "A",
-        explanation: "الحالة الشرطية الأولى (First Conditional) تتكون من: If + مضارع بسيط (is optimized) يعقبه في جواب الشرط will + المصدر (will decrease)."
-      },
-      {
-        id: "eng_4",
-        question: "In computer networking, the term 'Bandwidth' refers to:",
-        options: [
-          { key: "A", text: "The physical mass of network cables" },
-          { key: "B", text: "The maximum rate of data transfer across a given communication path" },
-          { key: "C", text: "The browser software used to navigate web portals" },
-          { key: "D", text: "The battery consumption of a wireless network adapter" }
-        ],
-        correctKey: "B",
-        explanation: "عرض النطاق الترددي (Bandwidth) يعبر عن الطاقة القصوى لنقل حجم البيانات عبر قناة أو مسار شبكي في وحدة زمنية محددة (مثل Mbps أو Gbps)."
-      },
-      {
-        id: "eng_5",
-        question: "Select the word that correctly completes the sentence: 'The software architecture must be _______ to support future growth in workloads.'",
-        options: [
-          { key: "A", text: "Scalable" },
-          { key: "B", text: "Redundant" },
-          { key: "C", text: "Depreciated" },
-          { key: "D", text: "Volatile" }
-        ],
-        correctKey: "A",
-        explanation: "كلمة 'Scalable' (قابلة للتوسع والاستيعاب) هي المصطلح الهندسي الصحيح لوصف النظام البرمجي القادر على التوسع بسلاسة عند زيادة الحمل والبيانات."
-      }
-    ]
+    theme: "from-emerald-500 via-teal-600 to-cyan-600",
+    borderGlow: "hover:border-emerald-500/50 hover:shadow-[0_0_30px_rgba(16,185,129,0.25)]",
+    badgeBg: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+    icon: "book-open",
+    description: "المصطلحات الهندسية، القواعد المتقدمة، التراكيب الأكاديمية، ومهارات القراءة التقنية.",
+    questions: []
   },
-
   cs_intro: {
     id: "cs_intro",
-    nameAr: "مقدمة في علوم الحاسب",
+    nameAr: "مقدمة علوم الحاسب",
     nameEn: "Introduction to Computer Science",
     code: "CS 101",
     theme: "from-teal-600 via-emerald-600 to-cyan-600",
@@ -412,68 +102,343 @@ const SUBJECTS_DATA = {
     badgeBg: "bg-teal-500/15 text-teal-300 border-teal-500/30",
     icon: "cpu",
     description: "المفاهيم الأساسية لعلوم الحاسب، الخوارزميات، تمثيل البيانات والأنظمة الثنائية، شبكات الحاسب، ونظم التشغيل.",
-    questions: [
-      {
-        id: "cs_1",
-        question: "What is the binary representation of the decimal number 13?",
-        options: [
-          { key: "A", text: "1101" },
-          { key: "B", text: "1011" },
-          { key: "C", text: "1110" },
-          { key: "D", text: "1001" }
-        ],
-        correctKey: "A",
-        explanation: "تحويل العدد 13 إلى النظام الثنائي: $13 = 8 + 4 + 0 + 1 = 2^3 + 2^2 + 0 + 2^0 = (1101)_2$."
-      },
-      {
-        id: "cs_2",
-        question: "Which component of the Central Processing Unit (CPU) executes arithmetic and logic operations?",
-        options: [
-          { key: "A", text: "Control Unit (CU)" },
-          { key: "B", text: "Arithmetic Logic Unit (ALU)" },
-          { key: "C", text: "Program Counter (PC)" },
-          { key: "D", text: "Memory Address Register (MAR)" }
-        ],
-        correctKey: "B",
-        explanation: "وحدة الحساب والمنطق (ALU - Arithmetic Logic Unit) هي المسؤولة عن تنفيذ العمليات الحسابية والمنطقية داخل المعالج."
-      },
-      {
-        id: "cs_3",
-        question: "What is the primary role of an Operating System Kernel?",
-        options: [
-          { key: "A", text: "Compiling source code to machine instructions" },
-          { key: "B", text: "Designing user interface layouts" },
-          { key: "C", text: "Managing hardware resources, memory allocation, and CPU scheduling" },
-          { key: "D", text: "Browsing web applications over HTTP" }
-        ],
-        correctKey: "C",
-        explanation: "نواة نظام التشغيل (Kernel) هي المسؤولة عن إدارة موارد الحاسوب المادية والذاكرة وتوزيع العمليات على المعالج بأمان."
-      },
-      {
-        id: "cs_4",
-        question: "Which algorithmic paradigm does Binary Search employ on sorted arrays?",
-        options: [
-          { key: "A", text: "Divide and Conquer" },
-          { key: "B", text: "Greedy Strategy" },
-          { key: "C", text: "Brute Force" },
-          { key: "D", text: "Backtracking" }
-        ],
-        correctKey: "A",
-        explanation: "خوارزمية البحث الثنائي تطبق استراتيجية فرّق تسُد (Divide and Conquer) بتقسيم مجال البحث إلى النصفين في كل خطوة لتحقيق تعقيد زمني $O(\\log N)$."
-      },
-      {
-        id: "cs_5",
-        question: "Which transport layer protocol guarantees reliable, ordered packet delivery over the Internet?",
-        options: [
-          { key: "A", text: "UDP (User Datagram Protocol)" },
-          { key: "B", text: "TCP (Transmission Control Protocol)" },
-          { key: "C", text: "IP (Internet Protocol)" },
-          { key: "D", text: "DNS (Domain Name System)" }
-        ],
-        correctKey: "B",
-        explanation: "بروتوكول TCP يوفر اتصالاً موثوقاً مع تأكيد الوصول (ACK) والترتيب وإعادة الإرسال عند فقدان أي حزمة بيانات."
+    questions: []
+  }
+};
+
+// ----------------- Custom Quiz Bank Engine (Zero Defaults • Student Managed) -----------------
+function getCustomQuestionsMap() {
+  try {
+    const raw = localStorage.getItem('jooprep_custom_questions');
+    return raw ? JSON.parse(raw) : {};
+  } catch(e) {
+    return {};
+  }
+}
+
+function saveCustomQuestionsMap(map) {
+  localStorage.setItem('jooprep_custom_questions', JSON.stringify(map));
+}
+
+function loadCustomQuestions() {
+  const map = getCustomQuestionsMap();
+  SUBJECT_ORDER.forEach(key => {
+    if (SUBJECTS_DATA[key]) {
+      SUBJECTS_DATA[key].questions = Array.isArray(map[key]) ? map[key] : [];
+    }
+  });
+}
+
+function addCustomQuestion(subjectKey, questionObj) {
+  const map = getCustomQuestionsMap();
+  if (!map[subjectKey]) map[subjectKey] = [];
+  map[subjectKey].push(questionObj);
+  saveCustomQuestionsMap(map);
+  loadCustomQuestions();
+  renderSubjectsGrid();
+  updateQuizBankCountUI();
+
+  if (state.activeSubjectKey === subjectKey) {
+    state.quizQuestions = [...SUBJECTS_DATA[subjectKey].questions];
+    startQuizForSubject(subjectKey);
+  }
+}
+
+function deleteCustomQuestion(subjectKey, questionId) {
+  const map = getCustomQuestionsMap();
+  if (map[subjectKey]) {
+    map[subjectKey] = map[subjectKey].filter(q => q.id !== questionId);
+    saveCustomQuestionsMap(map);
+    loadCustomQuestions();
+    renderSubjectsGrid();
+    updateQuizBankCountUI();
+
+    if (state.activeSubjectKey === subjectKey) {
+      state.quizQuestions = [...SUBJECTS_DATA[subjectKey].questions];
+      startQuizForSubject(subjectKey);
+    }
+  }
+}
+
+function clearSubjectQuestions(subjectKey) {
+  const map = getCustomQuestionsMap();
+  map[subjectKey] = [];
+  saveCustomQuestionsMap(map);
+  loadCustomQuestions();
+  renderSubjectsGrid();
+  updateQuizBankCountUI();
+
+  if (state.activeSubjectKey === subjectKey) {
+    startQuizForSubject(subjectKey);
+  }
+}
+
+function updateQuizBankCountUI() {
+  const subKey = state.activeSubjectKey || 'linear_algebra';
+  const sub = SUBJECTS_DATA[subKey];
+  const count = sub && sub.questions ? sub.questions.length : 0;
+  const btnText = document.getElementById('quiz-bank-count-btn');
+  if (btnText) {
+    btnText.innerText = `بنك الأسئلة (${count})`;
+  }
+}
+
+// ----------------- Lightweight Floating Toast Feedback -----------------
+function showToast(msg, type = 'success') {
+  let toast = document.getElementById('global-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'global-toast';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = type === 'success' 
+    ? `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i><span>${msg}</span>` 
+    : `<i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i><span>${msg}</span>`;
+  toast.className = `fixed bottom-20 sm:bottom-8 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs sm:text-sm font-bold transition-all duration-300 pointer-events-none transform translate-y-0 opacity-100 ${
+    type === 'success' ? 'bg-slate-900 border border-emerald-500/50 text-emerald-300' : 'bg-slate-900 border border-rose-500/50 text-rose-300'
+  }`;
+  if (window.lucide) lucide.createIcons();
+  setTimeout(() => {
+    toast.className = 'fixed bottom-20 sm:bottom-8 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs sm:text-sm font-bold transition-all duration-300 pointer-events-none transform translate-y-10 opacity-0 bg-slate-900 border border-slate-700 text-slate-300';
+  }, 3200);
+}
+
+// ----------------- Modal Open / Close Handlers -----------------
+window.openAddQuestionModal = function(subKey) {
+  const modal = document.getElementById('modal-add-question');
+  if (!modal) return;
+  const select = document.getElementById('add-q-subject');
+  if (select) {
+    select.value = subKey || state.activeSubjectKey || 'linear_algebra';
+  }
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+  if (window.lucide) lucide.createIcons();
+};
+
+window.closeAddQuestionModal = function() {
+  const modal = document.getElementById('modal-add-question');
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+};
+
+window.handleAddQuestionSubmit = function(action = 'start') {
+  const subKey = document.getElementById('add-q-subject').value;
+  const prompt = document.getElementById('add-q-prompt').value.trim();
+  const optA = document.getElementById('add-q-opt-a').value.trim();
+  const optB = document.getElementById('add-q-opt-b').value.trim();
+  const optC = document.getElementById('add-q-opt-c').value.trim();
+  const optD = document.getElementById('add-q-opt-d').value.trim();
+  const correctKey = document.getElementById('add-q-correct').value;
+  const explanation = document.getElementById('add-q-explanation').value.trim() || 'إجابة صحيحة وفقاً للمفاهيم الأكاديمية المقررة.';
+
+  if (!prompt || !optA || !optB || !optC || !optD) {
+    showToast('يرجى ملء نص السؤال وجميع الخيارات الأربعة (A, B, C, D)', 'error');
+    return;
+  }
+
+  const newQuestion = {
+    id: `${subKey}_${Date.now()}`,
+    question: prompt,
+    options: [
+      { key: "A", text: optA },
+      { key: "B", text: optB },
+      { key: "C", text: optC },
+      { key: "D", text: optD }
+    ],
+    correctKey: correctKey,
+    explanation: explanation
+  };
+
+  addCustomQuestion(subKey, newQuestion);
+  showToast('تمت إضافة السؤال بنجاح إلى بنك الأسئلة!');
+
+  document.getElementById('add-q-prompt').value = '';
+  document.getElementById('add-q-opt-a').value = '';
+  document.getElementById('add-q-opt-b').value = '';
+  document.getElementById('add-q-opt-c').value = '';
+  document.getElementById('add-q-opt-d').value = '';
+  document.getElementById('add-q-explanation').value = '';
+
+  if (action === 'start') {
+    closeAddQuestionModal();
+    startQuizForSubject(subKey);
+  } else {
+    document.getElementById('add-q-prompt').focus();
+  }
+};
+
+window.openManageQuestionsModal = function() {
+  const modal = document.getElementById('modal-manage-questions');
+  if (!modal) return;
+  const sel = document.getElementById('manage-q-subject-filter');
+  if (sel) {
+    sel.value = state.activeSubjectKey || 'linear_algebra';
+  }
+  renderManageQuestionsList();
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+  if (window.lucide) lucide.createIcons();
+};
+
+window.closeManageQuestionsModal = function() {
+  const modal = document.getElementById('modal-manage-questions');
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+};
+
+window.renderManageQuestionsList = function() {
+  const sel = document.getElementById('manage-q-subject-filter');
+  const subKey = sel ? sel.value : (state.activeSubjectKey || 'linear_algebra');
+  const sub = SUBJECTS_DATA[subKey];
+  const listContainer = document.getElementById('manage-q-list');
+  const countBadge = document.getElementById('manage-q-count-badge');
+  if (!listContainer || !sub) return;
+
+  const questions = sub.questions || [];
+  if (countBadge) countBadge.innerText = `${questions.length} أسئلة مضافة`;
+
+  if (questions.length === 0) {
+    listContainer.innerHTML = `
+      <div class="p-8 text-center space-y-3 bg-slate-950/60 rounded-2xl border border-slate-800">
+        <i data-lucide="inbox" class="w-10 h-10 text-slate-500 mx-auto"></i>
+        <p class="text-sm font-bold text-slate-300">لا توجد أسئلة مضافة في هذه المادة بعد.</p>
+        <button type="button" onclick="closeManageQuestionsModal(); openAddQuestionModal('${subKey}');" class="btn-glass-primary px-4 py-2 rounded-xl text-xs font-black">
+          + أضف أول سؤال الآن
+        </button>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
+    return;
+  }
+
+  listContainer.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = "p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3 animate-slide-up";
+    card.innerHTML = `
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex items-start gap-2.5">
+          <span class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-300 font-mono text-xs font-black flex items-center justify-center border border-indigo-500/30 flex-shrink-0 mt-0.5">
+            ${idx + 1}
+          </span>
+          <p class="text-xs sm:text-sm font-bold text-slate-100 leading-relaxed font-sans" dir="auto">
+            ${q.question}
+          </p>
+        </div>
+        <button type="button" onclick="deleteCustomQuestion('${subKey}', '${q.id}'); renderManageQuestionsList(); showToast('تم حذف السؤال بنجاح', 'error');" class="p-1.5 rounded-lg text-rose-400 hover:text-white hover:bg-rose-950/60 transition flex-shrink-0" title="حذف السؤال">
+          <i data-lucide="trash-2" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 text-[11px] font-sans" dir="ltr">
+        ${q.options.map(opt => `
+          <div class="px-2.5 py-1.5 rounded-lg border flex items-center gap-2 ${opt.key === q.correctKey ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-200 font-black' : 'bg-slate-900 border-slate-800 text-slate-400'}">
+            <span class="font-mono font-bold ${opt.key === q.correctKey ? 'text-emerald-400' : 'text-slate-500'}">${opt.key}:</span>
+            <span class="truncate">${opt.text}</span>
+          </div>
+        `).join('')}
+      </div>
+
+      ${q.explanation ? `
+        <div class="text-[11px] text-slate-400 bg-slate-900/60 p-2 rounded-xl border border-slate-800/80">
+          <strong class="text-indigo-400">التلميح:</strong> ${q.explanation}
+        </div>
+      ` : ''}
+    `;
+    listContainer.appendChild(card);
+  });
+
+  if (window.lucide) lucide.createIcons();
+};
+
+window.handleClearSubjectQuestions = function() {
+  const sel = document.getElementById('manage-q-subject-filter');
+  const subKey = sel ? sel.value : (state.activeSubjectKey || 'linear_algebra');
+  if (confirm('هل أنت متأكد من رغبتك في حذف جميع أسئلة هذه المادة؟')) {
+    clearSubjectQuestions(subKey);
+    renderManageQuestionsList();
+    showToast('تم إفراغ جميع أسئلة المادة بنجاح');
+  }
+};
+
+window.openImportModal = function() {
+  const modal = document.getElementById('modal-import-questions');
+  if (!modal) return;
+  const sel = document.getElementById('import-q-subject');
+  if (sel) {
+    sel.value = state.activeSubjectKey || 'linear_algebra';
+  }
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+  if (window.lucide) lucide.createIcons();
+};
+
+window.closeImportModal = function() {
+  const modal = document.getElementById('modal-import-questions');
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+};
+
+window.loadSampleImportTemplate = function() {
+  const textarea = document.getElementById('import-json-input');
+  if (!textarea) return;
+  const sample = [
+    {
+      "question": "What is the result of 2 + 2?",
+      "options": [
+        { "key": "A", "text": "3" },
+        { "key": "B", "text": "4" },
+        { "key": "C", "text": "5" },
+        { "key": "D", "text": "6" }
+      ],
+      "correctKey": "B",
+      "explanation": "2 + 2 equals 4 according to standard arithmetic."
+    }
+  ];
+  textarea.value = JSON.stringify(sample, null, 2);
+};
+
+window.handleBatchImportSubmit = function() {
+  const subKey = document.getElementById('import-q-subject').value;
+  const rawText = document.getElementById('import-json-input').value.trim();
+  if (!rawText) {
+    showToast('يرجى لصق كود الأسئلة في الخانة', 'error');
+    return;
+  }
+
+  try {
+    const list = JSON.parse(rawText);
+    if (!Array.isArray(list) || list.length === 0) {
+      showToast('يجب أن تكون البيانات عبارة عن قائمة أسئلة (JSON Array)', 'error');
+      return;
+    }
+
+    let addedCount = 0;
+    list.forEach((item, idx) => {
+      if (item.question && Array.isArray(item.options) && item.options.length >= 2 && item.correctKey) {
+        addCustomQuestion(subKey, {
+          id: `${subKey}_${Date.now()}_${idx}`,
+          question: item.question,
+          options: item.options,
+          correctKey: item.correctKey,
+          explanation: item.explanation || 'إجابة صحيحة وفقاً للمقرر الأكاديمي.'
+        });
+        addedCount++;
       }
-    ]
+    });
+
+    closeImportModal();
+    showToast(`تم استيراد ${addedCount} سؤال بنجاح!`);
+    startQuizForSubject(subKey);
+  } catch(err) {
+    showToast(`خطأ في صيغة JSON: ${err.message}`, 'error');
   }
 };
 
@@ -563,6 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   if (window.lucide) lucide.createIcons();
 
+  loadCustomQuestions();
   initSupabaseClient();
   checkAuthSession();
 
@@ -742,7 +708,7 @@ window.startQuizWithTopic = function(course, topic) {
 function startQuizForSubject(subjectKey) {
   const sub = SUBJECTS_DATA[subjectKey] || SUBJECTS_DATA.linear_algebra;
   state.activeSubjectKey = sub.id;
-  state.quizQuestions = [...sub.questions];
+  state.quizQuestions = [...(sub.questions || [])];
   state.currentQuestionIndex = 0;
   state.userAnswers = {};
   state.quizSubmitted = false;
@@ -750,17 +716,35 @@ function startQuizForSubject(subjectKey) {
   const sel = document.getElementById('quiz-course-select');
   if (sel) sel.value = sub.id;
 
-  document.getElementById('quiz-topic-title').innerText = `${sub.nameAr} — كويز MCQ`;
-  document.getElementById('quiz-problem-card').classList.remove('hidden');
-  document.getElementById('quiz-success-card').classList.add('hidden');
+  const titleEl = document.getElementById('quiz-topic-title');
+  if (titleEl) titleEl.innerText = `${sub.nameAr} (${sub.nameEn}) — كويز MCQ`;
 
   navigate('quizzes');
-  renderCurrentMCQQuestion();
+  updateQuizBankCountUI();
 
-  if (state.quizMode === 'exam') {
-    startQuizTimer();
-  } else {
+  const emptyCard = document.getElementById('quiz-empty-card');
+  const problemCard = document.getElementById('quiz-problem-card');
+  const successCard = document.getElementById('quiz-success-card');
+
+  if (state.quizQuestions.length === 0) {
+    if (emptyCard) emptyCard.classList.remove('hidden');
+    if (problemCard) problemCard.classList.add('hidden');
+    if (successCard) successCard.classList.add('hidden');
+    const emptySubName = document.getElementById('quiz-empty-subject-name');
+    if (emptySubName) emptySubName.innerText = `${sub.nameAr} (${sub.nameEn})`;
     stopQuizTimer();
+  } else {
+    if (emptyCard) emptyCard.classList.add('hidden');
+    if (problemCard) problemCard.classList.remove('hidden');
+    if (successCard) successCard.classList.add('hidden');
+
+    renderCurrentMCQQuestion();
+
+    if (state.quizMode === 'exam') {
+      startQuizTimer();
+    } else {
+      stopQuizTimer();
+    }
   }
 }
 
@@ -773,7 +757,19 @@ function handleSubjectSelectChange() {
 
 function renderCurrentMCQQuestion() {
   const questions = state.quizQuestions;
-  if (!questions || questions.length === 0) return;
+  const emptyCard = document.getElementById('quiz-empty-card');
+  const problemCard = document.getElementById('quiz-problem-card');
+
+  if (!questions || questions.length === 0) {
+    const sub = SUBJECTS_DATA[state.activeSubjectKey] || SUBJECTS_DATA.linear_algebra;
+    if (emptyCard) emptyCard.classList.remove('hidden');
+    if (problemCard) problemCard.classList.add('hidden');
+    const emptySubName = document.getElementById('quiz-empty-subject-name');
+    if (emptySubName) emptySubName.innerText = `${sub.nameAr} (${sub.nameEn})`;
+    return;
+  }
+  if (emptyCard) emptyCard.classList.add('hidden');
+  if (problemCard) problemCard.classList.remove('hidden');
 
   const q = questions[state.currentQuestionIndex];
   const total = questions.length;

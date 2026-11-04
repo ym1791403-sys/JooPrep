@@ -1,56 +1,102 @@
 /* ==========================================================================
-   JooPrep Educational Platform — Permanent Dark Theme Design System
-   Exact Spec Palettes:
-   Canvas:         #0B1220
-   Cards/Surface:  #131C2E
-   Borders:        #263247
-   Text:           #E8EEF9
-   Muted Text:     #92A0B8
-   Primary Blue:   #2563EB
-   Primary Tint:   #8DB4FF
-   Dark Blue Tint: #14234A
-   Secondary Teal: #2DD4BF
-   Secondary Tint: #0F2F31
+   JooPrep Academic Theme Engine (Dark Midnight Navy & Academic Light)
    ========================================================================== */
 
+/* 1. Flagship Dark Mode: Midnight Navy (الكحلي الليلي الفخم) */
 :root,
-html,
-body,
-[data-theme="dark"] {
-  --bg: #0B1220;   /* خلفية الصفحة الداكنة الفخمة */
-  --sf: #131C2E;   /* الكروت الداكنة */
-  --bd: #263247;   /* الحدود المتناسقة */
-  --tx: #E8EEF9;   /* النص الأساسي عالي الوضوح */
-  --mu: #92A0B8;   /* النص الباهت */
-  --p:  #2563EB;   /* الأزرق الأساسي (الأزرار) */
-  --pt: #8DB4FF;   /* الأزرق للنص والأيقونات */
-  --tn: #14234A;   /* خلفية زرقاء داكنة */
-  --sc: #2DD4BF;   /* التيل (التقدم والإنجاز) */
-  --st: #0F2F31;   /* خلفية تيل داكنة */
+[data-theme="dark"],
+html.dark {
+  --bg: #0B1220;   /* خلفية الصفحة كحلي داكن ملكي */
+  --sf: #131C2E;   /* أسطح الكروت كحلي عميق صلب */
+  --bd: #263247;   /* حدود كحلي صلبة متناسقة */
+  --tx: #E8EEF9;   /* نص أبيض كحلي عالي الوضوح */
+  --mu: #92A0B8;   /* نص ثانوي باهت */
+  --p:  #2563EB;   /* أزرق أساسي للأزرار */
+  --pt: #8DB4FF;   /* أزرق فاتح للنصوص والأيقونات */
+  --tn: #14234A;   /* كحلي أفتح للأوعية */
+  --sc: #0D9488;   /* تيل أكاديمي للإنجاز */
+  --st: #0F2F31;   /* تيل داكن */
 
-  /* Surface & Shadow Tokens */
-  --shadow-card: 0 14px 36px -8px rgba(0, 0, 0, 0.65), 0 0 20px -5px rgba(37, 99, 235, 0.1);
-  --shadow-card-hover: 0 22px 48px -10px rgba(0, 0, 0, 0.8), 0 0 30px -5px rgba(37, 99, 235, 0.28);
-  --shadow-btn-primary: 0 6px 22px rgba(37, 99, 235, 0.4);
-  --shadow-btn-hover: 0 10px 30px rgba(37, 99, 235, 0.55);
-  --header-bg: rgba(11, 18, 32, 0.92);
+  --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+  --shadow-card-hover: 0 16px 36px -6px rgba(0, 0, 0, 0.7);
+  --header-bg: rgba(11, 18, 32, 0.94);
   --header-border: #263247;
   --code-bg: #060B14;
   --code-tx: #E8EEF9;
-  --glow-opacity: 0.28;
 }
 
-/* Base Body Styling with Dynamic Ambient Background Glows */
+/* 2. Clean Academic Light Mode (الوضع الفاتح الأكاديمي المريح) */
+[data-theme="light"],
+html.light {
+  --bg: #F8FAFC;   /* خلفية فاتحة مريحة للعين */
+  --sf: #FFFFFF;   /* كروت بيضاء نقية */
+  --bd: #E2E8F0;   /* حدود ناعمة */
+  --tx: #0F172A;   /* نص كحلي داكن عالي التباين */
+  --mu: #64748B;   /* نص ثانوي رمادي */
+  --p:  #2563EB;   /* أزرق أساسي */
+  --pt: #1D4ED8;   /* أزرق داكن */
+  --tn: #EEF4FF;   /* أزرق فاتح جداً */
+  --sc: #0D9488;   /* تيل */
+  --st: #E6F7F5;   /* تيل فاتح */
+
+  --shadow-card: 0 4px 16px -2px rgba(15, 23, 42, 0.06);
+  --shadow-card-hover: 0 10px 25px -4px rgba(15, 23, 42, 0.1);
+  --header-bg: rgba(255, 255, 255, 0.95);
+  --header-border: #E2E8F0;
+  --code-bg: #0F172A;
+  --code-tx: #F8FAFC;
+}
+
 body {
   background-color: var(--bg) !important;
   color: var(--tx) !important;
   overflow-x: hidden;
-  background-image: 
-    radial-gradient(circle at 50% -10%, rgba(37, 99, 235, var(--glow-opacity)) 0%, transparent 60%),
-    radial-gradient(circle at 100% 30%, rgba(13, 148, 136, var(--glow-opacity)) 0%, transparent 50%),
-    radial-gradient(circle at 0% 70%, rgba(37, 99, 235, calc(var(--glow-opacity) * 0.7)) 0%, transparent 55%),
-    radial-gradient(circle at 80% 90%, rgba(13, 148, 136, calc(var(--glow-opacity) * 0.6)) 0%, transparent 45%);
-  background-attachment: fixed;
+  min-height: 100vh;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+header {
+  background-color: var(--header-bg) !important;
+  border-color: var(--header-border) !important;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Adaptive Light Mode Overrides */
+html.light .glass-card {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06);
+}
+
+html.light .text-white {
+  color: #0F172A !important;
+}
+
+html.light .text-slate-100,
+html.light .text-slate-200 {
+  color: #1E293B !important;
+}
+
+html.light .text-slate-300,
+html.light .text-slate-400 {
+  color: #475569 !important;
+}
+
+html.light .bg-slate-900,
+html.light .bg-slate-950 {
+  background-color: #F1F5F9 !important;
+  border-color: #E2E8F0 !important;
+  color: #0F172A !important;
+}
+
+html.light .border-slate-800,
+html.light .border-slate-700 {
+  border-color: #E2E8F0 !important;
+}
+
+html.light nav.md\:hidden {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: #E2E8F0 !important;
 }
 
 ::selection {
@@ -507,4 +553,92 @@ main {
   main {
     padding-bottom: 2rem;
   }
+}
+
+
+/* ==========================================================================
+   Educational Platform Animations & Interactive Micro-Styles (High Speed)
+   ========================================================================== */
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes modalPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes optionSelectBounce {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.015); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(37, 99, 235, 0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUpFade 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.animate-modal-pop {
+  animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.animate-option-bounce {
+  animation: optionSelectBounce 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+/* Tactile Interactive Option Styles */
+.mcq-option-card {
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, border-color, box-shadow;
+  position: relative;
+}
+
+.mcq-option-card:hover {
+  transform: translateX(-4px);
+  border-color: var(--p) !important;
+}
+
+.mcq-option-card:active {
+  transform: scale(0.99);
+}
+
+/* Modal Backdrop Blur */
+.modal-overlay {
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  background-color: rgba(11, 18, 32, 0.85);
+  transition: opacity 0.2s ease;
+}
+
+html.light .modal-overlay {
+  background-color: rgba(15, 23, 42, 0.65);
 }
